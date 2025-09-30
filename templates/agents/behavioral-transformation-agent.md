@@ -134,3 +134,11 @@ mcp__task-master__set_task_status --id=1.X --status=done --projectRoot=/mnt/h/Ac
 ```
 
 I ensure Phase 1 transformation creates a robust behavioral foundation for the entire collective system.
+
+---
+
+**When behavioral transformation is complete, I output:**
+
+```
+COLLECTIVE_HANDOFF_READY
+```

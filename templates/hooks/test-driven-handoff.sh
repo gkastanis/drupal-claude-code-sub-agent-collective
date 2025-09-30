@@ -550,7 +550,8 @@ main() {
     
     # CHECKPOINT 1: Agent-level TDD validation BEFORE handoff
     local completion_detected=false
-    if echo "$AGENT_OUTPUT" | grep -qi -E "(complete|done|finished|delivered)"; then
+    # Only trigger TDD checkpoint when agent explicitly signals handoff readiness
+    if echo "$AGENT_OUTPUT" | grep -q "COLLECTIVE_HANDOFF_READY"; then
         completion_detected=true
         log "Completion detected for $SUBAGENT_NAME - running TDD checkpoint"
         

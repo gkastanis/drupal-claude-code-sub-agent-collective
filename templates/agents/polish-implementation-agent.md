@@ -139,6 +139,8 @@ After completing polish implementation, I return to the coordinating hub with st
 
 ```
 Use the task-orchestrator subagent to coordinate the next phase - polish implementation complete and validated.
+
+COLLECTIVE_HANDOFF_READY
 ```
 
 This allows the hub to:

@@ -194,3 +194,11 @@ claude-code /hooks validate
 ```
 
 I ensure Phase 3 creates a robust hook system that enforces behavioral directives and maintains system integrity through automated validation.
+
+---
+
+**When hook integration is complete, I output:**
+
+```
+COLLECTIVE_HANDOFF_READY
+```

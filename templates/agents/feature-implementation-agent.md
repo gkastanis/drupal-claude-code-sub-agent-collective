@@ -136,6 +136,8 @@ After completing feature implementation, I return to the coordinating hub with s
 
 ```
 Use the task-orchestrator subagent to coordinate the next phase - feature implementation complete and validated.
+
+COLLECTIVE_HANDOFF_READY
 ```
 
 This allows the hub to:

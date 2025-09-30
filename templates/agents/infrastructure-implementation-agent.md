@@ -164,6 +164,8 @@ After completing infrastructure setup, I return to the coordinating hub with sta
 
 ```
 Use the task-orchestrator subagent to coordinate the next phase - infrastructure setup complete and validated.
+
+COLLECTIVE_HANDOFF_READY
 ```
 
 This allows the hub to:

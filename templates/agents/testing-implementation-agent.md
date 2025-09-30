@@ -139,6 +139,8 @@ After completing test implementation, I return to the coordinating hub with stat
 
 ```
 Use the task-orchestrator subagent to coordinate the next phase - testing implementation complete and validated.
+
+COLLECTIVE_HANDOFF_READY
 ```
 
 This allows the hub to:
