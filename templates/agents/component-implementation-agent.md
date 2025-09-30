@@ -152,6 +152,8 @@ When I complete component implementation, I use this TDD completion format:
 🌐 **Documentation Sources**: [Context7 libraries consulted for current best practices]
 
 Use the task-orchestrator subagent to coordinate the next phase - component implementation complete and validated.
+
+COLLECTIVE_HANDOFF_READY
 ```
 
 ## 🔄 HUB RETURN PROTOCOL
@@ -160,6 +162,8 @@ After completing component implementation, I return to the coordinating hub with
 
 ```
 Use the task-orchestrator subagent to coordinate the next phase - component implementation complete and validated.
+
+COLLECTIVE_HANDOFF_READY
 ```
 
 This allows the hub to:
