@@ -1,8 +1,8 @@
-# Claude Code Collective - Command System Usage Guide
+# Drupal Claude Code Collective - Command System Usage Guide
 
 ## Overview
 
-The Claude Code Collective command system provides both natural language and structured command interfaces for controlling the multi-agent orchestration system. This guide covers all available commands, usage patterns, and best practices.
+The Drupal Claude Code Collective command system provides both natural language and structured command interfaces for controlling the Drupal-focused multi-agent orchestration system. This guide covers all available commands, usage patterns, and best practices.
 
 ## Quick Start
 
@@ -55,14 +55,14 @@ Routes requests to the appropriate agent using intelligent selection.
 
 **Examples:**
 ```bash
-/collective route create a button component
-/collective route implement user authentication
-/collective route fix failing tests --skip-test
+/collective route create a custom block plugin showing recent articles
+/collective route implement event registration with Webform
+/collective route fix node access control bug --skip-test
 ```
 
 **Natural Language:**
-- "route create a login form to the right agent"
-- "send this task to the appropriate agent: build a todo app"
+- "route create a custom field widget to the right agent"
+- "send this task to the appropriate agent: build FAQ system with voting"
 
 #### `/collective agents [--detailed]`
 Lists all available agents in the collective.
@@ -124,24 +124,24 @@ Lists all available agents with their current status.
 Creates a new specialized agent instance.
 
 **Available Types:**
-- `component` - UI component development
-- `feature` - Business logic implementation
-- `testing` - Test creation and validation
-- `research` - Technical research and documentation
-- `infrastructure` - Build systems and tooling
+- `module-development` - Custom Drupal module development
+- `theme-development` - Drupal theme and front-end
+- `functional-testing` - Behat/Playwright testing
+- `drupal-architect` - Site architecture and planning
+- `performance-devops` - Performance optimization and DevOps
 - `behavioral-transformation` - CLAUDE.md behavioral system
 
 **Examples:**
 ```bash
-/agent spawn testing integration
-/agent spawn component --template=custom
-/agent spawn feature authentication --skip-contract
+/agent spawn functional-testing behat-scenarios
+/agent spawn module-development --template=custom
+/agent spawn theme-development responsive-design --skip-contract
 ```
 
 **Natural Language:**
-- "spawn a testing agent for integration work"
-- "create a component agent"
-- "I need a new research agent"
+- "spawn a testing agent for functional Behat work"
+- "create a module development agent"
+- "I need a new Drupal architect agent"
 
 #### `/agent status <id> [--verbose]`
 Shows detailed status for a specific agent.
@@ -149,7 +149,7 @@ Shows detailed status for a specific agent.
 **Examples:**
 ```bash
 /agent status routing-agent
-/agent status testing-implementation-agent --verbose
+/agent status module-development-agent --verbose
 ```
 
 #### `/agent route <request>`
@@ -157,8 +157,8 @@ Tests routing logic without actually executing the request.
 
 **Examples:**
 ```bash
-/agent route create a button component
-/agent route fix authentication bug
+/agent route create a custom field formatter for dates
+/agent route fix entity access control bug
 ```
 
 #### `/agent health [id] [--verbose]`
@@ -175,8 +175,8 @@ Executes manual agent handoff between two agents.
 
 **Examples:**
 ```bash
-/agent handoff component-agent testing-agent
-/agent handoff routing-agent feature-agent --skip-test
+/agent handoff module-development-agent functional-testing-agent
+/agent handoff routing-agent theme-development-agent --skip-test
 ```
 
 #### `/agent help [topic]`
@@ -278,8 +278,8 @@ The command system understands natural language instructions and converts them t
 ### Agent Operations
 - "list agents" → `/agent list`
 - "show available agents" → `/agent list --detailed`
-- "spawn testing agent" → `/agent spawn testing`
-- "create component agent" → `/agent spawn component`
+- "spawn testing agent" → `/agent spawn functional-testing`
+- "create module development agent" → `/agent spawn module-development`
 
 ### Gate Operations
 - "check gates" → `/gate status`
@@ -427,10 +427,10 @@ The system provides helpful error messages and suggestions:
 /gate validate planning
 
 # Route development task
-/collective route "implement user dashboard"
+/collective route "implement member directory with filtering"
 
 # Monitor progress
-/agent status component-implementation-agent
+/agent status module-development-agent
 
 # Validate completion
 /gate validate implementation
@@ -494,7 +494,7 @@ const help = commandSystem.getHelp('collective route');
 
 ## Conclusion
 
-The Claude Code Collective command system provides a powerful, intuitive interface for managing the multi-agent orchestration system. Whether you prefer structured commands or natural language, the system adapts to your working style while maintaining the precision needed for complex operations.
+The Drupal Claude Code Collective command system provides a powerful, intuitive interface for managing the Drupal-focused multi-agent orchestration system. Whether you prefer structured commands or natural language, the system adapts to your working style while maintaining the precision needed for complex Drupal development operations.
 
 For additional help:
 - Type `/help` for general assistance

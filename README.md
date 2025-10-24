@@ -1,84 +1,104 @@
-# Claude Code Sub-Agent Collective
+# Drupal Claude Code Sub-Agent Collective
 
-[![npm version](https://badge.fury.io/js/claude-code-collective.svg)](https://badge.fury.io/js/claude-code-collective)
+[![npm version](https://badge.fury.io/js/drupal-claude-collective.svg)](https://badge.fury.io/js/drupal-claude-collective)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Experimental NPX installer for TDD-focused AI agents**
+**Drupal-focused NPX installer for specialized Drupal development AI agents**
 
-This installs a collection of AI agents designed for Test-Driven Development and rapid prototyping. It's experimental, opinionated, and I built it to speed up my own MVP development work.
+This installs a collection of AI agents designed specifically for Drupal CMS development. Adapted from [claude-code-sub-agent-collective](https://github.com/vanzan01/claude-code-sub-agent-collective), this version replaces TDD-focused agents with Drupal specialists that understand Drupal architecture, coding standards, security best practices, and configuration management.
 
 ## What this installs
 
 ```bash
-npx claude-code-collective init
+npx drupal-claude-collective init
 ```
 
-You get 30+ specialized agents that enforce TDD methodology and try to be smarter about using real documentation instead of guessing.
+You get 15+ specialized Drupal development agents that understand Drupal architecture, follow Drupal coding standards, and deliver production-ready code.
 
 ## Why this exists
 
-I got tired of:
-- AI giving me code without tests
-- Having to manually look up library documentation
-- Inconsistent development approaches across projects
-- Breaking down complex features manually
+Drupal development with AI assistants often results in:
+- Code that violates Drupal coding standards
+- Security vulnerabilities (SQL injection, XSS)
+- Improper use of Drupal APIs
+- Missing configuration management
+- Poor performance patterns
 
-So I built agents that:
-1. Write tests first, always (RED → GREEN → REFACTOR)
-2. Use Context7 to pull real documentation
-3. Route work to specialists based on what needs doing
-4. Break down complex requests intelligently
+This collective solves these problems with agents that:
+1. Follow Drupal 10/11 best practices and coding standards
+2. Perform security reviews (phpcs, vulnerability scans)
+3. Use proper Drupal APIs (Entity API, dependency injection)
+4. Manage configuration export/import
+5. Implement proper caching and performance patterns
 
 ## What you get after installation
 
-### Core Implementation Agents (TDD-enforced)
-- **@component-implementation-agent** - UI components with tests and modern patterns
-- **@feature-implementation-agent** - Business logic with comprehensive testing
-- **@infrastructure-implementation-agent** - Build systems with testing setup
-- **@testing-implementation-agent** - Test suites that actually test things
-- **@polish-implementation-agent** - Performance optimization with preserved tests
+### Core Drupal Work Agents
+- **drupal-architect** - Site architecture, content modeling, module selection
+- **module-development-agent** - Custom modules with Drupal 10/11 best practices
+- **theme-development-agent** - Twig templates, SCSS, JavaScript behaviors
+- **configuration-management-agent** - Config export, update hooks, deployment
+- **content-migration-agent** - Content architecture and data migrations
+- **security-compliance-agent** - Security reviews and phpcs validation
+- **performance-devops-agent** - Caching, optimization, deployment
 
-### Quality & Validation
-- **@quality-agent** - Code review and standards checking
-- **@devops-agent** - Deployment and CI/CD setup
-- **@functional-testing-agent** - Browser testing with Playwright
-- **@enhanced-quality-gate** - Comprehensive validation gates
-- **@completion-gate** - Task validation and completion checks
+### Quality Gate Agents
+- **drupal-standards-gate** - Fast phpcs validation checkpoint
+- **security-gate** - Vulnerability scanning and access control checks
+- **performance-gate** - Query efficiency and caching validation
+- **accessibility-gate** - WCAG 2.1 AA compliance checking
+- **integration-gate** - Module compatibility and dependency validation
 
-### Research & Intelligence (Experimental)
-- **@research-agent** - Context7-powered documentation lookup
-- **@prd-research-agent** - Intelligent requirement breakdown
-- **@task-orchestrator** - Smart task parallelization
+### Testing Agents
+- **functional-testing-agent** - Playwright browser automation for Drupal
+- **unit-testing-agent** - PHPUnit tests with Drupal test base
+- **visual-regression-agent** - Screenshot comparison testing
 
-### System & Coordination
-- **`/van` command** - Entry point that routes to @task-orchestrator
-- **@task-orchestrator** - Central routing hub that picks the right specialist
-- **@behavioral-transformation-agent** - System behavioral setup
-- **@hook-integration-agent** - TDD enforcement automation
-- **@van-maintenance-agent** - System maintenance and updates
+### Coordination Agents (Reused from Original)
+- **enhanced-project-manager-agent** - Task Master coordination
+- **prd-research-agent** - Intelligent PRD breakdown
+- **research-agent** - Documentation research
+- **task-orchestrator** - Multi-agent coordination
+- **routing-agent** - Central routing hub
 
-**Plus 20+ other specialized agents** for specific development tasks.
+**Total: 20+ specialized agents** for Drupal development.
 
-## Installation options
+## Installation
 
-### Quick install (recommended for trying it out)
+### Prerequisites
+- Claude Code CLI installed
+- Drupal 10 or 11 site
+- PHP 8.1+ with Composer
+- Drush 12+
+- Node.js 18+
+
+### Quick Install
 ```bash
-npx claude-code-collective init
+# 1. Install MCP servers
+claude mcp add task-master -s user -- npx -y --package=task-master-ai task-master-ai
+claude mcp add playwright -s user -- npx -y playwright-mcp-server
+
+# 2. Navigate to your Drupal project
+cd /path/to/drupal
+
+# 3. Install the collective
+npx drupal-claude-collective init
+
+# 4. Install Drupal dev tools
+composer require --dev drupal/coder phpstan/phpstan
+./vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
 ```
 
-### Other options if you want to be selective
+### Installation Options
 ```bash
-# Just core agents for lightweight projects
-npx claude-code-collective init --minimal
+# Full installation (recommended)
+npx drupal-claude-collective init
 
-# Focus on testing framework only
-npx claude-code-collective init --testing-only
+# Minimal installation (core agents only)
+npx drupal-claude-collective init --minimal
 
-# Just the behavioral system and hooks
-npx claude-code-collective init --hooks-only
-
-# Interactive setup with choices
-npx claude-code-collective init --interactive
+# Force overwrite existing files
+npx drupal-claude-collective init --force
 ```
 
 ## What actually gets installed
@@ -103,80 +123,102 @@ your-project/
     └── package.json           # Testing setup (Vitest)
 ```
 
-## How it works
+## How It Works
 
-1. **`/van` command** routes to **@task-orchestrator** (the routing hub) which analyzes requests and delegates to specialists
-2. **Research phase** - agents use Context7 for real documentation  
-3. **Tests written first** - before any implementation
-4. **Implementation** - minimal code to make tests pass
-5. **Refactoring** - clean up while keeping tests green
-6. **Delivery** - you see what tests were added and results
+### 1. Complexity Assessment
+Main Claude reads `CLAUDE.md` and assesses task complexity (Level 1-4)
 
-### The TDD contract every agent follows
+### 2. Agent Routing
+- **Level 1**: Direct execution (drush commands, file operations)
+- **Level 2**: 2-4 specialized agents
+- **Level 3**: 5-9 agents with Task Master coordination
+- **Level 4**: Full project with phased agent deployment
 
+### 3. Drupal Development Workflow
 ```
-## DELIVERY COMPLETE
-✅ Tests written first (RED phase)
-✅ Implementation passes tests (GREEN phase)
-✅ Code refactored for quality (REFACTOR phase)
-📊 Test Results: X/X passing
+Architecture → Implementation → Quality Gates → Testing → Deployment
 ```
 
-## Management commands
+### 4. Quality Gate Validation
+Every implementation passes through:
+- ✅ Drupal coding standards (phpcs)
+- ✅ Security review (SQL injection, XSS, access control)
+- ✅ Performance validation (caching, queries)
+- ✅ Accessibility checks (WCAG 2.1 AA)
+- ✅ Integration testing (Playwright)
+
+### 5. Delivery Standard
+```
+## DRUPAL FEATURE COMPLETE
+
+✅ Module created: my_custom_module
+✅ Coding standards: PASS (0 errors, 0 warnings)
+✅ Security review: PASS
+✅ Functional tests: PASS
+✅ Configuration exported
+📊 Ready for deployment
+```
+
+## Management Commands
 
 ```bash
-# Check what's installed and working
-npx claude-code-collective status
+# Check installation status
+npx drupal-claude-collective status
 
 # Validate installation integrity
-npx claude-code-collective validate
+npx drupal-claude-collective validate
 
-# Fix broken installations
-npx claude-code-collective repair
+# Repair installation
+npx drupal-claude-collective repair
 
-# Remove everything
-npx claude-code-collective clean
+# Remove collective
+npx drupal-claude-collective clean
 
 # Get help
-npx claude-code-collective --help
+npx drupal-claude-collective --help
 ```
 
-## Current state (honest assessment)
+## Current State
 
-### What works well
-- TDD enforcement prevents a lot of bugs
-- Context7 integration is much better than agents guessing
-- Routing usually picks the right agent for the job
-- Breaking down complex tasks is genuinely helpful
+### What Works Well
+- Drupal coding standards enforcement prevents common issues
+- Security reviews catch vulnerabilities early
+- Agents understand Drupal APIs and best practices
+- Configuration management is handled automatically
+- Quality gates ensure production-ready code
 
-### What's experimental/rough
-- Some agents are still being refined
-- Research phase can be slow sometimes
-- Hook system requires restart (Claude Code limitation)
-- Documentation is scattered across files
+### Experimental Features
+- Theme development agent (works but being refined)
+- Content migration agent (handles basic scenarios)
+- Visual regression testing (depends on Playwright setup)
 
-### Known limitations
+### Known Limitations
+- Requires existing Drupal 10/11 installation
+- Best for custom module/theme development
 - Requires Node.js >= 16
-- Need to restart Claude Code after installation
-- Opinionated about TDD (if you don't like tests, skip this)
-- Some agents might be too thorough/slow for simple tasks
+- Need Task Master MCP for complex projects (Level 3-4)
+- Agents work best with clear, detailed requirements
 
-## Testing your installation
+## Testing Your Installation
 
 After installing:
 
 ```bash
-# 1. Validate everything installed correctly
-npx claude-code-collective validate
+# 1. Validate installation
+npx drupal-claude-collective validate
 
 # 2. Check status
-npx claude-code-collective status
+npx drupal-claude-collective status
 
-# 3. Restart Claude Code (required for hooks)
+# 3. Restart Claude Code (if hooks were installed)
 
-# 4. Try it out
-# In Claude Code: "Build a simple todo app with React"
-# Expected: routes to research → breaks down task → writes tests → implements
+# 4. Try a simple task
+# In Claude Code: "Add a 'Featured' boolean field to the Article content type"
+# Expected: Direct execution via drush
+
+# 5. Try a Level 2 feature
+# In Claude Code: "Create a custom block plugin that displays the 5 most recent articles"
+# Expected: module-development-agent → security-compliance-agent → functional-testing-agent
 ```
 
 ## Troubleshooting
@@ -203,34 +245,51 @@ npx claude-code-collective status
 
 ## Requirements
 
+### System Requirements
 - **Node.js**: >= 16.0.0
 - **NPM**: >= 8.0.0
-- **Claude Code**: With MCP support and hook system
-- **Restart**: Required after installation (hooks limitation)
+- **Claude Code**: Latest version with MCP support
 
-## What this is and isn't
+### Drupal Requirements
+- **Drupal**: 10.x or 11.x
+- **PHP**: 8.1+
+- **Drush**: 12+
+- **Composer**: Latest version
 
-### What it is
-- Experimental development aid for rapid prototyping
-- Collection of TDD-focused AI agents
-- Personal project that I use for my own MVPs
-- Opinionated about test-first development
+### Development Tools
+- **PHP_CodeSniffer**: With Drupal standards (`drupal/coder`)
+- **PHPStan**: For static analysis (recommended)
+- **Playwright**: For functional testing (optional but recommended)
 
-### What it isn't
-- Production-ready enterprise software
-- Guaranteed to work perfectly
-- Following any official standards
-- A replacement for thinking or understanding code
+## What This Is and Isn't
 
-## Why TDD?
+### What It Is
+- Drupal development aid for building production-ready modules and themes
+- Collection of Drupal-specialized AI agents
+- Adapted from claude-code-sub-agent-collective for Drupal CMS
+- Opinionated about Drupal best practices
 
-Because in my experience:
-- Writing tests first forces better design thinking
-- Tests catch bugs when they're cheap to fix
-- Refactoring is safe with good test coverage
-- Code with tests is easier to change later
+### What It Isn't
+- A replacement for Drupal knowledge
+- Guaranteed to handle every edge case
+- A substitute for code review
+- Magic that requires zero Drupal understanding
 
-The agents enforce this because I believe it leads to better outcomes. If you disagree with TDD philosophy, this tool probably isn't for you.
+## Why Drupal-Specific Agents?
+
+Generic AI assistants often produce Drupal code that:
+- Violates coding standards
+- Contains security vulnerabilities
+- Uses deprecated APIs
+- Ignores configuration management
+- Has poor performance patterns
+
+Drupal-specialized agents enforce:
+- Proper use of Entity API
+- Dependency injection patterns
+- Security best practices
+- Configuration export workflows
+- Performance and caching standards
 
 ## Research features (experimental)
 
@@ -271,12 +330,21 @@ Most of these are enforced automatically through hooks and behavioral constraint
 
 ## Support
 
-This is a personal project, but:
-- **Issues welcome** if you find bugs or have suggestions
-- **PRs welcome** for small fixes or better agent prompts  
-- **Don't expect rapid responses** - this is a side project
+- **Issues**: Report bugs and suggestions on GitHub
+- **Documentation**: See `FOR_DRUPAL/` directory for detailed guides
+- **Validation**: Run `npx drupal-claude-collective validate` for diagnostics
 
-**Get help**: Run `npx claude-code-collective validate` for diagnostics
+### Resources
+- **Drupal.org**: https://www.drupal.org
+- **Drupal API**: https://api.drupal.org
+- **Drupal Coding Standards**: https://www.drupal.org/docs/develop/standards
+- **Original Project**: https://github.com/vanzan01/claude-code-sub-agent-collective
+
+## Credits
+
+Adapted from [claude-code-sub-agent-collective](https://github.com/vanzan01/claude-code-sub-agent-collective) by vanzan01 for Drupal CMS development.
+
+Specialized for Drupal with custom agents, quality gates, and Drupal-specific workflows.
 
 ## License
 
@@ -284,8 +352,8 @@ MIT License - Use it, break it, fix it, whatever works for you.
 
 ---
 
-**Experimental** | **TDD-Focused** | **Personal Project** | **Use At Your Own Risk**
+**Drupal-Specialized** | **Production-Ready Code** | **Drupal 10/11** | **Agent-Based Development**
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for detailed version history and release notes.
+See [CHANGELOG.md](CHANGELOG.md) for version history.

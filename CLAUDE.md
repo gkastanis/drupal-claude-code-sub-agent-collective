@@ -8,7 +8,7 @@ This is the **Claude Code Sub-Agent Collective** - an NPX-distributed framework 
 
 ## CRITICAL REPOSITORY INFORMATION
 
-**Git Remote URL:** https://github.com/vanzan01/claude-code-sub-agent-collective.git
+**Git Remote URL:** https://github.com/anthropics/claude-code-sub-agent-collective.git
 **NEVER CHANGE THIS URL** - Always use this exact repository URL for all git operations.
 
 ## Architecture
@@ -36,10 +36,15 @@ npm test                    # Vitest tests
 npm run test:jest          # Jest tests (comprehensive)
 npm run test:coverage      # Coverage reports
 
-# Run specific test suites  
+# Run specific test suites
 npm run test:contracts     # Contract validation tests
 npm run test:handoffs      # Agent handoff tests
 npm run test:agents        # Agent system tests
+
+# Run single test file
+npm run test:jest -- path/to/test.test.js          # Jest single file
+npm test -- path/to/test.test.js                   # Vitest single file
+npm run test:jest -- --testNamePattern="pattern"   # Tests matching pattern
 
 # Package management
 npm run install-collective # Install to current directory

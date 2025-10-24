@@ -1,7 +1,7 @@
-# Agent Interaction and Workflow Diagram
+# Drupal Agent Interaction and Workflow Diagram
 
 ## Overview
-This document maps the complete agent ecosystem using a **hub-and-spoke delegation model**. Individual specialized agents complete their work and return to the routing-agent (hub) for next decisions, preventing boundary violations. Only coordination agents (enhanced-project-manager-agent, workflow-agent) manage sequential workflows.
+This document maps the complete Drupal agent ecosystem using a **hub-and-spoke delegation model**. Individual specialized agents complete their Drupal development work and return to the routing-agent (hub) for next decisions, preventing boundary violations. Only coordination agents (enhanced-project-manager-agent, workflow-agent) manage sequential workflows.
 
 ## Architectural Model: Hub-and-Spoke vs Pipeline
 
@@ -38,31 +38,31 @@ graph TD
     PRD_AGENT -->|"COMPLETE"| ROUTING
     PRD_MVP -->|"COMPLETE"| ROUTING
     
-    %% CORE IMPLEMENTATION WORKFLOW
-    ENHANCED_PM --> INFRASTRUCTURE["🏗️ infrastructure-implementation-agent<br/>Build System, Vite, TypeScript"]
-    ENHANCED_PM --> FEATURE["💾 feature-implementation-agent<br/>Data Services, Business Logic"]
-    ENHANCED_PM --> COMPONENT["🎨 component-implementation-agent<br/>UI Components, Styling"]
-    ENHANCED_PM --> TESTING_IMPL["🧪 testing-implementation-agent<br/>Test Framework & Test Suites"]
-    ENHANCED_PM --> FUNCTIONAL_TESTING["🧪 functional-testing-agent<br/>Browser Testing & User Validation"]
-    ENHANCED_PM --> POLISH["✨ polish-implementation-agent<br/>Performance & Accessibility"]
-    ENHANCED_PM --> DEVOPS["🚀 devops-agent<br/>Deployment, CI/CD"]
+    %% CORE DRUPAL IMPLEMENTATION WORKFLOW
+    ENHANCED_PM --> ARCHITECT["🏗️ drupal-architect<br/>Site Architecture, Content Modeling"]
+    ENHANCED_PM --> MODULE["💾 module-development-agent<br/>Custom Modules, Plugins, Services"]
+    ENHANCED_PM --> THEME["🎨 theme-development-agent<br/>Twig Templates, SCSS, Behaviors"]
+    ENHANCED_PM --> TESTING_IMPL["🧪 unit-testing-agent<br/>PHPUnit Test Suites"]
+    ENHANCED_PM --> FUNCTIONAL_TESTING["🧪 functional-testing-agent<br/>Behat/Playwright Browser Testing"]
+    ENHANCED_PM --> SECURITY["🛡️ security-compliance-agent<br/>Security & Coding Standards"]
+    ENHANCED_PM --> DEVOPS["🚀 performance-devops-agent<br/>Performance, Deployment, CI/CD"]
     
     %% HUB-AND-SPOKE RETURN FLOWS (Individual Agents Return to Delegator)
-    INFRASTRUCTURE -->|"COMPLETE"| ROUTING
-    FEATURE -->|"COMPLETE"| ROUTING  
-    COMPONENT -->|"COMPLETE"| ROUTING
+    ARCHITECT -->|"COMPLETE"| ROUTING
+    MODULE -->|"COMPLETE"| ROUTING
+    THEME -->|"COMPLETE"| ROUTING
     TESTING_IMPL -->|"COMPLETE"| ROUTING
     FUNCTIONAL_TESTING -->|"COMPLETE"| ROUTING
-    POLISH -->|"COMPLETE"| ROUTING
+    SECURITY -->|"COMPLETE"| ROUTING
     DEVOPS -->|"COMPLETE"| ROUTING
     
     %% COORDINATION WORKFLOWS (Only for Coordination Agents)
-    ENHANCED_PM -->|"COORDINATE"| INFRASTRUCTURE
-    ENHANCED_PM -->|"COORDINATE"| FEATURE
-    ENHANCED_PM -->|"COORDINATE"| COMPONENT
-    WORKFLOW -->|"ORCHESTRATE"| INFRASTRUCTURE
-    WORKFLOW -->|"ORCHESTRATE"| FEATURE
-    WORKFLOW -->|"ORCHESTRATE"| COMPONENT
+    ENHANCED_PM -->|"COORDINATE"| ARCHITECT
+    ENHANCED_PM -->|"COORDINATE"| MODULE
+    ENHANCED_PM -->|"COORDINATE"| THEME
+    WORKFLOW -->|"ORCHESTRATE"| ARCHITECT
+    WORKFLOW -->|"ORCHESTRATE"| MODULE
+    WORKFLOW -->|"ORCHESTRATE"| THEME
     
     %% QUALITY VALIDATION FLOWS (Through Routing Hub)
     ROUTING -->|"QUALITY CHECK"| ENHANCED_QUALITY["🛡️ enhanced-quality-gate<br/>Quality Validation with Gate Enforcement"]
@@ -75,12 +75,12 @@ graph TD
     READINESS -->|"READY"| ENHANCED_PM
     
     %% WORKFLOW ORCHESTRATION (Coordination Agent)
-    WORKFLOW -->|"ORCHESTRATE"| INFRASTRUCTURE
-    WORKFLOW -->|"ORCHESTRATE"| FEATURE  
-    WORKFLOW -->|"ORCHESTRATE"| COMPONENT
+    WORKFLOW -->|"ORCHESTRATE"| ARCHITECT
+    WORKFLOW -->|"ORCHESTRATE"| MODULE
+    WORKFLOW -->|"ORCHESTRATE"| THEME
     WORKFLOW -->|"ORCHESTRATE"| TESTING_IMPL
     WORKFLOW -->|"ORCHESTRATE"| FUNCTIONAL_TESTING
-    WORKFLOW -->|"ORCHESTRATE"| POLISH
+    WORKFLOW -->|"ORCHESTRATE"| SECURITY
     
     %% RESEARCH AGENT DIRECT DELEGATION (Returns to Routing)
     RESEARCH -->|"COMPLETE"| ROUTING
@@ -97,7 +97,7 @@ graph TD
     class USER entry
     class ROUTING routing
     class ENHANCED_PM,WORKFLOW,READINESS management
-    class INFRASTRUCTURE,FEATURE,COMPONENT,TESTING_IMPL,FUNCTIONAL_TESTING,POLISH,DEVOPS implementation
+    class ARCHITECT,MODULE,THEME,TESTING_IMPL,FUNCTIONAL_TESTING,SECURITY,DEVOPS implementation
     class ENHANCED_QUALITY,QUALITY,COMPLETION quality
     class PRD_RESEARCH,PRD_AGENT,PRD_MVP prd
     class RESEARCH research
@@ -106,26 +106,28 @@ graph TD
 ## Agent Categories and Responsibilities
 
 ### 🔄 **Entry and Routing Agents**
-- **routing-agent**: Universal entry point with **30-second complexity assessment**, analyzes requests and routes to appropriate specialized agents. Features lightweight pattern recognition for simple applications (todo apps, HTML/CSS/JS patterns) that bypass heavy coordination workflows.
-- **workflow-agent**: Multi-agent orchestrator with feedback loops for complex tasks
+- **routing-agent**: Universal entry point with **complexity assessment**, analyzes Drupal requests and routes to appropriate specialized agents. Features lightweight pattern recognition for simple tasks (field creation, block placement, view configuration) that bypass heavy coordination workflows.
+- **workflow-agent**: Multi-agent orchestrator with feedback loops for complex Drupal projects
 
 ### 📊 **Management and Coordination Agents**
 - **enhanced-project-manager-agent**: Coordinates development phases with mandatory gate enforcement
 - **readiness-gate**: Validates if project phases can advance based on completeness
 
-### 🏗️ **Core Implementation Agents**
-- **infrastructure-implementation-agent**: Sets up build configurations, Vite, TypeScript, testing frameworks
-- **feature-implementation-agent**: Implements data services, business logic, state management, API integration
-- **component-implementation-agent**: Creates UI components, handles interactions, implements styling and responsive design
-- **testing-implementation-agent**: Creates unit tests, integration tests, and comprehensive test suites
-- **functional-testing-agent**: Performs real browser testing with Playwright, validates user workflows and functionality
-- **polish-implementation-agent**: Final performance optimization, accessibility refinement, error handling enhancement
-- **devops-agent**: Handles deployment, CI/CD, infrastructure, and production setup
+### 🏗️ **Core Drupal Implementation Agents**
+- **drupal-architect**: Designs site architecture, content models, module selection, database schema planning
+- **module-development-agent**: Implements custom Drupal modules with hooks, plugins, services, dependency injection
+- **theme-development-agent**: Creates custom themes with Twig templates, SCSS/CSS, JavaScript behaviors
+- **unit-testing-agent**: Creates PHPUnit unit tests and kernel tests for custom code
+- **functional-testing-agent**: Performs real browser testing with Behat/Playwright, validates Drupal user workflows
+- **security-compliance-agent**: Drupal coding standards validation (phpcs), security review, access control checks
+- **performance-devops-agent**: Performance optimization, caching strategies, deployment workflows, CI/CD
 
-### 🛡️ **Quality and Validation Agents**
-- **enhanced-quality-gate**: Comprehensive security, performance, accessibility validation with gate enforcement
-- **quality-agent**: Performs code quality review, security assessment, performance validation
-- **completion-gate**: Validates if tasks truly meet acceptance criteria and are complete
+### 🛡️ **Drupal Quality and Validation Agents**
+- **drupal-standards-gate**: Drupal coding standards validation (Drupal, DrupalPractice)
+- **security-gate**: Security vulnerability checking (SQL injection, XSS, CSRF, access control)
+- **performance-gate**: Query efficiency, caching validation, N+1 query detection
+- **accessibility-gate**: WCAG 2.1 AA compliance validation
+- **completion-gate**: Validates if Drupal tasks meet acceptance criteria
 
 ### 📋 **PRD and Research Agents**
 - **prd-research-agent**: Analyzes PRDs, conducts research, performs complexity analysis, generates tasks
@@ -138,18 +140,18 @@ graph TD
 Each agent uses standardized handoff tokens to ensure proper workflow coordination:
 
 ### Hub-and-Spoke Return Tokens (Individual Agents Return to Delegator)
-- `INFRA_COMPLETE_I5K7` - Infrastructure complete, return to routing-agent
-- `FEAT_COMPLETE_F7K5` - Feature implementation complete, return to routing-agent
-- `COMP_COMPLETE_C8K6` - Component implementation complete, return to routing-agent
+- `ARCH_COMPLETE_A5K7` - Architecture design complete, return to routing-agent
+- `MODULE_COMPLETE_M7K5` - Module implementation complete, return to routing-agent
+- `THEME_COMPLETE_T8K6` - Theme implementation complete, return to routing-agent
 - `TEST_COMPLETE_T9K7` - Testing implementation complete, return to routing-agent
 - `FUNCTIONAL_COMPLETE_F9K7` - Functional testing complete, return to routing-agent
-- `POLISH_COMPLETE_P5K8` - Polish implementation complete, return to routing-agent
-- `DEVOPS_COMPLETE_D7K9` - DevOps implementation complete, return to routing-agent
+- `SECURITY_COMPLETE_S5K8` - Security validation complete, return to routing-agent
+- `DEVOPS_COMPLETE_D7K9` - DevOps/Performance implementation complete, return to routing-agent
 
 ### Coordination Workflow Tokens (Coordination Agents Only)
-- `COORD_INFRA_C4M7` - Enhanced project manager coordinates infrastructure
-- `COORD_FEATURE_C6L8` - Enhanced project manager coordinates features
-- `COORD_COMPONENT_C8M2` - Enhanced project manager coordinates components
+- `COORD_ARCH_C4M7` - Enhanced project manager coordinates architecture
+- `COORD_MODULE_C6L8` - Enhanced project manager coordinates module development
+- `COORD_THEME_C8M2` - Enhanced project manager coordinates theme development
 - `ORCHESTRATE_PARALLEL_O5N4` - Workflow agent orchestrates parallel work
 - `ORCHESTRATE_SEQUENCE_O7P6` - Workflow agent orchestrates sequential work
 
@@ -159,25 +161,25 @@ Each agent uses standardized handoff tokens to ensure proper workflow coordinati
 - `TASK_COMPLETE_T3R9` - Task completion validated
 - `COORD_REQUIRED_C7M1` - Project coordination needed
 
-### Complexity Assessment Tokens (30-second routing)
-- `SIMPLE_APP_N7Q3` - Simple application pattern, direct to component-implementation-agent
+### Complexity Assessment Tokens
+- `SIMPLE_DRUPAL_N7Q3` - Simple Drupal task, direct to module-development-agent
 - `SIMPLE_COMPOUND_E4T7` - Simple compound request, bypass coordination overhead
-- `COMPLEX_COMPOUND_E9M5` - Complex multi-domain request, requires coordination
+- `COMPLEX_COMPOUND_E9M5` - Complex multi-component request, requires coordination
 
 ## Workflow Patterns
 
 ### 1. **Hub-and-Spoke Direct Delegation**
 ```
-routing-agent → infrastructure-implementation-agent → COMPLETE → routing-agent → next decision
-routing-agent → feature-implementation-agent → COMPLETE → routing-agent → next decision  
-routing-agent → component-implementation-agent → COMPLETE → routing-agent → next decision
-routing-agent → testing-implementation-agent → COMPLETE → routing-agent → next decision
+routing-agent → drupal-architect → COMPLETE → routing-agent → next decision
+routing-agent → module-development-agent → COMPLETE → routing-agent → next decision
+routing-agent → theme-development-agent → COMPLETE → routing-agent → next decision
+routing-agent → functional-testing-agent → COMPLETE → routing-agent → next decision
 ```
 
-### 2. **Coordinated Development Flow (via Enhanced Project Manager)**
+### 2. **Coordinated Drupal Development Flow (via Enhanced Project Manager)**
 ```
-routing-agent → enhanced-project-manager-agent → coordinates: infrastructure → feature → component → testing
-→ enhanced-quality-gate → quality-agent → completion-gate → enhanced-project-manager-agent
+routing-agent → enhanced-project-manager-agent → coordinates: drupal-architect → module-development-agent → theme-development-agent → functional-testing-agent
+→ security-compliance-agent → performance-gate → completion-gate → enhanced-project-manager-agent
 ```
 
 ### 3. **Research-Driven Flow**
@@ -188,8 +190,8 @@ routing-agent → research-agent → COMPLETE → routing-agent → prd-research
 
 ### 4. **Complex Multi-Agent Orchestration (via Workflow Agent)**
 ```
-routing-agent → workflow-agent → orchestrates: [parallel: infrastructure + research] → COMPLETE → workflow-agent
-→ orchestrates: [coordinated: feature + component] → COMPLETE → workflow-agent → completion
+routing-agent → workflow-agent → orchestrates: [parallel: drupal-architect + research] → COMPLETE → workflow-agent
+→ orchestrates: [coordinated: module-development-agent + theme-development-agent] → COMPLETE → workflow-agent → completion
 ```
 
 ### 5. **Quality Validation Flow**
@@ -197,25 +199,25 @@ routing-agent → workflow-agent → orchestrates: [parallel: infrastructure + r
 routing-agent → enhanced-quality-gate → quality-agent → completion-gate → COMPLETE → routing-agent
 ```
 
-### 6. **30-Second Complexity Assessment Flow (NEW)**
+### 6. **Complexity Assessment Flow**
 ```
-routing-agent → [30-second pattern analysis] → SIMPLE PATTERN → component-implementation-agent → COMPLETE → routing-agent
-routing-agent → [30-second pattern analysis] → COMPLEX PATTERN → enhanced-project-manager-agent → [coordination]
+routing-agent → [complexity pattern analysis] → SIMPLE PATTERN → module-development-agent → COMPLETE → routing-agent
+routing-agent → [complexity pattern analysis] → COMPLEX PATTERN → enhanced-project-manager-agent → [coordination]
 ```
 
 **Examples:**
-- "HTML/CSS/JS todo app" → SIMPLE → component-implementation-agent
-- "Enterprise user management system" → COMPLEX → enhanced-project-manager-agent
+- "Create custom block plugin showing recent articles" → SIMPLE → module-development-agent
+- "Build event management system with registration" → COMPLEX → enhanced-project-manager-agent
 
 ## Gate Enforcement Points
 
-### Mandatory Quality Gates
-1. **Research Compliance**: All implementations must use research cache, not training data
-2. **Build Validation**: All agents must validate with `npm run build` before completion
-3. **TypeScript Compliance**: Strict TypeScript configuration and validation required
+### Mandatory Drupal Quality Gates
+1. **Drupal Coding Standards**: All code must pass phpcs with Drupal and DrupalPractice standards
+2. **Security Validation**: No SQL injection, XSS, or access control vulnerabilities
+3. **Performance Check**: Efficient queries, proper caching, no N+1 query patterns
 4. **Accessibility Standards**: WCAG 2.1 AA compliance for all UI components
-5. **Error Handling**: Comprehensive error handling and fallback mechanisms
-6. **Integration Testing**: All components must integrate without conflicts
+5. **Configuration Export**: All configuration changes must be exportable
+6. **Functional Testing**: User workflows validated with Behat or Playwright
 
 ### Agent Structure Requirements
 **MANDATORY AGENT STRUCTURE**: All agents must follow EXACT format:
@@ -298,30 +300,27 @@ Individual Agent Blocked → COMPLETE with error context → routing-agent → e
 #### Tool Access Matrix
 
 **File Modification Only (No Bash Access):**
-- ✅ `component-implementation-agent` - Only needs Read, Write, Edit, MultiEdit for UI components
-- ✅ `feature-implementation-agent` - Only needs Read, Write, Edit, MultiEdit for data services  
-- ✅ `polish-implementation-agent` - Only needs Read, Write, Edit, MultiEdit for optimization
+- ✅ `theme-development-agent` - Only needs Read, Write, Edit, MultiEdit for Twig templates and SCSS
+- ✅ `content-migration-agent` - Only needs Read, Write, Edit, MultiEdit for migration files
 
 **Command Execution Required (Bash Access Maintained):**
-- ✅ `infrastructure-implementation-agent` - Needs Bash for build setup (npm install, npm run build)
-- ✅ `testing-implementation-agent` - Needs Bash for test execution (npm test, npm run test:unit)
-- ✅ `quality-agent` - Needs Bash for quality validation and test running
-- ✅ `devops-agent` - Needs Bash for deployment, CI/CD, and infrastructure commands
-- ✅ `functional-testing-agent` - Needs Bash for development server startup and Playwright testing
+- ✅ `module-development-agent` - Needs Bash for Drush commands (drush cr, drush cex, drush updb)
+- ✅ `unit-testing-agent` - Needs Bash for test execution (./vendor/bin/phpunit)
+- ✅ `security-compliance-agent` - Needs Bash for phpcs, phpstan, security validation
+- ✅ `performance-devops-agent` - Needs Bash for deployment, CI/CD, performance profiling
+- ✅ `functional-testing-agent` - Needs Bash for Behat/Playwright testing and server startup
 
 #### Prevention of Inappropriate Commands
 
-**RESOLVED ISSUE**: component-implementation-agent was inappropriately running:
-- `python3 -m http.server 8080` (web server startup)
-- `npm run dev` (development server for simple file modifications)
+**RESOLVED ISSUE**: Some agents were inappropriately running development servers or test commands when only file modifications were needed.
 
-**SOLUTION**: Removed Bash access from pure implementation agents that only need file modifications.
+**SOLUTION**: Removed Bash access from pure implementation agents that only need file modifications (theme templates, migration configs).
 
 #### Tool Access Rules
 
 1. **File-only agents**: `tools: Read, Write, Edit, MultiEdit, Glob, Grep, mcp__task-master__get_task, LS`
-2. **Command-execution agents**: Include `Bash` for legitimate build/test/deployment commands
-3. **Specialized agents**: Include specific tools (Playwright, Context7, etc.) as needed
+2. **Command-execution agents**: Include `Bash` for Drush, Composer, phpcs, phpunit, deployment
+3. **Specialized agents**: Include specific tools (Playwright for browser testing, etc.) as needed
 
 ---
 

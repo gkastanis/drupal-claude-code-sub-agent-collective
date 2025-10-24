@@ -1,13 +1,13 @@
-# Claude Code Sub-Agent Collective - Troubleshooting Guide
+# Drupal Claude Code Sub-Agent Collective - Troubleshooting Guide
 
 ## Common Installation Issues
 
 ### Template Files Not Found
 **Problem**: Warning messages about missing template files during installation.
-**Solution**: 
-1. Ensure you're using the latest version: `npx claude-code-collective@latest`
+**Solution**:
+1. Ensure you're using the latest version: `npx drupal-claude-collective@latest`
 2. Clear npm cache: `npm cache clean --force`
-3. Try installing with `--force` flag: `npx claude-code-collective --force`
+3. Try installing with `--force` flag: `npx drupal-claude-collective --force`
 
 ### Permission Errors
 **Problem**: EACCES errors when installing hooks or files.
@@ -84,10 +84,10 @@ Enable verbose logging for detailed troubleshooting:
 
 ```bash
 # Set debug environment
-export DEBUG=claude-collective:*
+export DEBUG=drupal-collective:*
 
 # Run with verbose output
-npx claude-code-collective --verbose --debug
+npx drupal-claude-collective --verbose --debug
 ```
 
 ## Getting Help
@@ -111,7 +111,7 @@ Expected output: All tests passing, no validation errors.
 
 ## Reset Instructions
 
-To completely reset the collective system:
+To completely reset the Drupal collective system:
 
 ```bash
 # Remove all collective files
@@ -120,7 +120,7 @@ rm -rf .claude/hooks/*
 rm -rf .claude-collective/
 
 # Reinstall
-npx claude-code-collective --force
+npx drupal-claude-collective --force
 ```
 
 **Warning**: This will remove all customizations and configurations.

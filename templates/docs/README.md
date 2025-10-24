@@ -1,8 +1,8 @@
-# Claude Code Sub-Agent Collective
+# Drupal Claude Code Sub-Agent Collective
 
 ## 📖 System Overview
 
-Welcome to your Claude Code Sub-Agent Collective installation! This system implements a research framework for reliable multi-agent coordination using hub-and-spoke architecture.
+Welcome to your Drupal Claude Code Sub-Agent Collective installation! This system provides specialized Drupal development agents with hub-and-spoke coordination for building production-ready Drupal sites.
 
 ### What Just Happened?
 
@@ -15,11 +15,13 @@ This file contains the core behavioral directives that govern how the collective
 - **Directive 3**: Test-driven validation - handoffs include contract validation
 
 #### 🤖 Agent Definitions (`.claude/agents/`)
-Each agent has specific capabilities and responsibilities:
+Each agent has Drupal-specific capabilities and responsibilities:
 - **@routing-agent**: Central hub for semantic request analysis and routing
-- **@testing-implementation-agent**: Handles test frameworks and validation
-- **@behavioral-transformation-agent**: Manages behavioral system changes
-- **@hook-integration-agent**: Implements and manages hook systems
+- **@drupal-architect**: Site architecture, content modeling, module selection
+- **@module-development-agent**: Custom Drupal module implementation
+- **@theme-development-agent**: Drupal themes with Twig templates
+- **@security-compliance-agent**: Drupal coding standards and security validation
+- **@functional-testing-agent**: Behat and Playwright testing for Drupal
 
 #### 🪝 Hook Scripts (`.claude/hooks/`)
 Enforcement mechanisms that ensure directive compliance:
@@ -44,15 +46,15 @@ Try these commands to verify everything works:
 
 ```bash
 # Check status
-npx claude-code-collective status
+npx drupal-claude-collective status
 
 # Validate installation
-npx claude-code-collective validate
+npx drupal-claude-collective validate
 ```
 
 ### 3. Try Agent Routing
 In Claude Code, try a request like:
-> "Route this through @routing-agent to create a login component with validation"
+> "Route this through @routing-agent to create a custom block plugin showing recent articles"
 
 ## 🎯 How to Use the Collective
 
@@ -60,22 +62,23 @@ In Claude Code, try a request like:
 Instead of asking Claude directly, route requests through agents:
 
 **❌ Old Way (Direct):**
-> "Create a login form component"
+> "Create a custom field widget"
 
 **✅ New Way (Agent Routed):**
-> "Route to @routing-agent: Create a login form component with React hooks"
+> "Route to @routing-agent: Create a custom field widget for date ranges with Drupal Form API"
 
 ### Understanding Agent Routing
-The @routing-agent will analyze your request and select the best agent:
-- **Implementation tasks** → @implementation-agent
-- **Testing tasks** → @testing-implementation-agent  
-- **Research tasks** → @research-agent
-- **Hook/behavioral tasks** → @hook-integration-agent
+The @routing-agent will analyze your request and select the best Drupal agent:
+- **Module development tasks** → @module-development-agent
+- **Theme development tasks** → @theme-development-agent
+- **Testing tasks** → @functional-testing-agent
+- **Architecture/planning tasks** → @drupal-architect
+- **Security/standards validation** → @security-compliance-agent
 
 ### Monitoring Activity
 - **Metrics**: Check `.claude-collective/metrics/` for performance data
 - **Logs**: Review `/tmp/collective-*.log` for detailed activity
-- **Status**: Run `npx claude-code-collective status` for health check
+- **Status**: Run `npx drupal-claude-collective status` for health check
 
 ## 📊 Research Framework
 
@@ -148,15 +151,15 @@ With the collective active, Claude Code will behave differently:
 ### Troubleshooting
 If something isn't working:
 1. **Restart Claude Code** - Hooks need to be reloaded
-2. **Check Status** - Run `npx claude-code-collective status`
-3. **Validate Installation** - Run `npx claude-code-collective validate`
+2. **Check Status** - Run `npx drupal-claude-collective status`
+3. **Validate Installation** - Run `npx drupal-claude-collective validate`
 4. **Review Logs** - Check `/tmp/collective-*.log` files
-5. **Repair Installation** - Run `npx claude-code-collective repair`
+5. **Repair Installation** - Run `npx drupal-claude-collective repair`
 
 ### Getting Help
-- **Status Command**: `npx claude-code-collective status`
-- **Validation**: `npx claude-code-collective validate`  
-- **Repair**: `npx claude-code-collective repair`
+- **Status Command**: `npx drupal-claude-collective status`
+- **Validation**: `npx drupal-claude-collective validate`
+- **Repair**: `npx drupal-claude-collective repair`
 - **Documentation**: Review the files in `.claude/docs/`
 
 ## 🔬 Research Participation
@@ -174,23 +177,24 @@ Metrics are collected automatically (no personal data) to validate the research 
 ### Essential Commands
 ```bash
 # Check collective health
-npx claude-code-collective status
+npx drupal-claude-collective status
 
-# Validate everything is working  
-npx claude-code-collective validate
+# Validate everything is working
+npx drupal-claude-collective validate
 
 # Fix problems
-npx claude-code-collective repair
+npx drupal-claude-collective repair
 
 # Remove collective
-npx claude-code-collective clean
+npx drupal-claude-collective clean
 ```
 
 ### Agent Routing Examples
 ```
-"@routing-agent please create a user authentication system"
-"Route to appropriate agent: implement API endpoint for user login"
-"@routing-agent analyze the current codebase structure"
+"@routing-agent please create a custom block plugin showing recent articles"
+"Route to appropriate agent: implement a custom field widget for entity references"
+"@routing-agent create an event registration system with Webform integration"
+"Route to @drupal-architect: design content model for a member directory"
 ```
 
 ### File Structure
@@ -209,6 +213,6 @@ npx claude-code-collective clean
 
 ---
 
-**Welcome to the future of AI-assisted development!** 🚀
+**Welcome to the future of Drupal development with AI!** 🚀
 
-The collective is now active and ready to coordinate your development work through intelligent agent routing and quality assurance.
+The collective is now active and ready to coordinate your Drupal development through intelligent agent routing, coding standards validation, and security compliance.

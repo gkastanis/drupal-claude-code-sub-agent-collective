@@ -1,10 +1,10 @@
 {
-  "name": "claude-code-collective",
-  "version": "2.0.8",
-  "description": "Sub-agent collective framework for Claude Code with TDD validation, TaskMaster Task ID integration, hub-spoke coordination, and deterministic handoffs",
+  "name": "drupal-claude-collective",
+  "version": "1.0.0",
+  "description": "Drupal-focused sub-agent collective framework for Claude Code with specialized Drupal development agents, quality gates, and TaskMaster coordination",
   "main": "lib/index.js",
   "bin": {
-    "claude-code-collective": "./bin/claude-code-collective.js"
+    "drupal-claude-collective": "./bin/claude-code-collective.js"
   },
   "scripts": {
     "test": "vitest run",
@@ -21,19 +21,21 @@
   },
   "keywords": [
     "claude-code",
+    "drupal",
     "sub-agent",
     "collective",
-    "tdd",
+    "drupal-10",
+    "drupal-11",
     "automation",
     "ai-agents",
-    "hub-spoke",
-    "handoffs"
+    "cms",
+    "web-development"
   ],
-  "author": "Claude Code Sub-Agent Collective",
+  "author": "Drupal Claude Collective",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anthropics/claude-code-sub-agent-collective.git"
+    "url": "https://github.com/jodagreyhame/drupal-claude-code-sub-agent-collective.git"
   },
   "engines": {
     "node": ">=16.0.0"
