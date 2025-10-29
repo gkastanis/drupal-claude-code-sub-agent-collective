@@ -213,6 +213,24 @@ npx drupal-claude-collective clean
 
 ---
 
+## 📚 Additional Resources
+
+### DRUPAL-LESSONS-LEARNED.md
+Comprehensive guide documenting real-world Drupal development patterns:
+- Field Management (field storage vs instance, widget selection)
+- Drush Command Patterns (complete syntax examples)
+- Configuration Management (export/import workflows)
+- Development Workflow (DDEV best practices)
+- Common Pitfalls & Solutions
+- Field Type Selection Guide
+- Quick Reference Cheat Sheet
+
+**Highly recommended reading** for all Drupal developers using this collective!
+
+Location: `DRUPAL-LESSONS-LEARNED.md` in project root
+
+---
+
 **Welcome to the future of Drupal development with AI!** 🚀
 
 The collective is now active and ready to coordinate your Drupal development through intelligent agent routing, coding standards validation, and security compliance.

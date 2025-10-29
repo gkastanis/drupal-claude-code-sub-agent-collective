@@ -193,6 +193,146 @@ modules/custom/my_module/
     └── my-template.html.twig
 ```
 
+## Field Management (Level 1 Tasks)
+
+### Field Creation via Drush
+
+When tasks involve creating fields on content types, use Drush commands directly:
+
+```bash
+# Standard field creation syntax
+drush field:create <entity_type> <bundle> \
+  --field-name=<machine_name> \
+  --field-label="<Human Label>" \
+  --field-type=<type> \
+  --field-widget=<widget> \
+  --cardinality=<number>
+```
+
+**Real Example - Event Date Field:**
+```bash
+drush field:create node event \
+  --field-name=field_event_date \
+  --field-label="Event Date" \
+  --field-type=datetime \
+  --field-widget=datetime_default \
+  --cardinality=1
+```
+
+### Field Storage vs Field Instance
+
+**IMPORTANT**: Drupal uses two-level field system:
+
+1. **Field Storage** (Shared database structure)
+   - Created first time a field is used
+   - Can be reused across multiple bundles
+   - Defines database schema
+
+2. **Field Instance** (Bundle-specific configuration)
+   - Configures field for specific content type
+   - Controls labels, help text, required status
+
+**Reusing Field Storage:**
+```bash
+# First content type - creates storage + instance
+drush field:create node event \
+  --field-name=field_location \
+  --field-label="Event Location" \
+  --field-type=string \
+  --field-widget=string_textfield
+
+# Second content type - reuses storage
+drush field:create node venue \
+  --field-name=field_location \
+  --existing-field-name=field_location \
+  --field-label="Venue Location"
+```
+
+### Common Widget/Field Type Mapping
+
+**DO NOT GUESS widget names - they differ from field types:**
+
+| Field Type | Widget Machine Name |
+|------------|---------------------|
+| `datetime` | `datetime_default` |
+| `text_long` | `text_textarea` |
+| `text_with_summary` | `text_textarea_with_summary` |
+| `entity_reference` | `entity_reference_autocomplete` |
+| `string` | `string_textfield` |
+| `email` | `email_default` |
+| `link` | `link_default` |
+
+**Discovery Commands:**
+```bash
+# List all field types
+drush field:types
+
+# List all widgets
+drush field:widgets
+
+# Find widgets for specific field type
+drush field:widgets --field-type=datetime
+```
+
+### Field Creation Checklist
+
+Before creating fields:
+1. ✅ Check if field storage already exists: `drush field:info node bundle`
+2. ✅ Use correct widget name (run `drush field:widgets --field-type=<type>`)
+3. ✅ Follow naming convention: `field_` prefix
+4. ✅ After creation, verify: `drush field:info node bundle`
+5. ✅ Export configuration: `drush cex -y`
+
+### Common Errors & Solutions
+
+**Error:** "Field storage with name 'field_location' already exists"
+**Solution:** Use `--existing-field-name` to reuse storage:
+```bash
+drush field:create node venue \
+  --field-name=field_location \
+  --existing-field-name=field_location \
+  --field-label="Venue Location"
+```
+
+**Error:** "Option --required does not exist"
+**Solution:** Check available options with `drush field:create --help`
+
+**Error:** Wrong widget name
+**Solution:** Run `drush field:widgets --field-type=<your_type>` to find correct name
+
+### Field Types Selection Guide
+
+| Need | Field Type | Example |
+|------|------------|---------|
+| Single date | `datetime` | Event date |
+| Date range | `daterange` | Conference start/end |
+| Short text | `string` | Location name |
+| Long text | `text_long` | Description |
+| Formatted text | `text_with_summary` | Article body |
+| Email | `email` | Contact email |
+| Phone | `telephone` | Phone number |
+| URL | `link` | Website link |
+| File | `file` | PDF upload |
+| Image | `image` | Featured image |
+| Yes/No | `boolean` | Published status |
+| Number | `integer` or `decimal` | Price, quantity |
+| List | `list_string` | T-shirt size |
+| Reference | `entity_reference` | Author, category |
+
+### Always Export Configuration
+
+After creating fields, ALWAYS export configuration:
+```bash
+drush cex -y
+```
+
+This ensures:
+- Changes are version controlled
+- Team members get updates
+- Can deploy to other environments
+
+**See DRUPAL-LESSONS-LEARNED.md for comprehensive field management patterns**
+
 ## Drupal-Specific Patterns
 
 ### Configuration Forms

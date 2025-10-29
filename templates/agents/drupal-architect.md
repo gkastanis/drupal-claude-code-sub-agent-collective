@@ -75,6 +75,78 @@ color: blue
 - Plan for content reusability across site
 - Use media entities for file management
 
+### Field Architecture Planning
+
+**Field Storage Reusability:**
+Consider which fields can share storage across content types:
+
+✅ **Good candidates for shared field storage:**
+- `field_location` - Could be used on Events, Venues, Businesses
+- `field_contact_email` - Used across multiple content types
+- `field_published_date` - Reusable publishing metadata
+- `field_tags` - Entity reference to taxonomy
+
+❌ **Poor candidates for shared storage:**
+- `field_event_registration_deadline` - Too specific to events
+- `field_product_sku` - Unique to products
+- `field_recipe_cooking_time` - Recipe-specific
+
+**Field Type Selection Matrix:**
+
+| Content Need | Recommended Field Type | Widget | Notes |
+|--------------|----------------------|--------|-------|
+| Event date/time | `datetime` | `datetime_default` | Single datetime |
+| Date range | `daterange` | `daterange_default` | Start/end dates |
+| Location (simple) | `string` | `string_textfield` | Text-based |
+| Location (structured) | `address` (contrib) | `address_default` | Full address |
+| Short description | `string` | `string_textfield` | Max 255 chars |
+| Long description | `text_long` | `text_textarea` | Unlimited plain text |
+| Rich content | `text_with_summary` | `text_textarea_with_summary` | Formatted with summary |
+| Email | `email` | `email_default` | Validated email |
+| Phone | `telephone` | `telephone_default` | Phone number |
+| Website | `link` | `link_default` | URL with title |
+| Document | `file` | `file_generic` | Any file type |
+| Image | `image` | `image_image` | With alt text |
+| Reference to content | `entity_reference` (node) | `entity_reference_autocomplete` | Links to nodes |
+| Reference to terms | `entity_reference` (taxonomy_term) | `entity_reference_autocomplete` | Categories |
+| Yes/No flag | `boolean` | `boolean_checkbox` | True/false |
+| Flexible components | `entity_reference_revisions` (paragraphs) | `paragraphs` | Nested content |
+
+**Field Architecture Checklist:**
+1. ✅ Identify fields that can share storage across bundles
+2. ✅ Select appropriate field types (not just "string" for everything)
+3. ✅ Plan widget types for optimal editor experience
+4. ✅ Consider cardinality (single vs multi-value)
+5. ✅ Plan required fields vs optional
+6. ✅ Document field purposes and usage
+7. ✅ Consider field display in different view modes
+
+**Common Field Architecture Mistakes:**
+
+❌ **Creating separate field storage for same concept:**
+```
+field_event_location (on event content type)
+field_venue_location (on venue content type)
+field_office_location (on office content type)
+```
+✅ **Better: Share field storage:**
+```
+field_location (shared across event, venue, office)
+```
+
+❌ **Using generic field types:**
+```
+field_website: string (no validation)
+field_email: string (no validation)
+```
+✅ **Better: Use specific field types:**
+```
+field_website: link (validates URLs)
+field_email: email (validates email format)
+```
+
+**See DRUPAL-LESSONS-LEARNED.md for detailed field creation patterns and Drush commands**
+
 ### Module Selection Criteria
 1. **Active Maintenance**: Check drupal.org for recent commits
 2. **Security Coverage**: Prefer covered modules
