@@ -144,10 +144,10 @@ describe('Phase 5 - Command System Implementation', () => {
     });
 
     test('should provide argument suggestions', () => {
-      const suggestions = autocomplete.getSuggestions('/agent spawn test');
-      
+      const suggestions = autocomplete.getSuggestions('/agent spawn mod');
+
       expect(suggestions.length).toBeGreaterThan(0);
-      expect(suggestions.some(s => s.text === 'testing')).toBe(true);
+      expect(suggestions.some(s => s.text === 'module-development')).toBe(true);
     });
 
     test('should provide natural language suggestions', () => {
