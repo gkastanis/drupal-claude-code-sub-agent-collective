@@ -57,22 +57,22 @@ check_routing_protocol() {
     return 0
 }
 
-# DIRECTIVE 3: TEST-DRIVEN VALIDATION
-# Ensure handoffs include proper test validation
-check_test_driven_validation() {
+# DIRECTIVE 3: QUALITY GATE VALIDATION
+# Ensure handoffs include proper quality validation
+check_quality_gate_validation() {
     local prompt="$1"
     local tool="$2"
-    
-    # Check for handoff scenarios without test validation
+
+    # Check for handoff scenarios without quality validation
     if echo "$prompt" | grep -qi -E "(handoff|hand.*off|transfer.*to|route.*to.*agent)"; then
-        if ! echo "$prompt" | grep -qi -E "(test|validate|verify|contract|quality.*gate)"; then
-            log "DIRECTIVE 3 WARNING: Handoff without explicit test validation mentioned"
-            echo "⚠️  TEST-DRIVEN WARNING: Handoff detected without test validation"
-            echo "📋 RECOMMENDATION: Include test contract validation in handoff"
+        if ! echo "$prompt" | grep -qi -E "(quality.*gate|security|standards|validate|verify|phpcs|review)"; then
+            log "DIRECTIVE 3 WARNING: Handoff without explicit quality validation mentioned"
+            echo "⚠️  QUALITY GATE WARNING: Handoff detected without quality validation"
+            echo "📋 RECOMMENDATION: Include security-compliance-agent validation in handoff"
             # Don't block, just warn
         fi
     fi
-    
+
     return 0
 }
 
@@ -106,9 +106,9 @@ main() {
     if ! check_routing_protocol "$USER_PROMPT"; then
         exit 1
     fi
-    
-    check_test_driven_validation "$USER_PROMPT" "$TOOL_NAME"
-    
+
+    check_quality_gate_validation "$USER_PROMPT" "$TOOL_NAME"
+
     log "All directive checks passed for tool: $TOOL_NAME"
     return 0
 }

@@ -1,0 +1,40 @@
+{
+  "description": "Patterns for sensitive files that should be blocked from Read/Grep tool access",
+  "patterns": {
+    "environment_files": [
+      "\\.env$",
+      "\\.env\\.[a-z]+$",
+      "/\\.env$",
+      "/\\.env\\.[a-z]+$"
+    ],
+    "drupal_settings": [
+      "settings\\.php$",
+      "[^/]*\\.settings\\.php$",
+      "settings\\.[^/]*\\.php$"
+    ],
+    "credentials": [
+      "\\.key$",
+      "\\.pem$",
+      "\\.crt$",
+      "\\.p12$",
+      "\\.pfx$",
+      "id_rsa",
+      "id_ed25519",
+      "authorized_keys"
+    ],
+    "custom_patterns": [
+      "# Add your custom patterns here (one regex pattern per line)",
+      "# Example: \"my_secret_config\\.php$\""
+    ]
+  },
+  "warnings_only": [
+    "# Patterns that should log warnings but not block access",
+    "\\.sql$",
+    "\\.dump$",
+    "\\.backup$"
+  ],
+  "allowlist": [
+    "# Files that should NEVER be blocked (overrides all patterns)",
+    "# Example: \"sites/default/default.settings.php\""
+  ]
+}

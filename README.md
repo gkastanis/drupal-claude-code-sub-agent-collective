@@ -13,7 +13,7 @@ This installs a collection of AI agents designed specifically for Drupal CMS dev
 npx drupal-claude-collective init
 ```
 
-You get 15+ specialized Drupal development agents that understand Drupal architecture, follow Drupal coding standards, and deliver production-ready code.
+You get 14 specialized Drupal development agents that understand Drupal architecture, follow Drupal coding standards, and deliver production-ready code.
 
 ## Why this exists
 
@@ -33,35 +33,33 @@ This collective solves these problems with agents that:
 
 ## What you get after installation
 
-### Core Drupal Work Agents
+### Core Coordination (1 agent)
+- **routing-agent** - Central routing hub for intelligent agent selection
+
+### Core Drupal Work (5 agents)
 - **drupal-architect** - Site architecture, content modeling, module selection
 - **module-development-agent** - Custom modules with Drupal 10/11 best practices
 - **theme-development-agent** - Twig templates, SCSS, JavaScript behaviors
 - **configuration-management-agent** - Config export, update hooks, deployment
 - **content-migration-agent** - Content architecture and data migrations
-- **security-compliance-agent** - Security reviews and phpcs validation
+
+### Quality & Security (2 agents)
+- **security-compliance-agent** - Comprehensive validation: Drupal standards, security, performance, accessibility, integration (all quality gates consolidated into one agent)
 - **performance-devops-agent** - Caching, optimization, deployment
 
-### Quality Gate Agents
-- **drupal-standards-gate** - Fast phpcs validation checkpoint
-- **security-gate** - Vulnerability scanning and access control checks
-- **performance-gate** - Query efficiency and caching validation
-- **accessibility-gate** - WCAG 2.1 AA compliance checking
-- **integration-gate** - Module compatibility and dependency validation
-
-### Testing Agents
+### Testing (3 agents)
 - **functional-testing-agent** - Playwright browser automation for Drupal
 - **unit-testing-agent** - PHPUnit tests with Drupal test base
 - **visual-regression-agent** - Screenshot comparison testing
 
-### Coordination Agents (Reused from Original)
-- **enhanced-project-manager-agent** - Task Master coordination
-- **prd-research-agent** - Intelligent PRD breakdown
-- **research-agent** - Documentation research
-- **task-orchestrator** - Multi-agent coordination
-- **routing-agent** - Central routing hub
+### Project Management (3 agents)
+- **enhanced-project-manager-agent** - Task Master coordination for complex projects
+- **research-agent** - Technical research for Drupal solutions
+- **workflow-agent** - Complex workflow orchestration
 
-**Total: 20+ specialized agents** for Drupal development.
+**Total: 14 specialized agents** (streamlined from 47 agents in January 2025 - 70% reduction!)
+
+**Key improvement**: All quality gates (Drupal standards, security, performance, accessibility, integration) consolidated into `security-compliance-agent` for streamlined validation workflow.
 
 ## Installation
 
@@ -108,19 +106,34 @@ your-project/
 ├── CLAUDE.md                    # Behavioral rules for agents
 ├── .claude/
 │   ├── settings.json           # Hook configuration
-│   ├── agents/                 # Agent definitions (30+ files)
-│   │   ├── prd-research-agent.md
-│   │   ├── task-orchestrator.md
-│   │   ├── lib/
-│   │   │   └── research-analyzer.js  # Complexity analysis engine
-│   │   └── ... (lots more agents)
-│   └── hooks/                  # TDD enforcement scripts
-│       ├── test-driven-handoff.sh
-│       └── collective-metrics.sh
+│   ├── agents/                 # 14 agent definitions
+│   │   ├── routing-agent.md
+│   │   ├── drupal-architect.md
+│   │   ├── module-development-agent.md
+│   │   ├── theme-development-agent.md
+│   │   ├── configuration-management-agent.md
+│   │   ├── content-migration-agent.md
+│   │   ├── security-compliance-agent.md
+│   │   ├── performance-devops-agent.md
+│   │   ├── functional-testing-agent.md
+│   │   ├── unit-testing-agent.md
+│   │   ├── visual-regression-agent.md
+│   │   ├── enhanced-project-manager-agent.md
+│   │   ├── research-agent.md
+│   │   ├── workflow-agent.md
+│   │   └── lib/
+│   │       └── research-analyzer.js
+│   ├── hooks/                  # Enforcement scripts
+│   │   ├── test-driven-handoff.sh
+│   │   ├── collective-metrics.sh
+│   │   └── ... (6 hooks total)
+│   └── commands/               # Command system
+│       ├── van.md              # Routing command
+│       └── tm/                 # TaskMaster commands
 └── .claude-collective/
-    ├── tests/                  # Test framework templates
-    ├── metrics/                # Usage tracking (for development)
-    └── package.json           # Testing setup (Vitest)
+    ├── tests/                  # Test framework
+    ├── metrics/                # Usage tracking
+    └── package.json           # Testing setup
 ```
 
 ## How It Works
@@ -129,23 +142,25 @@ your-project/
 Main Claude reads `CLAUDE.md` and assesses task complexity (Level 1-4)
 
 ### 2. Agent Routing
-- **Level 1**: Direct execution (drush commands, file operations)
-- **Level 2**: 2-4 specialized agents
-- **Level 3**: 5-9 agents with Task Master coordination
-- **Level 4**: Full project with phased agent deployment
+- **Level 1**: Direct execution (drush commands, file operations) - 0 agents
+- **Level 2**: Single-feature development - 2-3 specialized agents
+- **Level 3**: Multi-component systems - 5-7 agents with Task Master coordination
+- **Level 4**: Full projects - 8-12 agents with phased deployment
 
 ### 3. Drupal Development Workflow
 ```
 Architecture → Implementation → Quality Gates → Testing → Deployment
 ```
 
-### 4. Quality Gate Validation
-Every implementation passes through:
-- ✅ Drupal coding standards (phpcs)
+### 4. Consolidated Quality Validation
+Every implementation passes through the **security-compliance-agent**, which validates:
+- ✅ Drupal coding standards (phpcs, phpstan)
 - ✅ Security review (SQL injection, XSS, access control)
-- ✅ Performance validation (caching, queries)
-- ✅ Accessibility checks (WCAG 2.1 AA)
-- ✅ Integration testing (Playwright)
+- ✅ Performance validation (caching, query efficiency)
+- ✅ Accessibility compliance (WCAG 2.1 AA)
+- ✅ Integration compatibility (dependencies, config)
+
+**Note**: All quality gates consolidated into one agent for streamlined validation workflow.
 
 ### 5. Delivery Standard
 ```
@@ -178,14 +193,75 @@ npx drupal-claude-collective clean
 npx drupal-claude-collective --help
 ```
 
+## Security: Sensitive File Protection
+
+The collective automatically **blocks AI agent access** to sensitive files to prevent accidental exposure of credentials and secrets.
+
+### Protected Files (Default)
+
+**Environment Files:**
+- `.env` and `.env.*` (all variants)
+
+**Drupal Configuration:**
+- `settings.php`
+- `*.settings.php` (e.g., `local.settings.php`)
+- `settings.*.php` (e.g., `settings.local.php`)
+
+**Credentials:**
+- `.key`, `.pem`, `.crt`, `.p12`, `.pfx` files
+- SSH keys (`id_rsa`, `id_ed25519`, `authorized_keys`)
+
+### Customizing Protected Files
+
+Edit `.claude/sensitive-files.json` to add your own patterns:
+
+```json
+{
+  "patterns": {
+    "custom_patterns": [
+      "my_secret_config\\.php$",
+      "private/.*\\.key$",
+      "credentials/.*"
+    ]
+  },
+  "allowlist": [
+    "sites/default/default.settings.php"
+  ]
+}
+```
+
+**Pattern Format**: Regular expressions (regex)
+
+### How It Works
+
+When agents try to use `Read` or `Grep` tools on protected files:
+
+```
+🚫 BLOCKED: Drupal settings.php contains database credentials and secrets
+Attempted to access: web/sites/default/settings.php
+
+💡 If you need to review configuration:
+   - Ask the user to provide specific config values
+   - Use drush config:get for specific settings
+   - Request manual review of the file
+   - Or add the file to .claude/sensitive-files.json allowlist
+```
+
+### Bypassing Protection
+
+If you need agents to access a specific file, add it to the allowlist in `.claude/sensitive-files.json`.
+
 ## Current State
 
 ### What Works Well
+- **Streamlined agent collective** (14 agents vs 47 - 70% reduction)
+- **Consolidated quality validation** - one comprehensive gate instead of 6 separate gates
+- **Sensitive file protection** - automatic blocking of .env, settings.php, and credential files
 - Drupal coding standards enforcement prevents common issues
 - Security reviews catch vulnerabilities early
 - Agents understand Drupal APIs and best practices
 - Configuration management is handled automatically
-- Quality gates ensure production-ready code
+- Faster routing with fewer agents to choose from
 
 ### Experimental Features
 - Theme development agent (works but being refined)
@@ -314,11 +390,11 @@ AI agents can be unreliable. Here's what I built to deal with that:
 
 **Agents making up APIs**: Context7 integration forces agents to use real, current documentation.
 
-**Agents taking wrong approach**: Central routing through **@task-orchestrator** hub prevents agents from self-selecting incorrectly.
+**Agents taking wrong approach**: Central routing through **@routing-agent** hub prevents agents from self-selecting incorrectly.
 
 **Agents breaking coordination**: Hub-and-spoke architecture eliminates peer-to-peer communication chaos.
 
-**Agents skipping quality steps**: Quality gates that block completion until standards are met.
+**Agents skipping quality steps**: Consolidated **security-compliance-agent** blocks completion until all validation passes (standards, security, performance, accessibility, integration).
 
 **Agents losing context**: Handoff contracts preserve required information across agent transitions.
 
