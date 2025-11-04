@@ -123,10 +123,13 @@ your-project/
 │   │   ├── workflow-agent.md
 │   │   └── lib/
 │   │       └── research-analyzer.js
-│   ├── hooks/                  # Enforcement scripts
-│   │   ├── test-driven-handoff.sh
+│   ├── hooks/                  # Enforcement scripts (6 hooks)
+│   │   ├── directive-enforcer.sh
 │   │   ├── collective-metrics.sh
-│   │   └── ... (6 hooks total)
+│   │   ├── routing-executor.sh
+│   │   ├── load-behavioral-system.sh
+│   │   ├── block-destructive-commands.sh
+│   │   └── block-sensitive-files.sh
 │   └── commands/               # Command system
 │       ├── van.md              # Routing command
 │       └── tm/                 # TaskMaster commands
@@ -406,8 +409,8 @@ Most of these are enforced automatically through hooks and behavioral constraint
 
 ## Support
 
-- **Issues**: Report bugs and suggestions on GitHub
-- **Documentation**: See `FOR_DRUPAL/` directory for detailed guides
+- **Issues**: Report bugs and suggestions on [GitHub Issues](https://github.com/jodagreyhame/drupal-claude-code-sub-agent-collective/issues)
+- **NPM Package**: [drupal-claude-collective](https://www.npmjs.com/package/drupal-claude-collective)
 - **Validation**: Run `npx drupal-claude-collective validate` for diagnostics
 
 ### Resources
