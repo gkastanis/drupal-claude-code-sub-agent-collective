@@ -177,42 +177,6 @@ composer audit
 composer update drupal/core --with-all-dependencies
 ```
 
-## Validation Checklist
-
-### Required Checks
-
-#### 1. Coding Standards (MUST PASS)
-```bash
-./vendor/bin/phpcs --standard=Drupal,DrupalPractice web/modules/custom/MODULE_NAME/
-# Expected: 0 errors, 0 warnings
-```
-
-#### 2. Static Analysis
-```bash
-./vendor/bin/phpstan analyse web/modules/custom/MODULE_NAME/
-# Expected: No errors
-```
-
-#### 3. Security Review Checklist
-- [ ] No SQL injection vulnerabilities
-- [ ] No XSS vulnerabilities
-- [ ] All routes have access control
-- [ ] User input is sanitized
-- [ ] Passwords/secrets not in code
-- [ ] File uploads are validated
-- [ ] CSRF protection in place
-- [ ] Proper use of Drupal APIs
-- [ ] No hardcoded credentials
-- [ ] Dependencies are up to date
-
-#### 4. Drupal Best Practices
-- [ ] Dependency injection used (not `\Drupal::service()` in services)
-- [ ] Entity API used (not raw SQL)
-- [ ] Proper cache metadata
-- [ ] Translatable strings use `t()` or `@Translation()`
-- [ ] Configuration has schema
-- [ ] Permissions are granular and well-named
-
 ## Common Vulnerabilities to Check
 
 ### 1. Information Disclosure
@@ -264,12 +228,14 @@ if (!UrlHelper::isExternal($destination)) {
 
 ### PASS Result
 ```
-## SECURITY & COMPLIANCE REVIEW: PASS ✅
+## SECURITY, COMPLIANCE & QUALITY REVIEW: PASS ✅
 
 **Module**: my_module
 **Standards Check**: PASS (0 errors, 0 warnings)
 **Static Analysis**: PASS
 **Security Review**: PASS
+**Accessibility**: PASS (WCAG 2.1 AA)
+**Integration**: PASS
 
 ### Validated Items:
 ✅ No SQL injection vulnerabilities
@@ -279,6 +245,12 @@ if (!UrlHelper::isExternal($destination)) {
 ✅ No hardcoded credentials
 ✅ Dependency injection used
 ✅ Proper error handling
+✅ Accessibility compliance (WCAG 2.1 AA)
+✅ Semantic HTML structure
+✅ Keyboard navigation functional
+✅ Dependencies declared correctly
+✅ Configuration exportable
+✅ No deprecated code
 
 **Next Agent**: functional-testing-agent
 **Ready For**: Browser-based functional testing
@@ -286,11 +258,13 @@ if (!UrlHelper::isExternal($destination)) {
 
 ### FAIL Result
 ```
-## SECURITY & COMPLIANCE REVIEW: FAIL ❌
+## SECURITY, COMPLIANCE & QUALITY REVIEW: FAIL ❌
 
 **Module**: my_module
 **Standards Check**: FAIL (3 errors, 7 warnings)
 **Security Review**: FAIL
+**Accessibility**: FAIL
+**Integration**: FAIL
 
 ### Critical Issues Found:
 
@@ -309,11 +283,21 @@ if (!UrlHelper::isExternal($destination)) {
    - Issue: Route has no _permission requirement
    - Fix: Add _permission: 'access content'
 
+### Accessibility Issues:
+- Missing alt text on images in templates/hero.html.twig:15
+- Heading hierarchy skip (h2 to h4) in templates/article.html.twig:23
+- Color contrast ratio 3.2:1 (minimum 4.5:1) in css/buttons.scss:45
+
+### Integration Issues:
+- Missing dependency 'token' in my_module.info.yml
+- Deprecated function \Drupal::entityManager() used in MyService.php:67
+- Configuration my_module.settings.yml fails schema validation
+
 ### Coding Standards Errors:
 [Detailed phpcs output]
 
 **Required Action**: Fix all CRITICAL and HIGH issues
-**Next Agent**: module-development-agent (for fixes)
+**Next Agent**: module-development-agent OR theme-development-agent (for fixes)
 **Re-validation Required**: YES
 ```
 
@@ -351,6 +335,131 @@ drush secrev
 # Static analysis
 ./vendor/bin/phpstan analyse web/modules/custom/my_module/
 ```
+
+### 8. Accessibility Compliance (WCAG 2.1 AA)
+
+#### Semantic HTML
+- ✅ Proper heading hierarchy (h1 → h2 → h3)
+- ✅ Semantic elements used (nav, main, article, aside)
+- ✅ Lists use proper markup (ul/ol/li)
+- ✅ Tables have proper structure
+
+#### ARIA Labels & Accessibility
+- ✅ Form fields have labels
+- ✅ Buttons have accessible text
+- ✅ Links have descriptive text
+- ✅ Images have alt text
+- ✅ All interactive elements keyboard accessible
+- ✅ Focus indicators visible
+- ✅ Logical tab order
+- ✅ Skip links present
+
+#### Color Contrast
+- ✅ Text contrast minimum 4.5:1
+- ✅ Large text contrast minimum 3:1
+- ✅ UI component contrast minimum 3:1
+- ✅ Color not sole indicator
+
+**Accessibility Validation Commands:**
+```bash
+# Check for common accessibility issues
+grep -r "alt=" web/themes/custom/  # Verify alt attributes
+grep -r "aria-label" web/themes/custom/  # Check ARIA usage
+grep -r "<h[1-6]" web/themes/custom/  # Verify heading usage
+```
+
+### 9. Integration & Compatibility Validation
+
+#### Module Dependencies
+- ✅ All dependencies declared in .info.yml
+- ✅ Dependencies are available
+- ✅ Version compatibility checked
+- ✅ Circular dependencies avoided
+
+#### API Compatibility
+- ✅ Uses current Drupal APIs
+- ✅ No deprecated functions
+- ✅ Proper service injection
+- ✅ Entity API used correctly
+
+#### Configuration Export
+- ✅ Configuration is exportable
+- ✅ No hard-coded config values
+- ✅ Config schema defined
+- ✅ Configuration validates
+
+#### Module Compatibility
+- ✅ No conflicts with contrib modules
+- ✅ Hooks properly implemented
+- ✅ Events properly subscribed
+- ✅ Services properly defined
+
+**Integration Validation Commands:**
+```bash
+# Check dependencies
+drush pm:list --type=module --status=enabled
+composer validate
+
+# Check configuration
+drush config:status
+drush config:validate
+
+# Check for deprecated code
+drupal-check web/modules/custom/MODULE_NAME/
+```
+
+## Comprehensive Validation Checklist
+
+### Required Checks (All Must Pass)
+
+#### 1. Coding Standards (MUST PASS)
+```bash
+./vendor/bin/phpcs --standard=Drupal,DrupalPractice web/modules/custom/MODULE_NAME/
+# Expected: 0 errors, 0 warnings
+```
+
+#### 2. Static Analysis
+```bash
+./vendor/bin/phpstan analyse web/modules/custom/MODULE_NAME/
+# Expected: No errors
+```
+
+#### 3. Security Review Checklist
+- [ ] No SQL injection vulnerabilities
+- [ ] No XSS vulnerabilities
+- [ ] All routes have access control
+- [ ] User input is sanitized
+- [ ] Passwords/secrets not in code
+- [ ] File uploads are validated
+- [ ] CSRF protection in place
+- [ ] Proper use of Drupal APIs
+- [ ] No hardcoded credentials
+- [ ] Dependencies are up to date
+
+#### 4. Accessibility Checklist (WCAG 2.1 AA)
+- [ ] Semantic HTML structure
+- [ ] All images have alt text
+- [ ] Form fields properly labeled
+- [ ] Keyboard navigation functional
+- [ ] Color contrast ratios meet standards
+- [ ] No heading hierarchy skips
+- [ ] ARIA attributes used appropriately
+
+#### 5. Integration Checklist
+- [ ] Dependencies declared correctly
+- [ ] No deprecated code usage
+- [ ] Configuration exportable
+- [ ] Config schema defined
+- [ ] No circular dependencies
+- [ ] Module compatibility verified
+
+#### 6. Drupal Best Practices
+- [ ] Dependency injection used (not `\Drupal::service()` in services)
+- [ ] Entity API used (not raw SQL)
+- [ ] Proper cache metadata
+- [ ] Translatable strings use `t()` or `@Translation()`
+- [ ] Configuration has schema
+- [ ] Permissions are granular and well-named
 
 ## Handoff Protocol
 

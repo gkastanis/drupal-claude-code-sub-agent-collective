@@ -179,32 +179,9 @@ Phase 4: Testing & Deployment
 **Use When**: Need caching, query optimization, deployment workflows
 **Tools**: Read, Write, Bash (drush, composer), Task Master (read-only)
 
-### Quality Gate Agents
+### Quality & Validation
 
-#### drupal-standards-gate
-**Purpose**: Quick Drupal coding standards check
-**Validation**: Runs phpcs with Drupal standards
-**Result**: PASS/FAIL with specific issues
-
-#### security-gate
-**Purpose**: Security vulnerability check
-**Validation**: SQL injection, XSS, access control, CSRF
-**Result**: PASS/FAIL with security issues
-
-#### performance-gate
-**Purpose**: Performance validation
-**Validation**: Query efficiency, caching, N+1 queries
-**Result**: PASS/FAIL with performance concerns
-
-#### accessibility-gate
-**Purpose**: Accessibility compliance
-**Validation**: WCAG 2.1 AA compliance
-**Result**: PASS/FAIL with accessibility issues
-
-#### integration-gate
-**Purpose**: Module compatibility validation
-**Validation**: Dependencies, API compatibility, config export
-**Result**: PASS/FAIL with integration issues
+**Note**: All quality gates (Drupal standards, security, performance, accessibility, and integration) are now consolidated into the security-compliance-agent for streamlined validation.
 
 ### Testing Agents
 
@@ -296,11 +273,8 @@ Workflow:
    - Create update hooks if needed
    - Document deployment process
 
-6. Quality Gates (run in parallel where possible):
-   - security-compliance-agent
-   - performance-gate
-   - accessibility-gate
-   - integration-gate
+6. Quality Validation:
+   - security-compliance-agent (comprehensive validation: security, standards, accessibility, integration, performance)
 
 7. Deploy functional-testing-agent
    - Test registration workflow
@@ -366,11 +340,8 @@ Phase 3: Features & Validation
    - Accessibility features
    - Performance optimization
 
-10. Quality Gates (parallel):
-    - security-compliance-agent
-    - performance-gate
-    - accessibility-gate
-    - integration-gate
+10. Quality Validation:
+    - security-compliance-agent (comprehensive validation)
 
 Phase 4: Testing & Deployment
 11. Deploy functional-testing-agent
