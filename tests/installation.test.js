@@ -261,13 +261,41 @@ describe('NPX Installation Tests', () => {
     test('should create valid settings.json', async () => {
       installer.options.express = true;
       await installer.install();
-      
+
       const settingsPath = path.join(projectRoot, '.claude', 'settings.json');
       expect(await fs.pathExists(settingsPath)).toBe(true);
-      
+
       const settings = await fs.readJson(settingsPath);
       expect(settings).toHaveProperty('hooks');
       expect(settings.hooks).toHaveProperty('SessionStart');
+    });
+
+    test('should register block-sensitive-files hook for Read and Grep', async () => {
+      installer.options.express = true;
+      await installer.install();
+
+      const settingsPath = path.join(projectRoot, '.claude', 'settings.json');
+      const settings = await fs.readJson(settingsPath);
+
+      expect(settings.hooks).toHaveProperty('PreToolUse');
+
+      // Find the Read|Grep hook configuration
+      const readGrepHook = settings.hooks.PreToolUse.find(
+        hook => hook.matcher === 'Read|Grep'
+      );
+
+      expect(readGrepHook).toBeDefined();
+      expect(readGrepHook.hooks).toBeDefined();
+      expect(Array.isArray(readGrepHook.hooks)).toBe(true);
+
+      // Verify block-sensitive-files.sh is registered
+      const sensitiveFilesHook = readGrepHook.hooks.find(
+        h => h.command && h.command.includes('block-sensitive-files.sh')
+      );
+
+      expect(sensitiveFilesHook).toBeDefined();
+      expect(sensitiveFilesHook.type).toBe('command');
+      expect(sensitiveFilesHook.command).toContain('.claude/hooks/block-sensitive-files.sh');
     });
 
     test('should setup hooks with correct permissions', async () => {

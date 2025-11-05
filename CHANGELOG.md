@@ -5,6 +5,21 @@ All notable changes to the TaskMaster Agent autonomous development system will b
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### 🔧 Fixed
+- **Sensitive Files Hook Missing**: Added `block-sensitive-files.sh` hook registration to `settings.json.template`
+  - Hook now properly protects `.env`, `settings.php`, and other sensitive Drupal files from Read/Grep access
+  - Configured for `Read|Grep` tools in PreToolUse hook section
+  - Added comprehensive test validation for hook registration
+
+### 🧪 Added
+- **Installation Tests**: New test to verify sensitive files hook is properly registered in settings.json
+  - Validates `Read|Grep` matcher is configured
+  - Ensures `block-sensitive-files.sh` hook is present and properly configured
+
+---
+
 ## [2.0.6] - 2025-08-16
 
 ### 🔧 Fixed
