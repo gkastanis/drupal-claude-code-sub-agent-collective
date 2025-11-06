@@ -33,10 +33,10 @@ Execute these tasks directly without agent coordination:
 
 **Commands:**
 ```bash
-drush field:create node article field_featured --field-type=boolean
-drush en pathauto -y
-drush cex -y
-drush cr
+ddev drush field:create node article field_featured --field-type=boolean
+ddev drush en pathauto -y
+ddev drush cex -y
+ddev drush cr
 ```
 
 ### Level 2: Single Module/Theme Features (2-4 Agents)
@@ -82,7 +82,7 @@ Deploy drupal-architect if architectural planning needed
 ```
 1. enhanced-project-manager-agent (Task Master coordination)
 2. drupal-architect (architecture & planning)
-3. prd-research-agent (if research needed)
+3. research-agent (if research needed)
 4. module-development-agent (custom modules)
 5. theme-development-agent (front-end components)
 6. configuration-management-agent (config export)
@@ -115,7 +115,7 @@ Use enhanced-project-manager-agent to break down into Task Master tasks
 ```
 Phase 1: Planning
 - enhanced-project-manager-agent (break down PRD)
-- prd-research-agent (research requirements)
+- research-agent (research requirements)
 - drupal-architect (complete architecture)
 
 Phase 2: Core Implementation
@@ -151,7 +151,7 @@ Phase 4: Testing & Deployment
 **Purpose**: Custom Drupal module implementation
 **Use When**: Building custom modules with hooks, plugins, services
 **Tools**: Read, Write, Edit, Bash, Task Master (read-only)
-**Drush Access**: YES
+**Drush Access**: YES (via `ddev drush`)
 
 #### theme-development-agent
 **Purpose**: Custom theme development and front-end
@@ -161,7 +161,7 @@ Phase 4: Testing & Deployment
 #### configuration-management-agent
 **Purpose**: Drupal configuration management
 **Use When**: Need to export configs, manage settings, create update hooks
-**Tools**: Read, Write, Bash (drush), Task Master (read-only)
+**Tools**: Read, Write, Bash (ddev drush), Task Master (read-only)
 
 #### content-migration-agent
 **Purpose**: Content architecture and data migration
@@ -177,7 +177,7 @@ Phase 4: Testing & Deployment
 #### performance-devops-agent
 **Purpose**: Performance optimization and deployment
 **Use When**: Need caching, query optimization, deployment workflows
-**Tools**: Read, Write, Bash (drush, composer), Task Master (read-only)
+**Tools**: Read, Write, Bash (ddev drush, ddev composer), Task Master (read-only)
 
 ### Quality & Validation
 
@@ -186,9 +186,9 @@ Phase 4: Testing & Deployment
 ### Testing Agents
 
 #### functional-testing-agent
-**Purpose**: Browser-based functional testing
-**Use When**: Need to test user journeys, forms, AJAX in real browser
-**Tools**: Playwright MCP, Bash, Task Master (read-only)
+**Purpose**: Behat functional testing (BDD) for Drupal
+**Use When**: Need to test user workflows, forms, business logic with Behat/Gherkin
+**Tools**: Read, Write, Edit, Bash, Grep, Glob, Task Master (read-only)
 
 #### unit-testing-agent
 **Purpose**: PHPUnit and kernel testing
@@ -198,7 +198,7 @@ Phase 4: Testing & Deployment
 #### visual-regression-agent
 **Purpose**: Visual validation and regression testing
 **Use When**: Need screenshot comparison across breakpoints
-**Tools**: Playwright MCP, Read
+**Tools**: Playwright MCP (navigate, screenshot, click, fill, evaluate), Read, Write, Edit, Bash, Grep, Glob, Task Master (read-only)
 
 ### Project Management Agents
 
@@ -207,10 +207,10 @@ Phase 4: Testing & Deployment
 **Use When**: Level 3-4 projects that need task breakdown
 **Tools**: Task Master (full read/write), Read
 
-#### prd-research-agent
-**Purpose**: Intelligent requirement breakdown with research
-**Use When**: Complex PRD documents need analysis
-**Tools**: Task Master, Context7 (via MCP), WebSearch
+#### research-agent
+**Purpose**: Technical research using Context7 and web sources
+**Use When**: Need to research technologies, frameworks, or architectural decisions
+**Tools**: Context7 MCP, WebSearch, WebFetch, Read, Grep, LS
 
 ## Drupal-Specific Workflows
 
@@ -296,7 +296,7 @@ Phase 1: Planning & Architecture
    - Create task hierarchy
    - Identify dependencies
 
-2. Deploy prd-research-agent
+2. Deploy research-agent
    - Research Drupal solutions for requirements
    - Recommend contrib modules
    - Document research findings
@@ -372,58 +372,145 @@ Phase 4: Testing & Deployment
 ### Essential Drush Commands
 ```bash
 # Cache operations
-drush cr                     # Clear all caches
-drush cc css-js             # Clear CSS/JS caches
+ddev drush cr                     # Clear all caches
+ddev drush cc css-js             # Clear CSS/JS caches
 
 # Configuration management
-drush cex -y                # Export configuration
-drush cim -y                # Import configuration
-drush csex -y               # Export single config
-drush csim -y               # Import single config
+ddev drush cex -y                # Export configuration
+ddev drush cim -y                # Import configuration
+ddev drush csex -y               # Export single config
+ddev drush csim -y               # Import single config
 
+# Verify configuration before import
+ddev drush config:export --diff            # Show what would change
+
+# Inspect specific configuration
+ddev drush config:get system.site           # View site config
+ddev drush config:get system.site name      # View specific key
+
+# Change configuration values
+ddev drush config:set system.site name "My Site"  # Set config value
+
+# Partial configuration import
+ddev drush config:import --partial --source=modules/custom/my_module/config/install
+
+# Install from existing configuration
+ddev drush site:install --existing-config   # Fresh install using config
+```
+
+**Configuration Best Practices:**
+- ✅ Always export configuration after making changes: `ddev drush cex -y`
+- ✅ Check configuration diffs before importing: `ddev drush config:export --diff`
+- ✅ Module install configuration goes in `config/install` not `hook_install()`
+- ✅ Changes to `config/install` should be applied to active config as well
+
+```bash
 # Module management
-drush en MODULE -y          # Enable module
-drush pmu MODULE -y         # Uninstall module
-drush pm:list --type=module # List modules
+ddev drush en MODULE -y          # Enable module
+ddev drush pmu MODULE -y         # Uninstall module
+ddev drush pm:list --type=module # List modules
+
+# Filter enabled modules only
+ddev drush pm:list --status=enabled        # Show only enabled modules
+
+# Filter custom/contrib modules (exclude core)
+ddev drush pm:list --type=module --no-core # Exclude Drupal core modules
+
+# Filter by name pattern
+ddev drush pm:list --filter=views          # Find modules matching "views"
 
 # Database updates
-drush updb -y               # Run database updates
-drush updatedb -y           # Alias for updb
+ddev drush updb -y               # Run database updates
+ddev drush updatedb -y           # Alias for updb
 
 # Status and information
-drush status                # Site status
-drush core:requirements     # System requirements check
+ddev drush status                # Site status
+ddev drush core:requirements     # System requirements check
 
 # Content operations
-drush entity:delete node --bundle=TYPE  # Delete content type content
-drush cache:rebuild         # Rebuild cache (alias: cr)
+ddev drush entity:delete node --bundle=TYPE  # Delete content type content
+ddev drush cache:rebuild         # Rebuild cache (alias: cr)
+```
+
+### Debugging & Logs
+```bash
+# View recent logs
+ddev drush watchdog:show                    # Show recent 10 entries
+ddev drush watchdog:show --count=50         # Show 50 entries
+ddev drush watchdog:show --severity=Error   # Filter by severity
+
+# Clear logs
+ddev drush watchdog:delete all              # Clear all log entries
+ddev drush watchdog:delete recent           # Clear recent entries
+
+# Run cron manually
+ddev drush cron                             # Execute cron tasks
+```
+
+### Entity Management
+```bash
+# View fields on content types
+ddev drush field:info node article           # Show article fields
+ddev drush field:info node page             # Show page fields
+
+# View fields on user entity
+ddev drush field:info user user             # Show user fields
+
+# View taxonomy term fields
+ddev drush field:info taxonomy_term tags    # Show tag fields
 ```
 
 ### Composer Commands
 ```bash
 # Module management
-composer require drupal/MODULE_NAME
-composer require --dev drupal/devel
+ddev composer require drupal/MODULE_NAME
+ddev composer require --dev drupal/devel
 
 # Updates
-composer update drupal/core --with-all-dependencies
-composer update
+ddev composer update drupal/core --with-all-dependencies
+ddev composer update
 
 # Security
-composer audit              # Check for vulnerabilities
+ddev composer audit              # Check for vulnerabilities
 ```
 
 ### Code Quality Commands
+
+**Best Practice:** Always check for project config files first.
+
 ```bash
 # Drupal coding standards
-./vendor/bin/phpcs --standard=Drupal,DrupalPractice web/modules/custom/
-./vendor/bin/phpcbf --standard=Drupal web/modules/custom/  # Auto-fix
+# If project has /phpcs.xml or /phpcs.xml.dist:
+ddev exec phpcs
+
+# Otherwise, specify standards explicitly:
+ddev exec phpcs --standard=Drupal,DrupalPractice web/modules/custom/
+
+# Auto-fix coding standards
+ddev exec phpcbf --standard=Drupal web/modules/custom/
 
 # Static analysis
-./vendor/bin/phpstan analyse web/modules/custom/
+# If project has /phpstan.neon or /phpstan.neon.dist:
+ddev exec phpstan analyse
 
-# Testing
-./vendor/bin/phpunit web/modules/custom/
+# Otherwise, specify level and path:
+ddev exec phpstan analyse --level 6 web/modules/custom/
+
+# PHPUnit testing
+# If project has /phpunit.xml or /phpunit.xml.dist:
+ddev exec phpunit
+
+# Otherwise, use Drupal core config:
+ddev exec phpunit -c web/core/phpunit.xml.dist web/modules/custom/
+
+# Run specific test
+ddev exec phpunit --filter TestName web/modules/custom/
+```
+
+**Installing Code Quality Tools:**
+If tools are not available, install them:
+```bash
+ddev composer require --dev drupal/core-dev
 ```
 
 ## Quality Standards
@@ -436,6 +523,60 @@ All deliverables must meet:
 4. **Accessibility**: WCAG 2.1 AA minimum compliance
 5. **Documentation**: Inline comments, README files, update hooks documented
 6. **Testing**: Adequate test coverage for custom code
+
+## Code Style Standards
+
+All custom code must follow these standards:
+
+### PHP Requirements
+- **PHP Version**: 8.3+ compatibility required
+- **Strict Typing**: Use `declare(strict_types=1);` in all PHP files
+- **Type Declarations**: Use union types and PHP 8+ features when appropriate
+
+### Code Formatting
+- **Indentation**: 2 spaces (no tabs)
+- **Line Length**: 120 characters maximum for code
+- **Comment Line Length**: 80 characters maximum
+- **Comments**: Always end with a period (.)
+- **Exception**: Do NOT add periods to Behat step definitions (@Then, @Given, @When)
+
+### Naming Conventions
+- **Classes/Interfaces**: PascalCase (e.g., `ArticleManager`)
+- **Methods/Properties**: camelCase (e.g., `getArticleList()`)
+- **Functions/Variables**: snake_case (e.g., `$article_count`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_ITEMS`)
+- **Namespaces**: PSR-4 standard (`Drupal\{module_name}\{category}`)
+
+### Class Structure
+- **Dependency Injection**: Use constructor injection, not `\Drupal::service()`
+- **Property Order**: Properties before methods
+- **Documentation**: Required PHPDoc for all classes and public methods
+- **Error Handling**: Use specific exception types with `@throws` annotations
+
+### Modern PHP Patterns
+- **Plugin Definition**: Use PHP 8 attributes for plugin annotations
+- **Typed Properties**: Declare types for all class properties
+- **Return Types**: Declare return types for all methods
+
+## Module Development Best Practices
+
+### Contrib-First Philosophy
+- ✅ **Attempt to use contrib modules** for functionality before writing custom code
+- ✅ Search drupal.org for existing solutions
+- ✅ Evaluate contrib module quality (usage stats, maintenance, test coverage)
+- ✅ Only write custom code when contrib doesn't meet requirements
+
+### Configuration Management
+- ✅ Module configuration goes in `config/install/` directory
+- ✅ **Never** use `hook_install()` for configuration - use `config/install/` instead
+- ✅ Export all configuration: `ddev drush cex -y`
+- ✅ Changes to `config/install/` must also be applied to active configuration
+
+### Service Architecture
+- ✅ Use dependency injection via constructor
+- ✅ **Avoid** `\Drupal::service()` in classes - use constructor injection
+- ✅ Define services in `{module_name}.services.yml`
+- ✅ Use interfaces for type hints when possible
 
 ## Error Recovery Pattern
 
@@ -467,13 +608,17 @@ For Level 3-4 projects, Task Master provides:
 ## Project Initialization Checklist
 
 For new Drupal projects using this collective:
-- [ ] Drupal 10/11 installed and accessible
+- [ ] DDEV installed and configured
+- [ ] Dependencies installed: `composer install` (first time setup)
+- [ ] Drupal 10/11 installed via DDEV: `ddev config` and `ddev start`
+- [ ] Fresh install option: `ddev drush site:install standard` OR `ddev drush site:install --existing-config`
+- [ ] Environment running: `ddev describe`
 - [ ] Task Master initialized: `npx task-master-ai init`
 - [ ] Models configured: `npx task-master-ai models --setMain claude-code/sonnet`
-- [ ] Drush available: `drush status`
-- [ ] Composer configured
-- [ ] Code quality tools installed (phpcs, phpstan)
-- [ ] Playwright installed (for functional testing): `npx playwright install`
+- [ ] Drush available: `ddev drush status`
+- [ ] Composer working: `ddev composer --version`
+- [ ] Code quality tools: `ddev composer require --dev drupal/core-dev`
+- [ ] Playwright installed (for functional testing): `ddev exec npx playwright install`
 
 ## Agent Deployment Syntax
 

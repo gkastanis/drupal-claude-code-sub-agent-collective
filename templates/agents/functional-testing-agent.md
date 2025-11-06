@@ -463,7 +463,32 @@ After completing functional testing implementation:
 **Feature Files**: [X] feature files created
 **Next Steps**: Run tests with `ddev robo behat` or `ddev robo behat @tag`
 **Validation Needed**: Test execution results, screenshot review if failures
+
+```yaml
+handoff:
+  phase: "Testing"
+  from: "@functional-testing-agent"
+  to: "None"
+  status: "complete"
+  retry_count: 0
+  metrics:
+    scenarios: [X]
+    scenarios_passed: [Y]
+    scenarios_failed: [Z]
+    coverage: "[X]% of user stories"
+    feature_files: [N]
+    execution_time: "[X]m [Y]s"
+    screenshots: [N]
+  dependencies: ["task-id"]
+  on_failure:
+    retry: 2
+    route_to: "@module-development-agent"
+    notify: "@enhanced-project-manager-agent"
+    context: "Failed scenarios require implementation fixes"
 ```
+```
+
+**Note:** See `templates/docs/AGENT-HANDOFF-SCHEMA.md` for complete handoff schema specification.
 
 ## Running Tests
 

@@ -754,7 +754,32 @@ After completing visual regression setup:
 **Tool**: BackstopJS / Percy / Playwright
 **Next Agent**: None (visual testing complete)
 **Validation Needed**: Review baseline screenshots
+
+```yaml
+handoff:
+  phase: "Testing"
+  from: "@visual-regression-agent"
+  to: "None"
+  status: "complete"
+  retry_count: 0
+  metrics:
+    scenarios: [X]
+    viewports: [Y]
+    screenshots_baseline: [Z]
+    screenshots_current: [Z]
+    diff_threshold: "[X]%"
+    failures: [N]
+    tool: "BackstopJS | Percy | Playwright"
+  dependencies: ["task-id"]
+  on_failure:
+    retry: 1
+    route_to: "@theme-development-agent"
+    notify: "@enhanced-project-manager-agent"
+    context: "Visual differences require theme fixes or baseline approval"
 ```
+```
+
+**Note:** See `templates/docs/AGENT-HANDOFF-SCHEMA.md` for complete handoff schema specification.
 
 ## Running Visual Tests
 

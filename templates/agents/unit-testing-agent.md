@@ -863,7 +863,34 @@ After completing unit test implementation:
 **Test Execution Time**: [X] seconds
 **Next Agent**: None (testing complete)
 **Validation Needed**: Coverage review
+
+```yaml
+handoff:
+  phase: "Testing"
+  from: "@unit-testing-agent"
+  to: "None"
+  status: "complete"
+  retry_count: 0
+  metrics:
+    tests_total: [X]
+    tests_passed: [Y]
+    tests_failed: [Z]
+    coverage: "[X]%"
+    test_types:
+      unit: [X]
+      kernel: [Y]
+      functional: [Z]
+    execution_time: "[X]s"
+  dependencies: ["task-id"]
+  on_failure:
+    retry: 2
+    route_to: "@module-development-agent"
+    notify: "@enhanced-project-manager-agent"
+    context: "Failed tests require code fixes"
 ```
+```
+
+**Note:** See `templates/docs/AGENT-HANDOFF-SCHEMA.md` for complete handoff schema specification.
 
 ## Running Tests
 
