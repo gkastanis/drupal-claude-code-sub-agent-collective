@@ -75,6 +75,7 @@ This collective solves these problems with agents that:
 # 1. Install MCP servers
 claude mcp add task-master -s user -- npx -y --package=task-master-ai task-master-ai
 claude mcp add playwright -s user -- npx -y playwright-mcp-server
+claude mcp add context7 -s user -- npx -y context7-mcp
 
 # 2. Navigate to your Drupal project
 cd /path/to/drupal
@@ -86,6 +87,22 @@ npx drupal-claude-collective init
 composer require --dev drupal/coder phpstan/phpstan
 ./vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
 ```
+
+### About Context7 Integration
+
+Context7 MCP provides access to up-to-date Drupal documentation with 400K+ tokens of indexed content. The collective uses two primary resources:
+
+**Official Documentation** (`/drupal/core`):
+- Drupal 11.x core documentation
+- 53,196 tokens, 97 code snippets, 212 pages
+- API references and official patterns
+
+**Developer Quick Reference** (`/selwynpolit/d9book`):
+- Modern Drupal developer handbook
+- 397,780 tokens, 1,989 code snippets, 433 Q&A entries
+- Practical examples and common patterns
+
+Agents automatically use Context7 to fetch current Drupal documentation when needed, ensuring recommendations stay up-to-date with latest Drupal best practices.
 
 ### Installation Options
 ```bash
@@ -120,9 +137,7 @@ your-project/
 │   │   ├── visual-regression-agent.md
 │   │   ├── enhanced-project-manager-agent.md
 │   │   ├── research-agent.md
-│   │   ├── workflow-agent.md
-│   │   └── lib/
-│   │       └── research-analyzer.js
+│   │   └── workflow-agent.md
 │   ├── hooks/                  # Enforcement scripts (6 hooks)
 │   │   ├── directive-enforcer.sh
 │   │   ├── collective-metrics.sh

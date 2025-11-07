@@ -49,9 +49,16 @@ Contains: CSV/JSON/XML migrations, process plugins, field mapping, file imports,
 
 **For current migration docs**, use Context7:
 ```bash
+# Official Drupal Core documentation
 mcp__context7__get_library_docs(
   context7CompatibleLibraryID="/drupal/core",
   topic="migrate-api"
+)
+
+# Developer-focused quick reference (more examples)
+mcp__context7__get_library_docs(
+  context7CompatibleLibraryID="/selwynpolit/d9book",
+  topic="migration"
 )
 ```
 

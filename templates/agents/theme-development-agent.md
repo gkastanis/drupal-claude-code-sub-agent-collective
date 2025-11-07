@@ -49,9 +49,16 @@ Contains: .info.yml setup, libraries, Twig templates, preprocess functions, Java
 
 **For current theming docs**, use Context7:
 ```bash
+# Official Drupal Core documentation
 mcp__context7__get_library_docs(
   context7CompatibleLibraryID="/drupal/core",
   topic="theming"
+)
+
+# Developer-focused quick reference (more examples)
+mcp__context7__get_library_docs(
+  context7CompatibleLibraryID="/selwynpolit/d9book",
+  topic="themes"
 )
 ```
 

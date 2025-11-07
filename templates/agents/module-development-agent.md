@@ -53,9 +53,16 @@ Contains: Block plugins, services, hooks, field plugins, controllers, routing, f
 
 **For current Drupal APIs**, use Context7:
 ```bash
+# Official Drupal Core documentation
 mcp__context7__get_library_docs(
   context7CompatibleLibraryID="/drupal/core",
   topic="plugin-api"
+)
+
+# Developer-focused quick reference (more examples)
+mcp__context7__get_library_docs(
+  context7CompatibleLibraryID="/selwynpolit/d9book",
+  topic="modules"
 )
 ```
 

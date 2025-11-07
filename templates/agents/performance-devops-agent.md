@@ -42,9 +42,16 @@ Contains: Render caching, cache tags/contexts, query optimization, N+1 fixes, Re
 
 **For current performance docs**, use Context7:
 ```bash
+# Official Drupal Core documentation
 mcp__context7__get_library_docs(
   context7CompatibleLibraryID="/drupal/core",
   topic="caching"
+)
+
+# Developer-focused quick reference (more examples)
+mcp__context7__get_library_docs(
+  context7CompatibleLibraryID="/selwynpolit/d9book",
+  topic="performance"
 )
 ```
 

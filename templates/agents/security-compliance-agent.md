@@ -44,8 +44,15 @@ Contains: SQL injection prevention, XSS protection, access control, input saniti
 
 **For current security docs**, use Context7:
 ```bash
+# Official Drupal Core documentation
 mcp__context7__get_library_docs(
   context7CompatibleLibraryID="/drupal/core",
+  topic="security"
+)
+
+# Developer-focused quick reference (more examples)
+mcp__context7__get_library_docs(
+  context7CompatibleLibraryID="/selwynpolit/d9book",
   topic="security"
 )
 ```
