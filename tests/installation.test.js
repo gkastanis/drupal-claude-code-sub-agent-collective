@@ -330,9 +330,9 @@ describe('NPX Installation Tests', () => {
       
       const claudeMdPath = path.join(projectRoot, 'CLAUDE.md');
       const content = await fs.readFile(claudeMdPath, 'utf8');
-      
+
       // Should contain core template content
-      expect(content).toContain('Global Decision Engine');
+      expect(content).toContain('Complexity Assessment & Routing');
     });
   });
 
