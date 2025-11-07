@@ -4,25 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the **Claude Code Sub-Agent Collective** - an NPX-distributed framework that installs specialized AI agents, hooks, and behavioral systems for TDD-focused development workflows. The system enforces test-driven development through automated handoff validation and provides intelligent task routing through a hub-and-spoke architecture.
+This is the **Drupal Claude Code Collective** - an NPX-distributed framework that installs specialized AI agents, hooks, and behavioral systems for Drupal 10/11 development workflows. The system provides quality gate validation and intelligent task routing through a hub-and-spoke architecture optimized for Drupal projects.
 
 ## CRITICAL REPOSITORY INFORMATION
 
-**Git Remote URL:** https://github.com/anthropics/claude-code-sub-agent-collective.git
+**Git Remote URL:** https://github.com/gkastanis/drupal-claude-code-sub-agent-collective.git
 **NEVER CHANGE THIS URL** - Always use this exact repository URL for all git operations.
 
 ## Architecture
 
 ### Core System
-- **Hub-and-spoke architecture** with `@routing-agent` as central coordinator
+- **Hub-and-spoke architecture** with intelligent task routing
 - **Behavioral Operating System** defined in `CLAUDE.md` with prime directives
-- **Test-Driven Handoffs** with contract validation between agents
+- **Quality gate validation** with Drupal standards enforcement between agents
 - **Just-in-time context loading** to minimize memory usage
 
 ### Key Components
-- **NPX Package**: `claude-code-collective` - Installable via `npx claude-code-collective init`
-- **Agent System**: 30+ specialized agents in `templates/agents/`
-- **Hook System**: TDD enforcement hooks in `templates/hooks/`
+- **NPX Package**: `drupal-claude-collective` - Installable via `npx drupal-claude-collective init`
+- **Agent System**: 14 specialized Drupal agents in `templates/agents/`
+- **Hook System**: Quality gate hooks in `templates/hooks/`
 - **Command System**: Natural language + structured commands in `lib/command-*.js`
 - **Metrics Framework**: Research hypotheses tracking in `lib/metrics/`
 - **Template System**: Installation templates in `templates/`
@@ -67,12 +67,12 @@ For testing changes before publishing (see ai-docs/Simple-Local-Testing-Workflow
 # - Leaves you in the test directory ready for more testing
 
 # Additional manual testing (you're already in test directory after script)
-npx claude-code-collective init            # Interactive mode
-npx claude-code-collective init --minimal  # Minimal installation  
-npx claude-code-collective --help          # Help information
+npx drupal-claude-collective init            # Interactive mode
+npx drupal-claude-collective init --minimal  # Minimal installation
+npx drupal-claude-collective --help          # Help information
 
 # Return to main directory and cleanup when done
-cd ../taskmaster-agent-claude-code
+cd ../drupal-claude-code-sub-agent-collective
 ./scripts/cleanup-tests.sh # Removes test directories and tarballs
 ```
 
@@ -98,21 +98,23 @@ npx . status              # Test status command
 npx . validate            # Test validation
 ```
 
+**Note**: The package is branded as `drupal-claude-collective` for NPM distribution.
+
 ## Key Development Files
 
 ### Core Implementation
-- `lib/index.js` - Main entry point and ClaudeCodeCollective class
+- `lib/index.js` - Main entry point and DrupalClaudeCollective class
 - `lib/installer.js` - NPX installation logic
 - `lib/command-system.js` - Natural language command processing
 - `lib/AgentRegistry.js` - Agent management and lifecycle
-- `bin/claude-code-collective.js` - CLI interface
+- `bin/claude-code-collective.js` - CLI interface (published as `drupal-claude-collective`)
 
 ### Testing Infrastructure
 - `jest.config.js` - Jest configuration for comprehensive testing
 - `vitest.config.js` - Vitest configuration for fast iteration
 - `tests/setup.js` - Test environment setup
-- `tests/contracts/` - Contract validation tests
-- `tests/handoffs/` - Agent handoff tests
+- `tests/agents/` - Agent system tests
+- `tests/integration/` - Integration tests
 
 ### Templates and Distribution
 - `templates/` - All installation templates (agents, hooks, configs)
@@ -143,18 +145,18 @@ npx . validate            # Test validation
 3. **Manual Testing** (you'll be in test directory)
    ```bash
    # Non-interactive testing (for validation/CI)
-   npx claude-code-collective init --yes --force
-   npx claude-code-collective status  
-   npx claude-code-collective validate
-   
+   npx drupal-claude-collective init --yes --force
+   npx drupal-claude-collective status
+   npx drupal-claude-collective validate
+
    # Interactive testing (for development)
-   npx claude-code-collective init
+   npx drupal-claude-collective init
    # Test all functionality you changed
    ```
 
 4. **Fix Issues** (if any)
    ```bash
-   cd ../taskmaster-agent-claude-code
+   cd ../drupal-claude-code-sub-agent-collective
    # Make fixes...
    git add . && git commit -m "fix: issue description"
    # Repeat from step 2
@@ -176,14 +178,14 @@ npx . validate            # Test validation
 ### Adding New Agents
 1. Create agent definition in `templates/agents/agent-name.md`
 2. Update `lib/file-mapping.js` to include in installation
-3. Add contract tests in `tests/agents/`
+3. Add agent tests in `tests/agents/`
 4. Test via `npm run test:agents`
 
 ### Modifying Hooks
 1. Edit hook scripts in `templates/hooks/`
 2. Update `templates/settings.json` if needed
-3. Test hook behavior with `npm run test:handoffs`
-4. Validate with `npm run test:contracts`
+3. Test hook behavior with `npm run test:agents`
+4. Validate with `npm run test:jest`
 
 ### Testing Installation
 1. Make changes to templates or core logic
@@ -198,9 +200,9 @@ npx . validate            # Test validation
 - **Template System**: Handlebars-based template rendering for dynamic agent creation
 - **Spawning System**: Dynamic agent instantiation with proper context loading
 
-### Hook System  
-- **Test-Driven Handoffs**: Automated validation of agent transitions
-- **Behavioral Enforcement**: Hooks enforce TDD and routing requirements
+### Hook System
+- **Quality Gate Validation**: Automated validation of Drupal standards
+- **Behavioral Enforcement**: Hooks enforce quality gates and routing requirements
 - **Metrics Collection**: Automated data gathering for research hypotheses
 
 ### Command System
@@ -212,8 +214,8 @@ npx . validate            # Test validation
 
 ### Test Suites
 1. **Unit Tests** (`tests/*.test.js`) - Core functionality
-2. **Contract Tests** (`tests/contracts/`) - Agent handoff validation
-3. **Integration Tests** (`tests/handoffs/`) - End-to-end workflows
+2. **Agent Tests** (`tests/agents/`) - Agent system validation
+3. **Integration Tests** (`tests/integration/`) - End-to-end workflows
 4. **Installation Tests** - NPX package validation
 
 ### Test Execution
@@ -223,7 +225,7 @@ npx . validate            # Test validation
 
 ### Quality Gates
 - All tests must pass before releases
-- Contract validation ensures agent compatibility
+- Agent system validation ensures proper integration
 - Installation tests verify NPX package integrity
 
 ## Important Notes
@@ -245,9 +247,9 @@ npx . validate            # Test validation
 - Template changes must be tested through full installation cycle
 - Agent definitions follow strict markdown format requirements
 
-### TDD Requirements
-- All new functionality must have tests first
-- Agent handoffs must include contract validation
+### Testing Requirements
+- All new functionality must have tests
+- Agent system must include proper validation
 - Behavioral changes require integration test updates
 
 ### Standards Compliance
@@ -272,4 +274,4 @@ When in doubt, follow existing patterns exactly. Ask for clarification before de
 - Example: `npm version patch -m "chore: release v%s - fix CI race conditions and add comprehensive testing"`
 - Never use the default "2.0.7" commit message
 
-This codebase implements a sophisticated agent collective system with strong TDD enforcement and intelligent routing capabilities.
+This codebase implements a sophisticated Drupal-focused agent collective system with quality gate validation and intelligent routing capabilities for Drupal 10/11 development.
