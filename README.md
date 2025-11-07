@@ -75,7 +75,7 @@ This collective solves these problems with agents that:
 # 1. Install MCP servers
 claude mcp add task-master -s user -- npx -y --package=task-master-ai task-master-ai
 claude mcp add playwright -s user -- npx -y playwright-mcp-server
-claude mcp add context7 -s user -- npx -y context7-mcp
+claude mcp add context7 -s user -- npx -y @upstash/context7-mcp
 
 # 2. Navigate to your Drupal project
 cd /path/to/drupal
@@ -90,19 +90,37 @@ composer require --dev drupal/coder phpstan/phpstan
 
 ### About Context7 Integration
 
-Context7 MCP provides access to up-to-date Drupal documentation with 400K+ tokens of indexed content. The collective uses two primary resources:
-
-**Official Documentation** (`/drupal/core`):
-- Drupal 11.x core documentation
-- 53,196 tokens, 97 code snippets, 212 pages
-- API references and official patterns
+Context7 MCP provides agents with real-time access to comprehensive Drupal documentation with thousands of working code examples. The collective uses three primary Drupal resources:
 
 **Developer Quick Reference** (`/selwynpolit/d9book`):
-- Modern Drupal developer handbook
-- 397,780 tokens, 1,989 code snippets, 433 Q&A entries
-- Practical examples and common patterns
+- Modern Drupal developer handbook with practical examples
+- **1,989 code snippets** | **Trust Score: 8.6/10**
+- Best for: Working code examples, common patterns, how-to guides
+- Covers: Services, plugins, forms, entities, migrations, theming, testing
 
-Agents automatically use Context7 to fetch current Drupal documentation when needed, ensuring recommendations stay up-to-date with latest Drupal best practices.
+**Official Core Documentation** (`/drupal/core`):
+- Drupal Core official API documentation
+- **97 code snippets** | **Trust Score: 9.2/10**
+- Best for: Official API references, core system architecture
+- Covers: Plugin API, Entity API, routing, caching, database abstraction
+
+**Drupal Main Project** (`/drupal/drupal`):
+- Version-specific Drupal documentation
+- **143 code snippets** | **Trust Score: 9.2/10**
+- Available versions: 11.2.2, 10.4.8
+- Best for: Version-specific patterns and compatibility
+
+**How Agents Use Context7**:
+```javascript
+// Agents fetch topic-specific documentation on-demand
+mcp__context7__get-library-docs(
+  context7CompatibleLibraryID: "/selwynpolit/d9book",
+  topic: "services dependency injection",
+  tokens: 2500
+)
+```
+
+This ensures agents always have access to current Drupal best practices and can provide working code examples from trusted sources. See `templates/docs/CONTEXT7-DRUPAL-GUIDE.md` for complete usage guide.
 
 ### Installation Options
 ```bash

@@ -208,9 +208,10 @@ Phase 4: Testing & Deployment
 **Tools**: Task Master (full read/write), Read
 
 #### research-agent
-**Purpose**: Technical research using Context7 and web sources
-**Use When**: Need to research technologies, frameworks, or architectural decisions
-**Tools**: Context7 MCP, WebSearch, WebFetch, Read, Grep, LS
+**Purpose**: Technical research using Context7 MCP for Drupal documentation and web sources
+**Use When**: Need to research Drupal APIs, contrib modules, best practices, or architectural decisions
+**Tools**: Context7 MCP (`/selwynpolit/d9book`, `/drupal/core`), WebSearch, WebFetch, Read, Grep, LS
+**Documentation**: See `.claude/docs/CONTEXT7-DRUPAL-GUIDE.md` for comprehensive Context7 usage guide
 
 ## Drupal-Specific Workflows
 

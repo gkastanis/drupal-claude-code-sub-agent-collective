@@ -5,6 +5,35 @@ All notable changes to the TaskMaster Agent autonomous development system will b
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.1.1] - 2025-01-08
+
+### 📚 Added
+- **Context7 MCP Documentation**: Comprehensive guide for using Context7 with Drupal development
+  - Created `templates/docs/CONTEXT7-DRUPAL-GUIDE.md` with detailed usage instructions
+  - Documents three primary Drupal resources: `/selwynpolit/d9book` (1,989 snippets), `/drupal/core` (97 snippets), `/drupal/drupal` (143 snippets)
+  - Includes trust scores, best practices, common query examples, and agent-specific usage patterns
+  - Covers topics: services, plugins, forms, entities, routing, migrations, theming, security, caching, testing
+
+### 🔄 Changed
+- **README.md**: Enhanced Context7 Integration section
+  - Added trust scores for all three Drupal documentation libraries
+  - Included usage example showing how agents fetch documentation
+  - Clarified when to use each library resource
+  - Added reference to comprehensive Context7 guide
+
+### 🔧 Fixed
+- **README.md**: Corrected Context7 MCP installation command
+  - Changed from `npx -y context7-mcp` to `npx -y @upstash/context7-mcp`
+  - Now uses correct npm package name for installation
+- **templates/CLAUDE.md**: Updated research-agent documentation
+  - Added specific library IDs for Drupal resources
+  - Referenced Context7 guide for detailed usage instructions
+- **CONTRIBUTING.md**: Enhanced Context7 testing section
+  - Added reference to Context7 guide
+  - Listed specific libraries and snippet counts for testing
+
 ## [1.0.3] - 2025-11-05
 
 ### 🔧 Fixed

@@ -23,9 +23,10 @@ We're looking for feedback and contributions in these key areas:
 - Identify areas where quality gates could be improved
 
 ### 🔧 **Context7 Integration**
-- Test agent usage of Context7 Drupal documentation
+- Test agent usage of Context7 Drupal documentation (see `templates/docs/CONTEXT7-DRUPAL-GUIDE.md`)
 - Report accuracy of recommendations against current Drupal best practices
 - Suggest improvements to documentation references
+- Test with `/selwynpolit/d9book` (1,989 snippets) and `/drupal/core` (97 snippets)
 
 ## 🚀 How to Contribute
 
