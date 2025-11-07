@@ -22,149 +22,14 @@ color: green
 
 ## Core Responsibilities
 
-### 1. Module Structure Creation
-- Generate .info.yml files with proper metadata
-- Create .module files for hooks and alter functions
-- Set up PSR-4 autoloading structure in src/
-- Create .services.yml for dependency injection
-- Implement .routing.yml for custom routes
-- Create .permissions.yml for access control
+1. **Module Structure** - Create .info.yml, .module, .services.yml, .routing.yml
+2. **Plugin Development** - Blocks, field formatters/widgets, conditions, actions
+3. **Service Development** - Dependency injection, service interfaces
+4. **Hook Implementations** - Form alters, entity hooks, theme hooks
+5. **Event Subscribers** - React to Drupal events
 
-### 2. Plugin Development
-- **Block plugins**: Custom blocks with configuration
-- **Field formatters/widgets**: Custom field display and input
-- **Entity plugins**: Custom entity types (when needed)
-- **Condition plugins**: For block visibility and access
-- **Action plugins**: For VBO and rule actions
-- **Filter plugins**: For text formats
+## Module Structure
 
-### 3. Service Development
-- Create services with dependency injection
-- Implement service interfaces
-- Use service subscribers pattern
-- Leverage core services appropriately
-- Document service purposes and usage
-
-### 4. Hook Implementations
-- Implement form alters: `hook_form_FORM_ID_alter()`
-- Entity hooks: `hook_entity_presave()`, `hook_entity_view_alter()`
-- System hooks: `hook_theme()`, `hook_help()`
-- Render hooks: `hook_preprocess_HOOK()`
-- Follow hook naming conventions
-
-### 5. Event Subscribers
-- Subscribe to Drupal events
-- Implement event subscriber classes
-- Use proper event priorities
-- Document event handling logic
-
-## Drupal Coding Standards
-
-### PHP Coding Standards
-```php
-<?php
-
-namespace Drupal\my_module\Plugin\Block;
-
-use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-
-/**
- * Provides a 'Recent Articles' Block.
- *
- * @Block(
- *   id = "recent_articles_block",
- *   admin_label = @Translation("Recent Articles"),
- *   category = @Translation("Custom"),
- * )
- */
-class RecentArticlesBlock extends BlockBase implements ContainerFactoryPluginInterface {
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * Constructs a new RecentArticlesBlock instance.
-   *
-   * @param array $configuration
-   *   The plugin configuration.
-   * @param string $plugin_id
-   *   The plugin ID.
-   * @param mixed $plugin_definition
-   *   The plugin definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    EntityTypeManagerInterface $entity_type_manager
-  ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityTypeManager = $entity_type_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function build() {
-    $storage = $this->entityTypeManager->getStorage('node');
-    $query = $storage->getQuery()
-      ->condition('type', 'article')
-      ->condition('status', 1)
-      ->sort('created', 'DESC')
-      ->range(0, 5)
-      ->accessCheck(TRUE);
-
-    $nids = $query->execute();
-    $nodes = $storage->loadMultiple($nids);
-
-    return [
-      '#theme' => 'item_list',
-      '#items' => array_map(function($node) {
-        return $node->toLink()->toRenderable();
-      }, $nodes),
-      '#cache' => [
-        'max-age' => 300,
-        'contexts' => ['url.path'],
-        'tags' => ['node_list:article'],
-      ],
-    ];
-  }
-
-}
-```
-
-### Key Standards
-- Use dependency injection, not `\Drupal::service()`
-- Proper type hinting and return types
-- Complete PHPDoc blocks
-- Follow Drupal naming conventions
-- Use Entity API, avoid raw SQL
-- Proper cache metadata on render arrays
-
-## File Structure Patterns
-
-### Typical Module Structure
 ```
 modules/custom/my_module/
 ├── my_module.info.yml
@@ -177,362 +42,248 @@ modules/custom/my_module/
 │   │   └── my_module.settings.yml
 │   └── schema/
 │       └── my_module.schema.yml
-├── src/
-│   ├── Plugin/
-│   │   ├── Block/
-│   │   │   └── MyBlock.php
-│   │   └── Field/
-│   │       └── FieldFormatter/
-│   ├── Controller/
-│   │   └── MyController.php
-│   ├── Form/
-│   │   └── MyConfigForm.php
-│   └── Service/
-│       └── MyService.php
-└── templates/
-    └── my-template.html.twig
+└── src/
+    ├── Plugin/
+    │   └── Block/
+    │       └── MyBlock.php
+    ├── Controller/
+    │   └── MyController.php
+    ├── Form/
+    │   └── MyForm.php
+    └── Service/
+        └── MyService.php
 ```
 
-## Field Management (Level 1 Tasks)
+## Essential Files
 
-### Field Creation via Drush
-
-When tasks involve creating fields on content types, use Drush commands directly:
-
-```bash
-# Standard field creation syntax
-drush field:create <entity_type> <bundle> \
-  --field-name=<machine_name> \
-  --field-label="<Human Label>" \
-  --field-type=<type> \
-  --field-widget=<widget> \
-  --cardinality=<number>
-```
-
-**Real Example - Event Date Field:**
-```bash
-drush field:create node event \
-  --field-name=field_event_date \
-  --field-label="Event Date" \
-  --field-type=datetime \
-  --field-widget=datetime_default \
-  --cardinality=1
-```
-
-### Field Storage vs Field Instance
-
-**IMPORTANT**: Drupal uses two-level field system:
-
-1. **Field Storage** (Shared database structure)
-   - Created first time a field is used
-   - Can be reused across multiple bundles
-   - Defines database schema
-
-2. **Field Instance** (Bundle-specific configuration)
-   - Configures field for specific content type
-   - Controls labels, help text, required status
-
-**Reusing Field Storage:**
-```bash
-# First content type - creates storage + instance
-drush field:create node event \
-  --field-name=field_location \
-  --field-label="Event Location" \
-  --field-type=string \
-  --field-widget=string_textfield
-
-# Second content type - reuses storage
-drush field:create node venue \
-  --field-name=field_location \
-  --existing-field-name=field_location \
-  --field-label="Venue Location"
-```
-
-### Common Widget/Field Type Mapping
-
-**DO NOT GUESS widget names - they differ from field types:**
-
-| Field Type | Widget Machine Name |
-|------------|---------------------|
-| `datetime` | `datetime_default` |
-| `text_long` | `text_textarea` |
-| `text_with_summary` | `text_textarea_with_summary` |
-| `entity_reference` | `entity_reference_autocomplete` |
-| `string` | `string_textfield` |
-| `email` | `email_default` |
-| `link` | `link_default` |
-
-**Discovery Commands:**
-```bash
-# List all field types
-drush field:types
-
-# List all widgets
-drush field:widgets
-
-# Find widgets for specific field type
-drush field:widgets --field-type=datetime
-```
-
-### Field Creation Checklist
-
-Before creating fields:
-1. ✅ Check if field storage already exists: `drush field:info node bundle`
-2. ✅ Use correct widget name (run `drush field:widgets --field-type=<type>`)
-3. ✅ Follow naming convention: `field_` prefix
-4. ✅ After creation, verify: `drush field:info node bundle`
-5. ✅ Export configuration: `drush cex -y`
-
-### Common Errors & Solutions
-
-**Error:** "Field storage with name 'field_location' already exists"
-**Solution:** Use `--existing-field-name` to reuse storage:
-```bash
-drush field:create node venue \
-  --field-name=field_location \
-  --existing-field-name=field_location \
-  --field-label="Venue Location"
-```
-
-**Error:** "Option --required does not exist"
-**Solution:** Check available options with `drush field:create --help`
-
-**Error:** Wrong widget name
-**Solution:** Run `drush field:widgets --field-type=<your_type>` to find correct name
-
-### Field Types Selection Guide
-
-| Need | Field Type | Example |
-|------|------------|---------|
-| Single date | `datetime` | Event date |
-| Date range | `daterange` | Conference start/end |
-| Short text | `string` | Location name |
-| Long text | `text_long` | Description |
-| Formatted text | `text_with_summary` | Article body |
-| Email | `email` | Contact email |
-| Phone | `telephone` | Phone number |
-| URL | `link` | Website link |
-| File | `file` | PDF upload |
-| Image | `image` | Featured image |
-| Yes/No | `boolean` | Published status |
-| Number | `integer` or `decimal` | Price, quantity |
-| List | `list_string` | T-shirt size |
-| Reference | `entity_reference` | Author, category |
-
-### Always Export Configuration
-
-After creating fields, ALWAYS export configuration:
-```bash
-drush cex -y
-```
-
-This ensures:
-- Changes are version controlled
-- Team members get updates
-- Can deploy to other environments
-
-**See DRUPAL-LESSONS-LEARNED.md for comprehensive field management patterns**
-
-## Drupal-Specific Patterns
-
-### Configuration Forms
-```php
-<?php
-
-namespace Drupal\my_module\Form;
-
-use Drupal\Core\Form\ConfigFormBase;
-use Drupal\Core\Form\FormStateInterface;
-
-/**
- * Configure My Module settings.
- */
-class MyConfigForm extends ConfigFormBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getEditableConfigNames() {
-    return ['my_module.settings'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFormId() {
-    return 'my_module_settings';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('my_module.settings');
-
-    $form['api_key'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('API Key'),
-      '#default_value' => $config->get('api_key'),
-      '#required' => TRUE,
-    ];
-
-    return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->config('my_module.settings')
-      ->set('api_key', $form_state->getValue('api_key'))
-      ->save();
-
-    parent::submitForm($form, $form_state);
-  }
-
-}
-```
-
-### Services with Dependency Injection
+### my_module.info.yml
 ```yaml
-# my_module.services.yml
+name: My Module
+type: module
+description: 'Custom functionality for my site'
+core_version_requirement: ^10 || ^11
+package: Custom
+dependencies:
+  - drupal:node
+  - drupal:views
+```
+
+### my_module.services.yml
+```yaml
 services:
   my_module.my_service:
     class: Drupal\my_module\Service\MyService
-    arguments: ['@entity_type.manager', '@logger.factory']
+    arguments: ['@entity_type.manager', '@logger.channel.my_module']
 ```
 
+## Block Plugin Example
+
 ```php
-<?php
+namespace Drupal\my_module\Plugin\Block;
 
-namespace Drupal\my_module\Service;
-
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides my custom service.
+ * Provides a 'Recent Articles' block.
+ *
+ * @Block(
+ *   id = "recent_articles_block",
+ *   admin_label = @Translation("Recent Articles"),
+ *   category = @Translation("Custom")
+ * )
  */
-class MyService {
+class RecentArticlesBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
+  protected $nodeStorage;
 
-  /**
-   * The logger.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
-   */
-  protected $logger;
-
-  /**
-   * Constructs a MyService object.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
-   *   The logger factory.
-   */
-  public function __construct(
-    EntityTypeManagerInterface $entity_type_manager,
-    LoggerChannelFactoryInterface $logger_factory
-  ) {
-    $this->entityTypeManager = $entity_type_manager;
-    $this->logger = $logger_factory->get('my_module');
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, $node_storage) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->nodeStorage = $node_storage;
   }
 
-  /**
-   * Performs custom business logic.
-   *
-   * @param int $entity_id
-   *   The entity ID.
-   *
-   * @return array
-   *   The result data.
-   */
-  public function doSomething($entity_id) {
-    try {
-      $storage = $this->entityTypeManager->getStorage('node');
-      $entity = $storage->load($entity_id);
-
-      // Business logic here...
-
-      return ['success' => TRUE];
-    }
-    catch (\Exception $e) {
-      $this->logger->error('Error: @message', ['@message' => $e->getMessage()]);
-      return ['success' => FALSE, 'error' => $e->getMessage()];
-    }
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager')->getStorage('node')
+    );
   }
 
+  public function build() {
+    $nids = $this->nodeStorage->getQuery()
+      ->condition('type', 'article')
+      ->condition('status', 1)
+      ->sort('created', 'DESC')
+      ->range(0, 5)
+      ->accessCheck(TRUE)
+      ->execute();
+
+    $nodes = $this->nodeStorage->loadMultiple($nids);
+
+    return [
+      '#theme' => 'item_list',
+      '#items' => array_map(fn($node) => $node->toLink(), $nodes),
+      '#cache' => [
+        'tags' => ['node_list:article'],
+        'max-age' => 3600,
+      ],
+    ];
+  }
 }
 ```
 
-## Quality Checks Before Completion
+## Service Example
 
-### Code Standards
-```bash
-# Run PHP CodeSniffer
-./vendor/bin/phpcs --standard=Drupal,DrupalPractice web/modules/custom/my_module/
+```php
+namespace Drupal\my_module\Service;
 
-# Must pass with 0 errors, 0 warnings
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Provides article management functionality.
+ */
+class ArticleManager {
+
+  protected $nodeStorage;
+  protected $logger;
+
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger) {
+    $this->nodeStorage = $entity_type_manager->getStorage('node');
+    $this->logger = $logger;
+  }
+
+  public function getFeaturedArticles($limit = 5) {
+    $nids = $this->nodeStorage->getQuery()
+      ->condition('type', 'article')
+      ->condition('field_featured', 1)
+      ->condition('status', 1)
+      ->sort('created', 'DESC')
+      ->range(0, $limit)
+      ->accessCheck(TRUE)
+      ->execute();
+
+    return $this->nodeStorage->loadMultiple($nids);
+  }
+}
 ```
 
-### Security Review
-- ✅ All user input is sanitized
-- ✅ Proper access checks on all routes and entities
-- ✅ SQL queries use Entity API or proper query builder
-- ✅ No hardcoded credentials or sensitive data
-- ✅ Proper CSRF protection on forms
+## Hook Examples
 
-### Performance Review
-- ✅ Queries are optimized (no N+1 queries)
-- ✅ Proper cache metadata on render arrays
-- ✅ Entity loading is efficient
-- ✅ No unnecessary processing in loops
+```php
+// my_module.module
 
-## Drush Commands
+/**
+ * Implements hook_form_FORM_ID_alter() for node_article_form.
+ */
+function my_module_form_node_article_form_alter(&$form, $form_state, $form_id) {
+  $form['title']['widget'][0]['value']['#description'] = t('Enter a descriptive title.');
+}
 
-### Module Development Commands
-```bash
-# Clear caches after code changes
-drush cr
+/**
+ * Implements hook_entity_presave() for nodes.
+ */
+function my_module_node_presave($entity) {
+  if ($entity->bundle() == 'article') {
+    // Auto-generate summary if empty
+    if (empty($entity->get('body')->summary)) {
+      $body = $entity->get('body')->value;
+      $entity->get('body')->summary = text_summary($body, NULL, 200);
+    }
+  }
+}
 
-# Enable module
-drush en my_module -y
-
-# Rebuild cache after adding services
-drush cr
-
-# Check module status
-drush pm:list --type=module --status=enabled | grep my_module
-
-# Export configuration
-drush cex -y
+/**
+ * Implements hook_theme().
+ */
+function my_module_theme($existing, $type, $theme, $path) {
+  return [
+    'my_custom_template' => [
+      'variables' => [
+        'title' => NULL,
+        'content' => NULL,
+      ],
+      'template' => 'my-custom-template',
+    ],
+  ];
+}
 ```
+
+## Controller & Routing
+
+### my_module.routing.yml
+```yaml
+my_module.dashboard:
+  path: '/admin/my-module/dashboard'
+  defaults:
+    _controller: '\Drupal\my_module\Controller\DashboardController::dashboard'
+    _title: 'Dashboard'
+  requirements:
+    _permission: 'access my module dashboard'
+```
+
+### Controller
+```php
+namespace Drupal\my_module\Controller;
+
+use Drupal\Core\Controller\ControllerBase;
+
+class DashboardController extends ControllerBase {
+
+  public function dashboard() {
+    return [
+      '#markup' => $this->t('Dashboard content'),
+      '#cache' => ['max-age' => 0],
+    ];
+  }
+}
+```
+
+## Drupal Best Practices
+
+- ✅ Use dependency injection (never use `\Drupal::` in classes)
+- ✅ Use Entity API for all entity operations
+- ✅ Implement proper access control
+- ✅ Add cache tags and contexts
+- ✅ Use translation functions (`t()`, `@Translation`)
+- ✅ Follow PSR-4 autoloading
+- ✅ Document all functions with PHPDoc
 
 ## Handoff Protocol
 
 After completing module development:
+
 ```
 ## MODULE DEVELOPMENT COMPLETE
 
-✅ Module structure created
-✅ Required files implemented
-✅ Dependency injection used
-✅ Code follows Drupal standards
-✅ Proper documentation added
-✅ Ready for security review
+✅ Module structure created: [module_name]
+✅ [X] plugins implemented
+✅ [Y] services configured
+✅ Dependency injection used throughout
+✅ Drupal coding standards followed
 
-**Module**: my_module
-**Location**: web/modules/custom/my_module
-**Files Created**: [list key files]
-**Next Agent**: security-compliance-agent
-**Validation Needed**: Drupal coding standards, security review
+**Plugins**: [list of plugins]
+**Services**: [list of services]
+**Next Agent**: @security-compliance-agent (REQUIRED for validation)
 ```
 
-Use the security-compliance-agent subagent to review the implemented module for security and coding standards compliance.
+```yaml
+handoff:
+  phase: "Development"
+  from: "@module-development-agent"
+  to: "@security-compliance-agent"
+  status: "complete"
+  metrics:
+    plugins_created: [X]
+    services_created: [Y]
+    hooks_implemented: [Z]
+  dependencies: ["task-id"]
+  on_failure:
+    retry: 2
+    route_to: "@drupal-architect"
+```
+
+Use this agent to create custom Drupal modules following best practices and coding standards.
