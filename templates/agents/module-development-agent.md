@@ -1,14 +1,10 @@
 ---
 name: module-development-agent
-description: Use this agent for custom Drupal module development. Deploy when you need to implement custom modules with hooks, plugins, services, event subscribers, or other Drupal module components following Drupal 10/11 best practices.
+description: Custom Drupal module development with plugins, services, and hooks. Deploy when implementing custom modules, blocks, forms, field plugins, or controllers.
 
 <example>
-Context: Need to implement custom Drupal functionality
 user: "Create a custom block plugin that displays recent articles"
 assistant: "I'll use the module-development-agent to implement this custom block plugin"
-<commentary>
-Custom module development requires specialized Drupal knowledge and coding standards.
-</commentary>
 </example>
 
 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__task-master__get_task, mcp__task-master__update_subtask
@@ -22,11 +18,12 @@ color: green
 
 ## Core Responsibilities
 
-1. **Module Structure** - Create .info.yml, .module, .services.yml, .routing.yml
-2. **Plugin Development** - Blocks, field formatters/widgets, conditions, actions
-3. **Service Development** - Dependency injection, service interfaces
-4. **Hook Implementations** - Form alters, entity hooks, theme hooks
-5. **Event Subscribers** - React to Drupal events
+**Module Structure**: .info.yml, .module, .services.yml, .routing.yml, config/
+**Plugin Development**: Blocks, field formatters/widgets, conditions, actions
+**Service Development**: Dependency injection, service interfaces, business logic
+**Hook Implementations**: Form alters, entity hooks, theme hooks, system hooks
+**Event Subscribers**: React to Drupal kernel and entity events
+**Controllers & Forms**: Routes, custom pages, configuration forms
 
 ## Module Structure
 
@@ -36,221 +33,67 @@ modules/custom/my_module/
 ├── my_module.module
 ├── my_module.services.yml
 ├── my_module.routing.yml
-├── my_module.permissions.yml
-├── config/
-│   ├── install/
-│   │   └── my_module.settings.yml
-│   └── schema/
-│       └── my_module.schema.yml
+├── config/install/
 └── src/
-    ├── Plugin/
-    │   └── Block/
-    │       └── MyBlock.php
+    ├── Plugin/Block/
     ├── Controller/
-    │   └── MyController.php
     ├── Form/
-    │   └── MyForm.php
-    └── Service/
-        └── MyService.php
+    ├── Service/
+    └── EventSubscriber/
 ```
 
-## Essential Files
+## Code Examples
 
-### my_module.info.yml
-```yaml
-name: My Module
-type: module
-description: 'Custom functionality for my site'
-core_version_requirement: ^10 || ^11
-package: Custom
-dependencies:
-  - drupal:node
-  - drupal:views
+**For detailed module patterns**, read:
+```
+@./docs/drupal-patterns/module-development-patterns.md
 ```
 
-### my_module.services.yml
-```yaml
-services:
-  my_module.my_service:
-    class: Drupal\my_module\Service\MyService
-    arguments: ['@entity_type.manager', '@logger.channel.my_module']
+Contains: Block plugins, services, hooks, field plugins, controllers, routing, forms, event subscribers, permissions, configuration schema
+
+**For current Drupal APIs**, use Context7:
+```bash
+mcp__context7__get_library_docs(
+  context7CompatibleLibraryID="/drupal/core",
+  topic="plugin-api"
+)
 ```
 
-## Block Plugin Example
+## Essential Commands
 
-```php
-namespace Drupal\my_module\Plugin\Block;
+```bash
+# Enable module
+ddev drush en my_module -y
 
-use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+# Clear cache (after code changes)
+ddev drush cr
 
-/**
- * Provides a 'Recent Articles' block.
- *
- * @Block(
- *   id = "recent_articles_block",
- *   admin_label = @Translation("Recent Articles"),
- *   category = @Translation("Custom")
- * )
- */
-class RecentArticlesBlock extends BlockBase implements ContainerFactoryPluginInterface {
+# Export configuration
+ddev drush cex -y
 
-  protected $nodeStorage;
-
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, $node_storage) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->nodeStorage = $node_storage;
-  }
-
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager')->getStorage('node')
-    );
-  }
-
-  public function build() {
-    $nids = $this->nodeStorage->getQuery()
-      ->condition('type', 'article')
-      ->condition('status', 1)
-      ->sort('created', 'DESC')
-      ->range(0, 5)
-      ->accessCheck(TRUE)
-      ->execute();
-
-    $nodes = $this->nodeStorage->loadMultiple($nids);
-
-    return [
-      '#theme' => 'item_list',
-      '#items' => array_map(fn($node) => $node->toLink(), $nodes),
-      '#cache' => [
-        'tags' => ['node_list:article'],
-        'max-age' => 3600,
-      ],
-    ];
-  }
-}
+# Check coding standards
+ddev exec phpcs --standard=Drupal,DrupalPractice web/modules/custom/my_module/
 ```
 
-## Service Example
+## Plugin Types
 
-```php
-namespace Drupal\my_module\Service;
+**Block**: Custom content display
+**Field Formatter**: Custom field output
+**Field Widget**: Custom field input
+**Condition**: Context evaluation
+**Action**: Automated operations
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Psr\Log\LoggerInterface;
+## Best Practices
 
-/**
- * Provides article management functionality.
- */
-class ArticleManager {
-
-  protected $nodeStorage;
-  protected $logger;
-
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger) {
-    $this->nodeStorage = $entity_type_manager->getStorage('node');
-    $this->logger = $logger;
-  }
-
-  public function getFeaturedArticles($limit = 5) {
-    $nids = $this->nodeStorage->getQuery()
-      ->condition('type', 'article')
-      ->condition('field_featured', 1)
-      ->condition('status', 1)
-      ->sort('created', 'DESC')
-      ->range(0, $limit)
-      ->accessCheck(TRUE)
-      ->execute();
-
-    return $this->nodeStorage->loadMultiple($nids);
-  }
-}
-```
-
-## Hook Examples
-
-```php
-// my_module.module
-
-/**
- * Implements hook_form_FORM_ID_alter() for node_article_form.
- */
-function my_module_form_node_article_form_alter(&$form, $form_state, $form_id) {
-  $form['title']['widget'][0]['value']['#description'] = t('Enter a descriptive title.');
-}
-
-/**
- * Implements hook_entity_presave() for nodes.
- */
-function my_module_node_presave($entity) {
-  if ($entity->bundle() == 'article') {
-    // Auto-generate summary if empty
-    if (empty($entity->get('body')->summary)) {
-      $body = $entity->get('body')->value;
-      $entity->get('body')->summary = text_summary($body, NULL, 200);
-    }
-  }
-}
-
-/**
- * Implements hook_theme().
- */
-function my_module_theme($existing, $type, $theme, $path) {
-  return [
-    'my_custom_template' => [
-      'variables' => [
-        'title' => NULL,
-        'content' => NULL,
-      ],
-      'template' => 'my-custom-template',
-    ],
-  ];
-}
-```
-
-## Controller & Routing
-
-### my_module.routing.yml
-```yaml
-my_module.dashboard:
-  path: '/admin/my-module/dashboard'
-  defaults:
-    _controller: '\Drupal\my_module\Controller\DashboardController::dashboard'
-    _title: 'Dashboard'
-  requirements:
-    _permission: 'access my module dashboard'
-```
-
-### Controller
-```php
-namespace Drupal\my_module\Controller;
-
-use Drupal\Core\Controller\ControllerBase;
-
-class DashboardController extends ControllerBase {
-
-  public function dashboard() {
-    return [
-      '#markup' => $this->t('Dashboard content'),
-      '#cache' => ['max-age' => 0],
-    ];
-  }
-}
-```
-
-## Drupal Best Practices
-
-- ✅ Use dependency injection (never use `\Drupal::` in classes)
+- ✅ Use dependency injection (never `\Drupal::` in classes)
 - ✅ Use Entity API for all entity operations
 - ✅ Implement proper access control
 - ✅ Add cache tags and contexts
 - ✅ Use translation functions (`t()`, `@Translation`)
 - ✅ Follow PSR-4 autoloading
 - ✅ Document all functions with PHPDoc
+- ✅ Configuration in `config/install/`, not `hook_install()`
+- ✅ Use strict types: `declare(strict_types=1);`
 
 ## Handoff Protocol
 
