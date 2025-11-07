@@ -1,83 +1,161 @@
-# Product Requirements Document: Simple Todo Application
+# Product Requirements Document: Event Management System
 
 ## Overview
-Create a basic todo application with essential CRUD operations and local storage persistence.
+Create a custom Drupal module for managing community events with registration, email notifications, and calendar display. Target audience: community organizations running Drupal 10/11 sites.
 
 ## Core Features
 
-### 1. Todo Management
-- **Add New Todos**: Input field with submit button
-- **Edit Todos**: Click to edit todo text inline
-- **Delete Todos**: Delete button to remove todos
-- **Toggle Completion**: Checkbox to mark complete/incomplete
+### 1. Event Content Type
+- **Event Details**: Title, description, location (physical/virtual)
+- **Date & Time**: Start/end dates with timezone support
+- **Capacity Management**: Maximum attendees, waitlist support
+- **Registration**: Open/closed status, early bird pricing
+- **Categories**: Event types (workshop, webinar, social, conference)
 
-### 2. Basic Organization
-- **Filtering**: Show All, Active, Completed views
-- **Search**: Simple text search through todos
+### 2. Registration System
+- **User Registration**: Authenticated users can register
+- **Anonymous Registration**: Optional anonymous user support
+- **Cancellation**: Users can cancel their registration
+- **Confirmation Emails**: Automated email notifications
+- **Attendance Tracking**: Check-in functionality for organizers
 
-### 3. Data Persistence
-- **Local Storage**: Save todos to browser localStorage
-- **Auto-save**: Changes saved automatically
+### 3. Display & Navigation
+- **Calendar View**: Monthly calendar using Views
+- **Event Listings**: Filterable list of upcoming events
+- **Search**: Text search with date range filters
+- **My Events**: Dashboard showing user's registered events
 
-### 4. User Experience
-- **Responsive Design**: Works on desktop and mobile
-- **Clean Interface**: Simple, intuitive design
+### 4. Admin Features
+- **Event Management**: Create, edit, delete events
+- **Attendee List**: Export registered users to CSV
+- **Email Notifications**: Custom email templates
+- **Reporting**: Basic event statistics and attendance
 
 ## Technical Requirements
 
-### Frontend Architecture
-- **React 18** with modern hooks
-- **TypeScript** for better development experience
-- **CSS Modules** or styled-components for styling
+### Drupal Architecture
+- **Drupal 10/11** compatibility
+- **Custom Module**: `event_management`
+- **Dependencies**: Views, Token, Email systems
+- **PHP 8.3+** with strict typing
 
 ### Data Model
-```typescript
-interface Todo {
-  id: string;
-  text: string;
-  completed: boolean;
-  createdAt: Date;
-}
+```php
+// Event content type fields
+event_management_event:
+  - field_event_date (daterange)
+  - field_location (text)
+  - field_virtual_link (link)
+  - field_capacity (integer)
+  - field_registration_status (list_string)
+  - field_event_category (entity_reference: taxonomy)
 
-interface AppState {
-  todos: Todo[];
-  filter: 'all' | 'active' | 'completed';
-  searchQuery: string;
-}
+// Registration entity
+event_registration:
+  - event_id (entity_reference: node)
+  - user_id (entity_reference: user)
+  - registration_date (datetime)
+  - status (confirmed|cancelled|waitlist)
+  - check_in_time (datetime, nullable)
 ```
 
-### Development Tools
-- **Vite** for fast development
-- **ESLint + Prettier** for code quality
-- **Vitest** for testing
+### Development Standards
+- **Drupal Coding Standards** (PHPCS with Drupal/DrupalPractice)
+- **Static Analysis** (PHPStan level 6)
+- **Security**: Input sanitization, access control, CSRF protection
+- **Performance**: Caching strategies, efficient queries
+- **Accessibility**: WCAG 2.1 AA compliance
+- **Testing**: Behat for functional testing, PHPUnit for unit tests
 
 ## User Stories
 
-1. **As a user**, I want to add new todos so I can track my tasks
-2. **As a user**, I want to edit todos so I can update task details
-3. **As a user**, I want to delete todos so I can remove completed tasks
-4. **As a user**, I want to mark todos complete so I can track progress
-5. **As a user**, I want to filter todos so I can focus on specific items
-6. **As a user**, I want to search todos so I can find specific tasks
+1. **As a site visitor**, I want to browse upcoming events so I can find interesting activities
+2. **As an authenticated user**, I want to register for events so I can attend
+3. **As a registered user**, I want to receive confirmation emails so I have event details
+4. **As a user**, I want to cancel my registration so I can free up my spot if plans change
+5. **As an event organizer**, I want to see attendee lists so I can plan accordingly
+6. **As an administrator**, I want to export attendee data so I can manage communications
 
 ## Success Criteria
 
-- ✅ All CRUD operations work correctly
-- ✅ Data persists across browser sessions
-- ✅ Filtering and search work properly
-- ✅ Clean, responsive interface
-- ✅ Basic test coverage
+- ✅ Event content type with all required fields
+- ✅ Registration system with email notifications
+- ✅ Calendar view displaying events
+- ✅ User dashboard showing registered events
+- ✅ Admin interface for managing events and attendees
+- ✅ Passes PHPCS/PHPStan validation
+- ✅ Security review passes (XSS, access control, SQL injection prevention)
+- ✅ WCAG 2.1 AA accessibility compliance
+- ✅ Behat tests for key user journeys
+- ✅ Configuration exportable via `drush cex`
 
 ## Implementation Plan
 
-### Phase 1: Core Features
-- Basic todo CRUD operations
-- Local storage persistence
-- Simple list display
+### Phase 1: Core Module Setup
+- Create custom module structure
+- Define event content type in `config/install/`
+- Create registration entity type
+- Implement basic permission system
 
-### Phase 2: Organization
-- Filtering system (all/active/completed)
-- Search functionality
-- Improved styling
+### Phase 2: Registration System
+- Build registration form with validation
+- Implement capacity checking logic
+- Create email notification system using Token
+- Add cancellation functionality
 
-This simple todo application demonstrates modern React development practices with essential functionality.
+### Phase 3: Display & Views
+- Create calendar view using Views module
+- Build event listing page with filters
+- Create "My Events" dashboard
+- Implement search functionality
+
+### Phase 4: Admin Features
+- Build attendee management interface
+- Create CSV export functionality
+- Add email template configuration
+- Implement basic reporting
+
+### Phase 5: Quality Assurance
+- Write Behat tests for registration flow
+- PHPUnit tests for business logic
+- Security review and validation
+- Accessibility audit
+- Performance optimization (caching, query optimization)
+
+## Integration Requirements
+
+### Contrib Modules (Evaluate First)
+- **Simple Registration**: Check if existing module meets needs
+- **Calendar**: Consider contrib calendar modules vs custom Views
+- **Email**: Use core Mail API with Token module
+- **Search**: Leverage core Search API or custom Views filters
+
+### Drupal Core Integration
+- Content type using Field API
+- Views for all listings and displays
+- Permissions and access control
+- Configuration management (`drush cex/cim`)
+- Update hooks for schema changes
+
+## Non-Functional Requirements
+
+### Security
+- All user inputs sanitized using Drupal APIs
+- Access control enforced at all levels
+- CSRF protection for all forms
+- SQL injection prevention via Entity API
+
+### Performance
+- Render caching for event lists and calendar
+- Cache tags for event node changes
+- Efficient entity queries (no N+1 problems)
+- Lazy loading for large attendee lists
+
+### Maintainability
+- Follow Drupal coding standards strictly
+- Comprehensive inline documentation
+- Configuration in `config/install/` not `hook_install()`
+- Update hooks for all schema changes
+- README with installation and usage instructions
+
+This event management system demonstrates modern Drupal development with custom entities, Views integration, and quality standards enforcement.
