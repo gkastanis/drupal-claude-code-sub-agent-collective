@@ -1,58 +1,63 @@
-# Contributing to the AI Development Revolution 🚀
+# Contributing to Drupal Claude Code Collective
 
-Welcome to the world's first autonomous AI development system! This alpha release represents a breakthrough in software development automation, and your contributions are essential for making it even better.
+Welcome to the Drupal-focused AI agent collective! This project provides specialized agents for Drupal 10/11 development with quality gate validation. Your contributions help make Drupal development more efficient and standardized.
 
-## 🎯 Alpha Testing Goals
+## 🎯 Testing & Contribution Goals
 
 We're looking for feedback and contributions in these key areas:
 
-### 🤖 **Multi-Agent Coordination**
-- Test agent handoffs and communication reliability
-- Identify coordination failures and suggest improvements
-- Evaluate agent decision-making quality
+### 🤖 **Agent System**
+- Test agent coordination for Drupal development workflows
+- Identify gaps in Drupal-specific knowledge
+- Evaluate code quality and adherence to Drupal standards
 
-### 🏗️ **Project Coverage**
-- Try different project types (React, Vue, Angular, backend)
-- Test with varying complexity levels (simple apps to complex systems)
-- Report which frameworks and patterns work best
+### 🏗️ **Drupal Project Coverage**
+- Test with different Drupal project types (small sites, custom modules, enterprise projects)
+- Test with varying complexity levels (simple content sites to complex integrations)
+- Report which Drupal patterns and workflows work best with agents
 
-### ⚡ **Quality & Performance**
-- Validate code quality standards and testing coverage
-- Test accessibility compliance and performance optimization
+### ⚡ **Quality & Standards**
+- Validate Drupal coding standards enforcement (PHPCS, PHPStan)
+- Test security compliance and accessibility (WCAG 2.1 AA)
+- Test performance optimization recommendations
 - Identify areas where quality gates could be improved
 
-### 🔧 **TaskMaster Integration**
-- Help diagnose and fix the ~15% MCP API failure rate
-- Suggest workarounds for integration issues
-- Contribute to error handling improvements
+### 🔧 **Context7 Integration**
+- Test agent usage of Context7 Drupal documentation
+- Report accuracy of recommendations against current Drupal best practices
+- Suggest improvements to documentation references
 
 ## 🚀 How to Contribute
 
-### 1. **Alpha Testing & Feedback**
+### 1. **Testing & Feedback**
 
-#### Try the Autonomous Development System
+#### Try the Drupal Agent Collective
 ```bash
-# Create a PRD for your project
-# Run the orchestrator
-/project:tm-orchestrator-simple
+# Install the collective in your Drupal project
+npx drupal-claude-collective init
+
+# Use agents for Drupal development tasks
+# Example: "Create a custom block showing recent articles"
+# The collective will route to appropriate specialized agents
 
 # Report your experience!
 ```
 
 #### **What We Want to Know:**
-- 📊 **Success Rate**: Did it work end-to-end?
-- 🕐 **Time to Complete**: How long did autonomous development take?
-- 🎯 **Quality Assessment**: How was the code quality and structure?
+- 📊 **Success Rate**: Did agents produce working Drupal code?
+- 🎯 **Standards Compliance**: Did code pass PHPCS/PHPStan validation?
+- 🔒 **Security Quality**: Were security best practices followed?
 - 🐛 **Issues Encountered**: What failed and how did you work around it?
-- 💡 **Surprise Factor**: What impressed you? What disappointed you?
+- 💡 **Agent Effectiveness**: Which agents were most/least helpful?
 
 ### 2. **Bug Reports**
 
 #### **High Priority Issues:**
 - Agent coordination failures
-- TaskMaster MCP integration errors
-- Quality gate failures
-- Project structure problems
+- Incorrect Drupal API usage
+- Quality gate false positives/negatives
+- Context7 integration errors
+- Standards validation issues
 
 #### **Bug Report Template:**
 ```markdown
@@ -60,8 +65,8 @@ We're looking for feedback and contributions in these key areas:
 Brief description of what went wrong
 
 ## Steps to Reproduce
-1. Create PRD with [specific requirements]
-2. Run `/project:tm-orchestrator-simple`
+1. Install collective in Drupal project
+2. Request specific task (e.g., "Create custom block plugin")
 3. Observe failure at [specific point]
 
 ## Expected Behavior
@@ -73,8 +78,9 @@ What actually happened
 ## Environment
 - OS: [Windows/macOS/Linux/WSL]
 - Claude Code Version: [version]
-- Project Type: [React/Vue/Angular/etc]
-- Project Complexity: [Simple/Medium/Complex]
+- Drupal Version: [10.x or 11.x]
+- Project Type: [Small site/Custom modules/Enterprise/Migration]
+- DDEV Version: [version]
 
 ## Error Output
 ```
@@ -83,17 +89,17 @@ What actually happened
 
 ## Agent State
 - Which agent was active when failure occurred
-- TaskMaster tag context if known
-- Any partial completions
+- Specific Drupal context (content types, modules, etc.)
+- Any partial code generated
 ```
 
 ### 3. **Feature Requests & Improvements**
 
 #### **Areas for Enhancement:**
-- **New Project Types**: Backend frameworks, mobile apps, full-stack projects
-- **Agent Capabilities**: Specialized agents for testing, deployment, documentation
-- **Quality Standards**: Enhanced testing strategies, security validation
-- **Developer Experience**: Better progress monitoring, error recovery
+- **New Drupal Patterns**: Commerce, webforms, headless Drupal, multisite
+- **Agent Capabilities**: Advanced migration, deployment automation, multilingual sites
+- **Quality Standards**: Enhanced Behat testing, security hardening, performance audits
+- **Developer Experience**: Better Context7 integration, error recovery, agent suggestions
 
 #### **Feature Request Template:**
 ```markdown
@@ -114,85 +120,95 @@ How important is this to your workflow?
 
 #### **Contribution Areas:**
 
-##### 🔧 **TaskMaster MCP Improvements**
-- Fix API reliability issues in `.claude/commands/`
-- Improve error handling and retry logic
-- Enhance agent context switching
-
 ##### 🤖 **Agent Enhancements**
-- Improve research analysis depth and accuracy
-- Enhance implementation quality and testing
-- Better project structure governance
+- Improve Drupal API knowledge and accuracy
+- Enhance Context7 documentation usage
+- Better Drupal best practices enforcement
+- Add support for more Drupal patterns (Commerce, Webforms, etc.)
+
+##### 🔧 **Quality Gate Improvements**
+- Enhanced PHPCS/PHPStan validation
+- Better security analysis patterns
+- Improved performance recommendations
+- Accessibility compliance validation
 
 ##### 📚 **Documentation & Guides**
-- Framework-specific setup guides
+- Drupal version-specific guides
+- DDEV integration improvements
 - Troubleshooting documentation
-- Video tutorials and examples
+- Example workflows and use cases
 
-##### ⚡ **Performance & Reliability**
+##### ⚡ **Testing & Reliability**
+- Behat test generation improvements
+- PHPUnit test coverage
 - Error recovery mechanisms
-- Progress monitoring improvements
 - Integration testing
 
 #### **Development Setup:**
 ```bash
 # Clone the repository
-git clone https://github.com/vanzan01/taskmaster-agent-claude-code.git
-cd taskmaster-agent-claude-code
+git clone https://github.com/gkastanis/drupal-claude-code-sub-agent-collective.git
+cd drupal-claude-code-sub-agent-collective
 
-# Install TaskMaster MCP
-claude mcp add task-master -s user -- npx -y --package=task-master-ai task-master-ai
+# Install dependencies
+npm install
 
-# Test with a simple project
-# [Create test PRD and run system]
+# Run tests
+npm run test:jest
+
+# Test NPX installation
+npx . init --force
 ```
 
 #### **Pull Request Guidelines:**
 1. **Focus on Single Issues**: One PR per bug fix or feature
-2. **Test Your Changes**: Validate with multiple project types
-3. **Document Changes**: Update README and CHANGELOG as needed
-4. **Include Examples**: Show before/after behavior
-5. **Alpha Considerations**: Remember this is alpha software - prioritize reliability over features
+2. **Test Your Changes**: Validate with Drupal 10 and 11 projects
+3. **Run All Tests**: Ensure `npm run test:jest` passes (118 tests)
+4. **Document Changes**: Update README and CHANGELOG as needed
+5. **Include Examples**: Show before/after behavior with Drupal code examples
+6. **Follow Standards**: Use Drupal coding standards in examples
 
-## 🧪 Alpha Testing Scenarios
+## 🧪 Testing Scenarios
 
 ### **Test Cases We Need Coverage For:**
 
-#### **Project Types:**
-- [ ] React + TypeScript + Tailwind
-- [ ] Vue 3 + Composition API + CSS Modules  
-- [ ] Angular + Material UI + NgRx
-- [ ] Vanilla TypeScript + Vite
-- [ ] Node.js Express API
-- [ ] Next.js full-stack
-- [ ] Mobile React Native
+#### **Drupal Project Types:**
+- [ ] Small site with custom content types
+- [ ] Custom module development (blocks, plugins, services)
+- [ ] Custom theme with Twig templates
+- [ ] Content migration from Drupal 7 or external source
+- [ ] Headless Drupal with JSON:API
+- [ ] Multisite architecture
+- [ ] Drupal Commerce site
 
 #### **Complexity Levels:**
-- [ ] Simple CRUD app (Todo, Notes)
-- [ ] Medium complexity (E-commerce, Blog)
-- [ ] Complex features (Authentication, Real-time, API integration)
-- [ ] Large codebase (50+ components)
+- [ ] Simple site (content types, views, basic theming)
+- [ ] Medium complexity (custom modules, integrations, migrations)
+- [ ] Complex features (custom workflows, API integrations, performance optimization)
+- [ ] Enterprise project (multisite, custom distribution, advanced security)
 
 #### **Development Scenarios:**
-- [ ] Complete new project from scratch
-- [ ] Adding features to existing project
-- [ ] Refactoring and improvements
-- [ ] Migration between frameworks
+- [ ] New Drupal 10/11 site from scratch
+- [ ] Adding custom functionality to existing site
+- [ ] Upgrading from Drupal 9 to 10/11
+- [ ] Migrating content from another CMS
+- [ ] Refactoring and code quality improvements
+- [ ] Performance optimization and caching strategies
 
 ### **Success Metrics:**
-- **Completion Rate**: % of projects that finish successfully
-- **Quality Score**: Code quality, testing, accessibility compliance
-- **Time Efficiency**: Speed compared to manual development
-- **Human Intervention**: How often manual fixes are needed
+- **Completion Rate**: % of tasks that produce working Drupal code
+- **Standards Compliance**: Code passing PHPCS/PHPStan/security validation
+- **Quality Score**: Code quality, Behat testing, WCAG 2.1 AA accessibility
+- **Drupal Best Practices**: Adherence to Drupal API and architectural patterns
 
 ## 🤝 Community Guidelines
 
-### **Alpha Testing Etiquette:**
+### **Contribution Etiquette:**
 1. **Be Honest**: Report failures and limitations honestly
 2. **Be Specific**: Detailed feedback is more helpful than general comments
-3. **Be Patient**: This is alpha software - expect some rough edges
+3. **Be Drupal-Focused**: Keep suggestions relevant to Drupal 10/11 best practices
 4. **Be Constructive**: Suggest improvements, not just criticisms
-5. **Be Collaborative**: Help other alpha testers troubleshoot issues
+5. **Be Collaborative**: Help other contributors troubleshoot issues
 
 ### **Communication Channels:**
 - **GitHub Issues**: Bug reports and feature requests
@@ -201,56 +217,57 @@ claude mcp add task-master -s user -- npx -y --package=task-master-ai task-maste
 
 ## 🏆 Recognition
 
-### **Alpha Contributor Recognition:**
-- Contributors to alpha testing will be recognized in release notes
-- Significant contributors may be invited to beta testing programs
-- Code contributors will be credited in repository documentation
+### **Contributor Recognition:**
+- Contributors will be recognized in release notes
+- Significant contributors will be credited in repository documentation
+- Code contributors may be invited to participate in roadmap planning
 
 ### **Types of Contributions We Value:**
-- **Bug Discovery**: Finding and reporting integration issues
-- **Use Case Expansion**: Testing new project types and scenarios
-- **Quality Improvements**: Enhancing code standards and testing
-- **Documentation**: Improving guides and troubleshooting resources
-- **Performance**: Optimizing agent coordination and execution time
+- **Bug Discovery**: Finding and reporting agent or quality gate issues
+- **Drupal Expertise**: Adding new Drupal patterns and best practices
+- **Quality Improvements**: Enhancing standards validation and testing
+- **Documentation**: Improving guides, examples, and troubleshooting
+- **Agent Enhancements**: Improving Context7 integration and Drupal knowledge
 
 ## 🔮 Vision for the Future
 
-### **Short-term Goals (Beta Release):**
-- Fix TaskMaster MCP reliability issues
-- Expand project type coverage
-- Improve error handling and recovery
-- Add real-time progress monitoring
+### **Short-term Goals:**
+- Enhanced Context7 integration with more Drupal documentation sources
+- Support for Drupal Commerce and Webform development
+- Improved multilingual site development patterns
+- Better performance optimization recommendations
 
 ### **Long-term Vision:**
-- **Production-Ready**: CI/CD integration, deployment automation
-- **Learning System**: Agents that improve from feedback
-- **Custom Personalities**: Specialized agents for different domains
-- **Scaling**: Support for large, complex production projects
+- **Drupal 12 Readiness**: Early adoption of Drupal 12 patterns and APIs
+- **Headless Drupal**: Advanced support for decoupled architectures
+- **CI/CD Integration**: Automated deployment workflows for Drupal
+- **Module Ecosystem**: Agents specialized for popular contrib modules
+- **Enterprise Features**: Multisite, advanced caching, high-availability patterns
 
 ### **Research Questions We're Exploring:**
-- How far can autonomous development scale?
-- What's the optimal human-AI collaboration pattern?
-- Can agents handle evolving requirements during development?
-- How do we measure and improve agent decision quality?
+- How can AI agents best learn Drupal's evolving best practices?
+- What's the optimal balance between automation and developer control?
+- Can agents effectively recommend contrib vs custom solutions?
+- How do we maintain code quality at scale with AI assistance?
 
 ## 💡 Getting Started
 
-### **New to Alpha Testing?**
-1. **Start Simple**: Try a basic todo app or simple CRUD project
-2. **Read the Docs**: Familiarize yourself with the agent system
-3. **Join Discussions**: Connect with other alpha testers
-4. **Share Results**: Report both successes and failures
+### **New to the Drupal Collective?**
+1. **Start Simple**: Try a basic custom block or content type task
+2. **Read the Docs**: Familiarize yourself with the 14 specialized Drupal agents
+3. **Join Discussions**: Connect with other contributors
+4. **Share Results**: Report both successes and areas for improvement
 
-### **Experienced with AI Development?**
-1. **Push the Limits**: Try complex projects and edge cases
-2. **Compare Approaches**: How does this compare to other AI coding tools?
-3. **Technical Deep Dive**: Analyze agent coordination patterns
-4. **Contribute Code**: Help improve reliability and capabilities
+### **Experienced Drupal Developer?**
+1. **Test Complex Patterns**: Try migrations, commerce, or headless architectures
+2. **Compare Quality**: How do agent recommendations compare to manual development?
+3. **Technical Review**: Analyze Context7 integration and quality gates
+4. **Contribute Expertise**: Help improve Drupal best practices and patterns
 
 ---
 
-**Ready to shape the future of autonomous software development?** 
+**Ready to enhance Drupal development with AI agents?**
 
-Your feedback and contributions are essential for making this breakthrough technology reliable, powerful, and accessible to developers worldwide.
+Your feedback and contributions are essential for making this tool valuable for the Drupal community.
 
-**Let's build the future together!** 🚀⚡🤖
+**Let's build better Drupal sites together!** 🚀
