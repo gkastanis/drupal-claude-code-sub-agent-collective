@@ -2,9 +2,9 @@
 
 ## Phase Gate Requirements
 - All subtasks must complete successfully
-- Test contracts must pass validation
-- Research metrics must be collected
-- Documentation must be updated
+- Quality validation must pass
+- Research metrics collected when applicable
+- Documentation updated when needed
 - No directive violations recorded
 
 ## Handoff Validation Contracts
@@ -13,7 +13,7 @@
 handoff:
   requiredContext: ["user_request", "drupal_context", "selected_agent"]
   validationRules: ["context_completeness", "agent_availability", "capability_match"]
-  successCriteria: ["implementation_complete", "tests_passing", "standards_compliant"]
+  successCriteria: ["implementation_complete", "standards_compliant", "security_validated"]
   fallbackProcedures: ["retry_with_context", "escalate_to_routing", "report_failure"]
 ```
 
@@ -48,37 +48,37 @@ handoff:
 **Next Agent**: functional-testing-agent
 ```
 
-### Testing Coverage Requirements
+### Testing Options (When Requested)
 
-**PHPUnit Testing (@unit-testing-agent)**:
+**PHPUnit Testing (@unit-testing-agent)** - Optional:
 - Unit tests: Fast, isolated, mocked dependencies
 - Kernel tests: Entity queries, services, plugins
 - Functional tests: Complete workflows, forms, access control
-- **Minimum Coverage**: 80%
+- Coverage reporting available when tests are written
 
-**Behat Testing (@functional-testing-agent)**:
+**Behat Testing (@functional-testing-agent)** - Optional:
 - Server-side functional validation
 - Gherkin scenarios for user workflows
 - **Limitation**: NO JavaScript/AJAX testing
 - Execution: `ddev robo behat @tag`
 
-**Visual Regression (@visual-regression-agent)**:
+**Visual Regression (@visual-regression-agent)** - Optional:
 - BackstopJS screenshot comparison
 - Multiple viewport testing (mobile, tablet, desktop)
 - Diff threshold: <0.1% for approval
 
-## TDD Completion Reporting Standard
+## Quality Completion Reporting Standard
 
-All Drupal implementation agents use standardized TDD completion reporting:
+All Drupal implementation agents use standardized quality completion reporting:
 
 ```
-## 🚀 MODULE DEVELOPMENT COMPLETE - TDD APPROACH
-✅ Tests written first (RED phase)
-✅ Implementation passes all tests (GREEN phase)
-✅ Code refactored for quality (REFACTOR phase)
+## 🚀 MODULE DEVELOPMENT COMPLETE
+✅ Implementation complete and functional
 ✅ Drupal coding standards validated (0 errors, 0 warnings)
-📊 Test Results: [X]/[Y] passing
-📊 Code Coverage: [X]%
+✅ Security review passed
+✅ Accessibility compliance verified (WCAG 2.1 AA)
+📊 Tests: [X]/[Y] passing (if tests were requested)
+📊 Code Coverage: [X]% (if tests were requested)
 ```
 
 ## Agent Coverage Matrix
@@ -132,18 +132,18 @@ drupal-check web/modules/custom/MODULE_NAME/
 
 ## Hub Controller Responsibility
 
-**CRITICAL**: The hub controller MUST display the complete TDD completion report to users exactly as received from agents. Never summarize, truncate, or paraphrase these reports - they demonstrate:
+**CRITICAL**: The hub controller MUST display the complete quality completion report to users exactly as received from agents. Never summarize, truncate, or paraphrase these reports - they demonstrate:
 - Rigorous Drupal best practices adherence
-- Test-first development approach
+- Quality-first development approach
 - Comprehensive quality assurance
 - Professional Drupal development standards
-- Measurable test coverage and quality metrics
+- Security and accessibility compliance
 
 ## Competitive Advantage
 
-This Drupal-focused TDD methodology provides:
+This Drupal-focused quality methodology provides:
 - **Security-first development** with mandatory security gates
 - **Accessibility compliance** built into the workflow
 - **Drupal coding standards** enforced automatically
-- **Multi-layer testing** (unit, functional, visual)
+- **Optional testing** (unit, functional, visual) when requested
 - **Research-backed decisions** via Context7 integration

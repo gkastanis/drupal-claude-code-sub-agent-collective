@@ -19,12 +19,12 @@
   - 7-day cache freshness rules
   - Hands off to task-generator-agent
 
-## 🧪 TESTING & QUALITY SPECIALISTS
-- **@unit-testing-agent** - PHPUnit testing (unit, kernel, functional tests) with 80%+ coverage requirement
-- **@functional-testing-agent** - Behat functional testing with Gherkin syntax
+## 🧪 TESTING & QUALITY SPECIALISTS (OPTIONAL)
+- **@unit-testing-agent** - PHPUnit testing (unit, kernel, functional tests) - optional, when requested
+- **@functional-testing-agent** - Behat functional testing with Gherkin syntax - optional, when requested
   - **NOTE**: NO JavaScript/AJAX support - server-side behavior only
   - Uses ddev robo behat for execution
-- **@visual-regression-agent** - Visual regression testing with BackstopJS, Percy, and Playwright
+- **@visual-regression-agent** - Visual regression testing with BackstopJS, Percy, and Playwright - optional, when requested
 
 ## 🔒 SECURITY & COMPLIANCE
 - **@security-compliance-agent** - Security review, Drupal coding standards, WCAG 2.1 AA accessibility
@@ -84,14 +84,14 @@ research_workflow:
   2. drupal-architect: Architecture design with researched patterns
   3. module-development-agent: Implementation with dependency injection
   4. security-compliance-agent: Validation with WCAG 2.1 AA + coding standards
-  5. unit-testing-agent: PHPUnit tests with 80%+ coverage
+  5. unit-testing-agent: PHPUnit tests (optional, when requested)
 
 # TaskMaster coordination
 project_coordination:
   coordinator: enhanced-project-manager-agent
   task_source: TaskMaster MCP
   workflow: Multi-phase development with research integration
-  validation: Test-driven handoffs with contract validation
+  validation: Quality-driven handoffs with contract validation
 ```
 
 ## Agent Handoff Schema
@@ -128,10 +128,10 @@ handoff:
 - WCAG 2.1 AA accessibility compliance
 - SQL injection and XSS prevention verification
 
-### Testing Coverage
-- **PHPUnit**: Unit, Kernel, Functional tests
-- **Behat**: Server-side functional testing (no JavaScript)
-- **BackstopJS**: Visual regression with responsive breakpoints
+### Testing Options (When Requested)
+- **PHPUnit**: Unit, Kernel, Functional tests - optional
+- **Behat**: Server-side functional testing (no JavaScript) - optional
+- **BackstopJS**: Visual regression with responsive breakpoints - optional
 
 ### Performance Optimization
 - Redis/Memcached caching configuration
