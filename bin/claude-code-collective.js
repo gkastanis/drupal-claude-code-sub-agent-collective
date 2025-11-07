@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Claude Code Sub-Agent Collective CLI
+ * Drupal Claude Code Sub-Agent Collective CLI
  * Professional command-line interface with interactive and express modes
+ * Specialized for Drupal 10/11 development
  */
 
 const { Command } = require('commander');
@@ -16,8 +17,8 @@ const program = new Command();
 const packageInfo = require('../package.json');
 
 program
-  .name('claude-code-collective')
-  .description('Sub-agent collective framework for Claude Code with TDD validation and hub-spoke coordination')
+  .name('drupal-claude-collective')
+  .description('Drupal-focused sub-agent collective for Claude Code with specialized agents for Drupal 10/11 development')
   .version(packageInfo.version);
 
 // Install command with interactive and express modes
@@ -36,8 +37,8 @@ program
     try {
       // Express mode (--yes flag)
       if (options.yes) {
-        console.log(chalk.cyan('🚀 Claude Code Collective Express Installation\n'));
-        console.log(chalk.gray('Using smart defaults for rapid deployment...\n'));
+        console.log(chalk.cyan('🚀 Drupal Claude Collective Express Installation\n'));
+        console.log(chalk.gray('Using smart defaults for Drupal development...\n'));
         
         const installer = new CollectiveInstaller({
           force: options.force,
@@ -51,9 +52,9 @@ program
         
         console.log(chalk.green('\n✅ Express installation completed!'));
         console.log(chalk.yellow('\n💡 Next steps:'));
-        console.log('1. Review .claude/settings.json for hooks configuration');
-        console.log('2. Test collective functionality with a simple request');
-        console.log('3. Run: npx claude-code-collective validate');
+        console.log('1. Review CLAUDE.md for behavioral directives');
+        console.log('2. Test agent routing with a Drupal development request');
+        console.log('3. Run: npx drupal-claude-collective validate');
         
       } else {
         // Interactive mode (default)
@@ -84,20 +85,20 @@ program
     try {
       const installer = new CollectiveInstaller({ targetPath: projectPath });
       const status = await installer.getInstallationStatus();
-      
-      console.log(chalk.cyan('📊 Claude Code Collective Status\n'));
+
+      console.log(chalk.cyan('📊 Drupal Claude Collective Status\n'));
       console.log(`📁 Project: ${path.basename(path.resolve(projectPath))}`);
       console.log(`📦 Version: ${status.version || 'Not installed'}`);
       console.log(`🚀 Installed: ${status.installed ? '✅ Yes' : '❌ No'}`);
       console.log(`🧠 Behavioral System: ${status.behavioral ? '✅ Active' : '❌ Missing'}`);
       console.log(`🧪 Testing Framework: ${status.testing ? '✅ Ready' : '❌ Missing'}`);
       console.log(`🪝 Hooks: ${status.hooks ? '✅ Configured' : '❌ Missing'}`);
-      console.log(`🤖 Agents: ${status.agents?.length || 0} installed`);
-      
+      console.log(`🤖 Drupal Agents: ${status.agents?.length || 0} installed`);
+
       if (status.installed) {
-        console.log(chalk.green('\n✅ Collective is operational'));
+        console.log(chalk.green('\n✅ Drupal Collective is operational'));
       } else {
-        console.log(chalk.yellow('\n⚠️  Run "npx claude-code-collective init" to install'));
+        console.log(chalk.yellow('\n⚠️  Run "npx drupal-claude-collective init" to install'));
       }
       
     } catch (error) {
@@ -203,24 +204,24 @@ program
 program.addHelpText('after', `
 ${chalk.yellow('Examples:')}
   ${chalk.gray('# Interactive installation (recommended for new users)')}
-  claude-code-collective install
+  drupal-claude-collective install
 
   ${chalk.gray('# Express installation (for automation/CI)')}
-  claude-code-collective install --yes
+  drupal-claude-collective install --yes
 
   ${chalk.gray('# Force overwrite with full backups')}
-  claude-code-collective install --force --backup full
+  drupal-claude-collective install --force --backup full
 
-  ${chalk.gray('# Minimal installation for lightweight setups')}
-  claude-code-collective install --minimal --yes
+  ${chalk.gray('# Minimal installation (core Drupal agents only)')}
+  drupal-claude-collective install --minimal --yes
 
   ${chalk.gray('# Validate installation with detailed output')}
-  claude-code-collective validate --detailed
+  drupal-claude-collective validate --detailed
 
 ${chalk.yellow('Installation Modes:')}
   ${chalk.gray('Interactive:')} Full menu-driven experience with conflict resolution
   ${chalk.gray('Express:')}     Automated installation using smart defaults (--yes)
-  ${chalk.gray('Minimal:')}     Core components only (--minimal)
+  ${chalk.gray('Minimal:')}     Core Drupal agents only (routing, architect, module-dev, security)
 
 ${chalk.yellow('Merge Strategies:')}
   ${chalk.gray('smart-merge:')}    Intelligently merge with existing configs (default)
