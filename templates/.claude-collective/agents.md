@@ -12,8 +12,9 @@
 - **@configuration-management-agent** - Config export/import, update hooks
 - **@content-migration-agent** - Content architecture and migrations
 
-## 🔬 RESEARCH
+## 🔬 RESEARCH & DOCUMENTATION
 - **@research-agent** - Context7-powered research (7-day cache, preserves code examples)
+- **@semantic-architect-agent** - Knowledge Graph documentation mapping business logic to code implementation
 
 ## 🧪 TESTING & QUALITY (OPTIONAL)
 - **@unit-testing-agent** - PHPUnit (optional, when requested)
@@ -37,6 +38,7 @@
 | configuration-management-agent | Bash, Read, Write | integration-gate |
 | content-migration-agent | Read, Write, Bash | integration-gate |
 | research-agent | Context7 MCP, WebSearch | task-generator-agent |
+| semantic-architect-agent | Read, Glob, Grep, Write | None (complete) |
 | unit-testing-agent | Bash, Read, Write | None (complete) |
 | functional-testing-agent | Bash, Read, Write | None (complete) |
 | visual-regression-agent | Playwright MCP | None (complete) |

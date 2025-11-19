@@ -13,7 +13,7 @@ This installs a collection of AI agents designed specifically for Drupal CMS dev
 npx drupal-claude-collective init
 ```
 
-You get 14 specialized Drupal development agents that understand Drupal architecture, follow Drupal coding standards, and deliver production-ready code.
+You get 15 specialized Drupal development agents that understand Drupal architecture, follow Drupal coding standards, and deliver production-ready code.
 
 ## Why this exists
 
@@ -52,12 +52,13 @@ This collective solves these problems with agents that:
 - **unit-testing-agent** - PHPUnit tests with Drupal test base
 - **visual-regression-agent** - Screenshot comparison testing
 
-### Project Management (3 agents)
+### Project Management & Documentation (4 agents)
 - **enhanced-project-manager-agent** - Task Master coordination for complex projects
 - **research-agent** - Technical research for Drupal solutions
 - **workflow-agent** - Complex workflow orchestration
+- **semantic-architect-agent** - Knowledge Graph documentation mapping business logic to code
 
-**Total: 14 specialized agents** (streamlined from 47 agents in January 2025 - 70% reduction!)
+**Total: 15 specialized agents** (streamlined from 47 agents in January 2025 - 68% reduction!)
 
 **Key improvement**: All quality gates (Drupal standards, security, performance, accessibility, integration) consolidated into `security-compliance-agent` for streamlined validation workflow.
 
@@ -141,7 +142,7 @@ your-project/
 ├── CLAUDE.md                    # Behavioral rules for agents
 ├── .claude/
 │   ├── settings.json           # Hook configuration
-│   ├── agents/                 # 14 agent definitions
+│   ├── agents/                 # 15 agent definitions
 │   │   ├── routing-agent.md
 │   │   ├── drupal-architect.md
 │   │   ├── module-development-agent.md
@@ -155,6 +156,7 @@ your-project/
 │   │   ├── visual-regression-agent.md
 │   │   ├── enhanced-project-manager-agent.md
 │   │   ├── research-agent.md
+│   │   ├── semantic-architect-agent.md
 │   │   └── workflow-agent.md
 │   ├── hooks/                  # Enforcement scripts (6 hooks)
 │   │   ├── directive-enforcer.sh

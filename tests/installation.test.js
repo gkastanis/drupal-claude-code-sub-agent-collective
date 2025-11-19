@@ -69,6 +69,21 @@ describe('NPX Installation Tests', () => {
         expect(await fs.pathExists(templatePath)).toBe(true);
       }
     });
+
+    test('should contain semantic-architect-agent template', async () => {
+      const semanticAgentPath = path.join(
+        installer.templateDir,
+        'agents',
+        'semantic-architect-agent.md'
+      );
+      expect(await fs.pathExists(semanticAgentPath)).toBe(true);
+
+      // Verify agent content has required sections
+      const content = await fs.readFile(semanticAgentPath, 'utf8');
+      expect(content).toContain('name: semantic-architect-agent');
+      expect(content).toContain('Knowledge Graph');
+      expect(content).toContain('Logic-to-Code');
+    });
   });
 
   describe('File Mapping System', () => {
@@ -159,11 +174,31 @@ describe('NPX Installation Tests', () => {
       // Perform installation
       installer.options.express = true;
       await installer.install();
-      
+
       // Validate
       const validation = await installer.validateInstallation();
       expect(Array.isArray(validation)).toBe(true);
       expect(validation.length).toBeGreaterThan(0);
+    });
+
+    test('should install semantic-architect-agent to target directory', async () => {
+      installer.options.express = true;
+      await installer.install();
+
+      // Verify agent is installed
+      const agentPath = path.join(
+        projectRoot,
+        '.claude',
+        'agents',
+        'semantic-architect-agent.md'
+      );
+      expect(await fs.pathExists(agentPath)).toBe(true);
+
+      // Verify agent appears in catalog
+      const catalogPath = path.join(projectRoot, '.claude-collective', 'agents.md');
+      const catalogContent = await fs.readFile(catalogPath, 'utf8');
+      expect(catalogContent).toContain('semantic-architect-agent');
+      expect(catalogContent).toContain('Knowledge Graph documentation');
     });
   });
 

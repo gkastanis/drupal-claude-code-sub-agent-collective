@@ -213,6 +213,12 @@ Phase 4: Testing & Deployment
 **Tools**: Context7 MCP (`/selwynpolit/d9book`, `/drupal/core`), WebSearch, WebFetch, Read, Grep, LS
 **Documentation**: See `.claude/docs/CONTEXT7-DRUPAL-GUIDE.md` for comprehensive Context7 usage guide
 
+#### semantic-architect-agent
+**Purpose**: Generate machine-first Knowledge Graphs mapping business logic to Drupal implementation
+**Use When**: Need structured documentation showing deterministic relationships between business requirements and code implementation
+**Tools**: Read, Glob, Grep, Write, Task Master (read-only)
+**Output**: Creates Master Business Index (hub) and Technical Logic Maps (spokes) with Logic-to-Code mappings
+
 ## Drupal-Specific Workflows
 
 ### Pattern 1: Quick Feature (Level 2)

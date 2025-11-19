@@ -127,47 +127,55 @@ Quick shortcuts for common operations:
 
 ## 🤖 Working with Agents
 
-### Available Specialized Agents
+### Available Specialized Agents (15 Total)
 
-**Core Coordination:**
-- `routing-agent` - Central hub coordinator
-- `enhanced-project-manager-agent` - Multi-phase project management
+**Core Coordination (1 agent):**
+- `routing-agent` - Central hub coordinator for intelligent agent selection
 
-**Implementation Specialists:**
-- `behavioral-transformation-agent` - CLAUDE.md behavioral OS
-- `testing-implementation-agent` - Jest framework and TDD
-- `hook-integration-agent` - Directive enforcement scripts
-- `npx-package-agent` - NPX distribution packages
-- `command-system-agent` - Natural language parsing
-- `metrics-collection-agent` - Research validation
-- `dynamic-agent-creator` - Runtime agent spawning
-- `van-maintenance-agent` - Self-healing ecosystem
+**Core Drupal Work (5 agents):**
+- `drupal-architect` - Site architecture, content modeling, module selection
+- `module-development-agent` - Custom modules with Drupal 10/11 best practices
+- `theme-development-agent` - Twig templates, SCSS, JavaScript behaviors
+- `configuration-management-agent` - Config export, update hooks, deployment
+- `content-migration-agent` - Content architecture and data migrations
 
-**Cross-Cutting Support:**
-- `research-agent` - Technical research and analysis
-- `quality-agent` - Code review and validation
-- `component-implementation-agent` - UI components
-- `feature-implementation-agent` - Business logic
-- `infrastructure-implementation-agent` - Build systems
+**Quality & Security (2 agents):**
+- `security-compliance-agent` - Comprehensive validation: Drupal standards, security, performance, accessibility, integration
+- `performance-devops-agent` - Caching, optimization, deployment
+
+**Testing (3 agents):**
+- `functional-testing-agent` - Playwright browser automation for Drupal
+- `unit-testing-agent` - PHPUnit tests with Drupal test base
+- `visual-regression-agent` - Screenshot comparison testing
+
+**Project Management & Documentation (4 agents):**
+- `enhanced-project-manager-agent` - Task Master coordination for complex projects
+- `research-agent` - Technical research for Drupal solutions
+- `workflow-agent` - Complex workflow orchestration
+- `semantic-architect-agent` - Knowledge Graph documentation mapping business logic to code
 
 ### Agent Routing Examples
 
 ```bash
-# Route complex requests
-/collective route "I need to implement authentication with OAuth2"
-# → Routes to @feature-implementation-agent or @research-agent
+# Route module development requests
+/collective route "Create a custom block plugin that displays recent articles"
+# → Routes to @module-development-agent
 
-# Route UI requests  
-/collective route "Create a login form component with validation"
-# → Routes to @component-implementation-agent
+# Route theming requests
+/collective route "Create a custom Twig template for the event content type"
+# → Routes to @theme-development-agent
 
 # Route research requests
-/collective route "What's the best way to handle WebSocket connections?"
+/collective route "What's the best Drupal contrib module for user registration workflows?"
 # → Routes to @research-agent
 
-# Route quality requests
-/collective route "Review this code for security issues"
-# → Routes to @quality-agent
+# Route documentation requests
+/collective route "Document the custom_sso module showing how business logic maps to code"
+# → Routes to @semantic-architect-agent
+
+# Route quality validation requests
+/collective route "Review this module for Drupal coding standards and security"
+# → Routes to @security-compliance-agent
 ```
 
 ### Dynamic Agent Creation

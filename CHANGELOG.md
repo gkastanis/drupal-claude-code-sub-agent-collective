@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 📚 Added
+- **Semantic Architect Agent**: New documentation agent for Knowledge Graph generation
+  - Creates machine-first documentation mapping High-Level Business Logic (HLBL) to Low-Level Code Implementation (LLCI)
+  - Generates Master Business Index (hub) and Technical Logic Maps (spokes)
+  - Provides Logic-to-Code mapping tables with file:class:method precision
+  - Exports entity schemas as JSON for RAG parsing
+  - Creates Mermaid execution flow diagrams
+  - Applies semantic tagging (#LogicType:Validation, #LogicType:Storage, etc.)
+  - Agent count increased from 14 to 15 specialized agents
+
+### 🔄 Changed
+- **Agent Count**: Updated from 14 to 15 agents across all documentation
+  - README.md: Updated agent listings and file structure
+  - AGENT-AUDIT.md: Updated counts and added semantic-architect-agent to ESSENTIAL category
+  - USER-GUIDE.md: Updated agent listings and routing examples with Drupal-specific scenarios
+  - templates/CLAUDE.md: Added semantic-architect-agent to Available Agents section
+  - templates/.claude-collective/agents.md: Added to Research & Documentation category
+
+### 🧪 Added
+- **Installation Tests**: New tests for semantic-architect-agent
+  - Validates agent template exists with required sections
+  - Verifies agent is installed to target directory
+  - Confirms agent appears in catalog with correct description
+
 ## [1.1.1] - 2025-01-08
 
 ### 📚 Added

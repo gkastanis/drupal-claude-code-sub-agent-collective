@@ -1,13 +1,13 @@
 # Drupal Agent Audit & Recommendations
 
 **Original Count: 47 agents** (Way too many!)
-**Final Count: 14 agents** (70% reduction! ✅)
+**Final Count: 15 agents** (68% reduction! ✅)
 
 ## ✅ CLEANUP COMPLETE
 
-Successfully streamlined the Drupal Claude Code Sub-Agent Collective from 47 agents down to 14 essential agents.
+Successfully streamlined the Drupal Claude Code Sub-Agent Collective from 47 agents down to 15 essential agents.
 
-## 🎯 Category 1: ESSENTIAL - Keep (12 agents)
+## 🎯 Category 1: ESSENTIAL - Keep (13 agents)
 
 ### Core Drupal Development
 1. **drupal-architect** ✅ KEEP
@@ -72,6 +72,11 @@ Successfully streamlined the Drupal Claude Code Sub-Agent Collective from 47 age
     - Purpose: Technical research for Drupal solutions
     - Drupal-Specific: Adapted for Drupal
     - Usage: Medium (researching contrib modules, patterns)
+
+13. **semantic-architect-agent** ✅ KEEP
+    - Purpose: Knowledge Graph documentation mapping business logic to code
+    - Drupal-Specific: Adapted for Drupal
+    - Usage: Medium (documentation, system understanding, AI-readable docs)
 
 ---
 
