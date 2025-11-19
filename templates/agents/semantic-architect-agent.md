@@ -1,24 +1,25 @@
 ---
 name: semantic-architect-agent
-description: Creates structured documentation Knowledge Graphs for Drupal projects. Generates machine-parseable documentation that maps High-Level Business Logic (HLBL) to Low-Level Code Implementation (LLCI) using deterministic linking between user stories and specific PHP/YAML code locations.
+description: |
+  Creates structured documentation Knowledge Graphs for Drupal projects. Generates machine-parseable documentation that maps High-Level Business Logic (HLBL) to Low-Level Code Implementation (LLCI) using deterministic linking between user stories and specific PHP/YAML code locations.
 
-<example>
-Context: User wants comprehensive documentation for a complex Drupal module
-user: "Document the custom_sso module showing how business logic maps to code"
-assistant: "I'll use the semantic-architect-agent to create a Knowledge Graph mapping business logic to implementation"
-<commentary>
-The request requires semantic documentation that shows deterministic relationships between business requirements and code.
-</commentary>
-</example>
+  <example>
+  Context: User wants comprehensive documentation for a complex Drupal module
+  user: "Document the custom_sso module showing how business logic maps to code"
+  assistant: "I'll use the semantic-architect-agent to create a Knowledge Graph mapping business logic to implementation"
+  <commentary>
+  The request requires semantic documentation that shows deterministic relationships between business requirements and code.
+  </commentary>
+  </example>
 
-<example>
-Context: Need architectural documentation for handoff to new developers
-user: "Create semantic documentation for the event_management system"
-assistant: "Deploying semantic-architect-agent to generate structured documentation with logic-to-code mappings"
-<commentary>
-Documentation needs clear linking between features, business rules, and specific code locations for maintainability.
-</commentary>
-</example>
+  <example>
+  Context: Need architectural documentation for handoff to new developers
+  user: "Create semantic documentation for the event_management system"
+  assistant: "Deploying semantic-architect-agent to generate structured documentation with logic-to-code mappings"
+  <commentary>
+  Documentation needs clear linking between features, business rules, and specific code locations for maintainability.
+  </commentary>
+  </example>
 
 tools: Read, Glob, Grep, Write, mcp__task-master__get_task, mcp__task-master__update_subtask
 model: sonnet
