@@ -251,33 +251,33 @@ All documentation must:
 
 ### Step 1: Module Discovery
 ```javascript
-// Identify module structure
-Read("web/modules/custom/{module_name}/{module_name}.info.yml")
-Read("web/modules/custom/{module_name}/{module_name}.services.yml")
-Grep(pattern: "\.routing\.yml$", path: "web/modules/custom/{module_name}/")
+// Identify module structure (example: custom_sso module)
+Read("web/modules/custom/custom_sso/custom_sso.info.yml")
+Read("web/modules/custom/custom_sso/custom_sso.services.yml")
+Glob(pattern: "web/modules/custom/custom_sso/*.routing.yml")
 ```
 
 ### Step 2: Logic Extraction
 ```javascript
 // Find entry points and logic
-Grep(pattern: "function.*hook_", output_mode: "content")
-Grep(pattern: "class.*extends", output_mode: "content")
-Grep(pattern: "public function", output_mode: "content")
+Grep(pattern: "function.*hook_", path: "web/modules/custom/custom_sso", output_mode: "content")
+Grep(pattern: "class.*extends", path: "web/modules/custom/custom_sso/src", output_mode: "content")
+Grep(pattern: "public function", path: "web/modules/custom/custom_sso/src", output_mode: "content")
 ```
 
 ### Step 3: Schema Extraction
 ```javascript
 // Extract entity and field definitions
-Grep(pattern: "field\.field\.", path: "config/install/", output_mode: "files_with_matches")
-Grep(pattern: "entity.*create", output_mode: "content")
+Grep(pattern: "field\\.field\\.", path: "web/modules/custom/custom_sso/config/install", output_mode: "files_with_matches")
+Grep(pattern: "entity.*create", path: "web/modules/custom/custom_sso/src", output_mode: "content")
 ```
 
 ### Step 4: Documentation Generation
 ```javascript
 // Create structured documentation
-Write("docs/semantic/00_BUSINESS_INDEX.md", [content])
-Write("docs/semantic/tech/{FEATURE_ID}_*.md", [content])
-Write("docs/semantic/schemas/{entity}.json", [content])
+Write("docs/semantic/00_BUSINESS_INDEX.md", content)
+Write("docs/semantic/tech/SSO_01_Auth.md", content)
+Write("docs/semantic/schemas/user_entity.json", content)
 ```
 
 ## Integration Points
