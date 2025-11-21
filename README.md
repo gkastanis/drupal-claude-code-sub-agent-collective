@@ -73,21 +73,18 @@ This collective solves these problems with agents that:
 
 ### Quick Install
 ```bash
-# 1. Install MCP servers
-claude mcp add task-master -s user -- npx -y --package=task-master-ai task-master-ai
-claude mcp add playwright -s user -- npx -y playwright-mcp-server
-claude mcp add context7 -s user -- npx -y @upstash/context7-mcp
-
-# 2. Navigate to your Drupal project
+# 1. Navigate to your Drupal project
 cd /path/to/drupal
 
-# 3. Install the collective
+# 2. Install the collective (includes Task Master MCP server configuration)
 npx drupal-claude-collective init
 
-# 4. Install Drupal dev tools
+# 3. Install Drupal dev tools
 composer require --dev drupal/coder phpstan/phpstan
 ./vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
 ```
+
+**Note**: The collective now generates `.mcp.json` configuration automatically. Task Master is included by default. Playwright and Context7 are opt-in (see MCP Server Configuration below).
 
 ### About Context7 Integration
 
@@ -125,14 +122,53 @@ This ensures agents always have access to current Drupal best practices and can 
 
 ### Installation Options
 ```bash
-# Full installation (recommended)
+# Default installation (Task Master MCP only - lightest, recommended)
 npx drupal-claude-collective init
 
-# Minimal installation (core agents only)
+# Minimal installation (core agents only, Task Master MCP)
 npx drupal-claude-collective init --minimal
+
+# With Playwright for visual regression testing
+npx drupal-claude-collective init --with-playwright
+
+# With Context7 for documentation lookup
+npx drupal-claude-collective init --with-context7
+
+# With all MCP servers (highest resource usage)
+npx drupal-claude-collective init --with-all-mcps
 
 # Force overwrite existing files
 npx drupal-claude-collective init --force
+
+# Express mode (skip prompts, use defaults)
+npx drupal-claude-collective init --yes
+```
+
+### MCP Server Configuration
+
+The collective automatically generates `.mcp.json` with selective MCP server configuration:
+
+**Default Configuration (Recommended)**:
+- ✅ **Task Master** (~20MB memory, Low CPU) - Required for /van commands and workflow management
+- ❌ **Playwright** - Excluded by default to prevent zombie processes on Linux
+- ❌ **Context7** - Excluded by default
+
+**Why exclude Playwright by default?**
+Playwright MCP server has a known issue on Linux where it can create zombie processes consuming 99% CPU after CLI exit. Only enable it when you need visual regression testing and use cleanup scripts if necessary.
+
+**Resource Usage Comparison**:
+| Configuration | Memory | CPU | Use Case |
+|--------------|--------|-----|----------|
+| Default (Task Master only) | ~20MB | Low | Backend development, module work |
+| + Playwright | ~220MB | High | Visual regression testing |
+| + Context7 | ~50MB | Low | Documentation-heavy research |
+| All MCPs | ~250MB | High | Full-stack development with testing |
+
+**Adding MCP Servers Later**:
+You can modify `.mcp.json` manually or re-run installation with different flags:
+```bash
+# Add Playwright for a specific project
+npx drupal-claude-collective init --with-playwright --force
 ```
 
 ## What actually gets installed
@@ -140,6 +176,7 @@ npx drupal-claude-collective init --force
 ```
 your-project/
 ├── CLAUDE.md                    # Behavioral rules for agents
+├── .mcp.json                    # MCP server configuration (Task Master by default)
 ├── .claude/
 │   ├── settings.json           # Hook configuration
 │   ├── agents/                 # 15 agent definitions

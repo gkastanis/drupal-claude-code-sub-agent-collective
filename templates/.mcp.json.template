@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "task-master": {
+      "command": "npx",
+      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
+      "env": {},
+      "description": "Task Master AI - Project management and workflow automation (Required for /van commands)",
+      "resourceUsage": {
+        "memory": "~20MB",
+        "cpu": "Low"
+      }
+    }{{#if includePlaywright}},
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "playwright-mcp-server"],
+      "env": {},
+      "description": "Playwright Browser Automation - Visual regression testing and browser automation (High resource usage)",
+      "resourceUsage": {
+        "memory": "~200MB",
+        "cpu": "High"
+      },
+      "warning": "Known issue: May create zombie processes on Linux. Use cleanup scripts if needed."
+    }{{/if}}{{#if includeContext7}},
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {},
+      "description": "Context7 Documentation - Up-to-date library documentation and code examples",
+      "resourceUsage": {
+        "memory": "~30MB",
+        "cpu": "Low"
+      }
+    }{{/if}}
+  },
+  "meta": {
+    "generatedBy": "drupal-claude-collective",
+    "version": "{{version}}",
+    "installedAt": "{{installedAt}}",
+    "profile": "{{profile}}"
+  }
+}
