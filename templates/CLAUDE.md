@@ -191,3 +191,133 @@ Eskil Steenberg:
 ```
 @./docs/drupal-patterns/architecture-principles.md
 ```
+
+---
+
+## Complexity Assessment & Routing
+
+**CRITICAL**: Before executing any task, assess its complexity level and route appropriately.
+
+### Level 1: Simple Configuration/Edits (Direct Execution)
+**Time: 1-2 minutes | Agents: 0**
+
+Execute these tasks directly without agent coordination:
+
+**Examples:**
+- Add field to content type
+- Enable/disable modules
+- Update view configuration
+- Block placement changes
+- Simple CSS/template tweaks
+- Configuration value changes
+- Cache clearing
+- Content type creation (basic)
+
+**Action**: Use Drush commands and file operations directly
+
+**Commands:**
+```bash
+ddev drush field:create node article field_featured --field-type=boolean
+ddev drush en pathauto -y
+ddev drush cex -y
+ddev drush cr
+```
+
+### Level 2: Single Module/Theme Features (2-4 Agents)
+**Time: 10-20 minutes | Agents: 2-4**
+
+**Examples:**
+- Custom block plugin
+- Custom form
+- Custom field formatter/widget
+- View mode creation
+- Theme component
+- Simple migration
+- Custom validation
+
+**Agent Workflow:**
+```
+1. drupal-architect (optional - for complex features)
+2. module-development-agent OR theme-development-agent
+3. security-compliance-agent (validation gate)
+4. functional-testing-agent (if Playwright available)
+```
+
+**Routing Pattern:**
+```
+Deploy drupal-architect if architectural planning needed
+→ Deploy module-development-agent to implement
+→ Deploy security-compliance-agent to validate
+→ Deploy functional-testing-agent if browser testing needed
+```
+
+### Level 3: Multi-Component Systems (5-9 Agents)
+**Time: 45-90 minutes | Agents: 5-9**
+
+**Examples:**
+- FAQ system with categories and voting
+- Member directory with filtering
+- Event management with registration
+- Document library with access control
+- API integration with external systems
+- Complex migration with transformations
+
+**Agent Workflow:**
+```
+1. enhanced-project-manager-agent (Task Master coordination)
+2. drupal-architect (architecture & planning)
+3. research-agent (if research needed)
+4. module-development-agent (custom modules)
+5. theme-development-agent (front-end components)
+6. configuration-management-agent (config export)
+7. security-compliance-agent (security validation)
+8. performance-gate (performance check)
+9. functional-testing-agent (comprehensive testing)
+```
+
+**Routing Pattern:**
+```
+Use enhanced-project-manager-agent to break down into Task Master tasks
+→ Use drupal-architect to design architecture
+→ Deploy implementation agents in parallel where possible
+→ Run all quality gates (security, performance)
+→ Deploy functional-testing-agent for validation
+```
+
+### Level 4: Full Drupal Projects (8-12+ Agents)
+**Time: 3-6 hours | Agents: 8-12+**
+
+**Examples:**
+- Complete site builds from PRD
+- Multi-site architecture
+- Headless Drupal implementation
+- Complex e-commerce platform
+- Enterprise migration
+- Custom distribution
+
+**Agent Workflow** (Phased):
+```
+Phase 1: Planning
+- enhanced-project-manager-agent (break down PRD)
+- research-agent (research requirements)
+- drupal-architect (complete architecture)
+
+Phase 2: Core Implementation
+- content-migration-agent (content model)
+- module-development-agent (core modules)
+- theme-development-agent (base theme)
+- configuration-management-agent (config framework)
+
+Phase 3: Features & Validation
+- module-development-agent (feature modules)
+- theme-development-agent (advanced components)
+- security-compliance-agent (security review)
+- performance-devops-agent (optimization)
+- accessibility-gate (WCAG validation)
+- integration-gate (compatibility check)
+
+Phase 4: Testing & Deployment
+- functional-testing-agent (user journey testing)
+- visual-regression-agent (visual validation)
+- performance-devops-agent (deployment setup)
+```
