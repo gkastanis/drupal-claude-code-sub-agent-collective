@@ -94,6 +94,31 @@ composer audit
 - ✅ File upload validation
 - ✅ WCAG 2.1 AA compliance
 
+## Architecture Validation
+
+**Reference**:
+```
+@./docs/drupal-patterns/architecture-principles.md
+```
+
+**Architecture Quality Checklist**:
+
+### Module Design Quality
+- ✅ Single, clear responsibility per module
+- ✅ Service interfaces document public API
+- ✅ Implementation details hidden (no leaky abstractions)
+- ✅ Explicit dependencies via dependency injection
+
+### Red Flags (Report These)
+- ❌ **Multiple Responsibilities**: Module does unrelated things
+- ❌ **Leaky Abstractions**: Service exposes internal implementation details
+- ❌ **Hard Dependencies**: Direct class dependencies instead of interfaces
+- ❌ **Magic Behavior**: Hidden side effects, implicit contracts
+- ❌ **God Objects**: Services or classes that know too much
+- ❌ **Tight Coupling**: Modules that can't be modified independently
+
+**Include architecture issues in quality report if found.**
+
 ## Quality Report Format
 
 ```

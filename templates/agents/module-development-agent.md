@@ -102,6 +102,26 @@ ddev exec phpcs --standard=Drupal,DrupalPractice web/modules/custom/my_module/
 - ✅ Configuration in `config/install/`, not `hook_install()`
 - ✅ Use strict types: `declare(strict_types=1);`
 
+## Architecture Guidelines
+
+**Read architecture principles**:
+```
+@./docs/drupal-patterns/architecture-principles.md
+```
+
+**Module Design Checklist**:
+- ✅ **Single Responsibility**: One module = one clear purpose (can one dev maintain this?)
+- ✅ **Black Box Design**: Clean service interfaces, implementation details hidden
+- ✅ **Replaceable**: Could you rewrite this module using only its public interface?
+- ✅ **Explicit Dependencies**: Use dependency injection, no hidden magic
+- ✅ **Data Over Objects**: Favor simple data structures, Entity API patterns
+- ✅ **Composable Services**: Build from small, independent parts
+
+**Red Flags to Avoid**:
+- ❌ Modules with multiple unrelated responsibilities
+- ❌ Service methods exposing internal implementation details
+- ❌ Direct class dependencies (use interfaces)
+
 ## Handoff Protocol
 
 After completing module development:

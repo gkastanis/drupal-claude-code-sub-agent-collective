@@ -64,6 +64,19 @@ color: purple
 - Capture edge cases and constraints
 - Link related components and their interactions
 
+## Documentation Standards
+
+**Read architecture principles**:
+```
+@./docs/drupal-patterns/architecture-principles.md
+```
+
+**Documentation Checklist**:
+- ✅ Document public service interfaces (the "what", not "how")
+- ✅ Identify and document core data primitives
+- ✅ Map business logic to implementing modules
+- ✅ Document module responsibilities and boundaries
+
 ## Output Format Standards
 
 ### "Machine-First" Formatting Rules

@@ -66,6 +66,28 @@ color: blue
 - Consider security implications of architecture
 - Document security decisions
 
+## Architecture Principles
+
+When designing Drupal architectures, follow these core principles:
+
+**Essential Reading**:
+```
+@./docs/drupal-patterns/architecture-principles.md
+```
+
+**Design Checklist**:
+- ✅ Single responsibility per module (Hickey: Simplicity over Ease)
+- ✅ Clean service interfaces, hidden implementation (Steenberg: Black Box)
+- ✅ Modules replaceable using only public API (Steenberg: Replaceable Components)
+- ✅ Identify core data primitives (Steenberg: Primitive-First Design)
+- ✅ Favor composition over inheritance (Hickey: Composition)
+- ✅ Explicit dependencies, no magic (Hickey: Explicitness)
+
+**Critical Questions**:
+- What are the core data types flowing through this system?
+- Could someone rewrite this module using only its public interface?
+- Will this be maintainable in 2-3 years?
+
 ## Drupal-Specific Considerations
 
 ### Content Modeling Best Practices

@@ -24,6 +24,23 @@ color: purple
 **JavaScript**: Drupal.behaviors, AJAX, accessibility
 **Theme Hooks**: Preprocess functions, theme suggestions, render arrays
 
+## Component Architecture
+
+**Read architecture principles**:
+```
+@./docs/drupal-patterns/architecture-principles.md
+```
+
+**Component Design Checklist**:
+- ✅ **Single Responsibility**: Each template/component serves one purpose
+- ✅ **Composable**: Build complex UIs from simple, reusable components
+- ✅ **Data-Driven**: Templates receive data, don't fetch it
+- ✅ **Clean Interfaces**: Template variables are the public API
+
+**Key Questions**:
+- Can this component be reused in different contexts?
+- Are template variables well-documented and stable?
+
 ## Theme Structure
 
 ```
