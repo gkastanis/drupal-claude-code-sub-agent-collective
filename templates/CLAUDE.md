@@ -146,7 +146,6 @@ When generating PHP/Drupal code diligently use following rules:
     - Avoid inline JS/CSS.
 7. Place configuration defaults in `config/install/` and commit them.
 8. Do not add fields to the user bundle, unless explicitly told to do so.
-# DXC Drupal specific rules:
 9. When writing a new translation in code, always use as context the name of the module the translation is in.
    The context should be a PHP string, and must not be a constant.
 10. English source strings are used in code. Translations should be put in the .po file(s) in the project wide directory "/translations" with proper msgctxt.
