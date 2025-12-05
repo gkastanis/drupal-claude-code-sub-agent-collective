@@ -167,7 +167,10 @@ field_website: link (validates URLs)
 field_email: email (validates email format)
 ```
 
-**See DRUPAL-LESSONS-LEARNED.md for detailed field creation patterns and Drush commands**
+**For field creation commands & common errors:**
+```
+@./docs/drupal-patterns/LESSONS-LEARNED.md
+```
 
 ### Module Selection Criteria
 1. **Active Maintenance**: Check drupal.org for recent commits

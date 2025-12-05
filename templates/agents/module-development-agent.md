@@ -51,6 +51,13 @@ modules/custom/my_module/
 
 Contains: Block plugins, services, hooks, field plugins, controllers, routing, forms, event subscribers, permissions, configuration schema
 
+**For field creation & Drush commands**, read:
+```
+@./docs/drupal-patterns/LESSONS-LEARNED.md
+```
+
+Contains: Field type→widget mappings, common errors, command templates
+
 **For current Drupal APIs**, use Context7:
 ```bash
 # Official Drupal Core documentation

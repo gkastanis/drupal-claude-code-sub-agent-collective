@@ -216,6 +216,11 @@ $settings['trusted_host_patterns'] = ['^localhost$', '^127\.0\.0\.1$'];
 
 ## Essential Commands
 
+**For field/config command reference:**
+```
+@./docs/drupal-patterns/LESSONS-LEARNED.md
+```
+
 ```bash
 # Configuration management
 drush config:export              # Export all config

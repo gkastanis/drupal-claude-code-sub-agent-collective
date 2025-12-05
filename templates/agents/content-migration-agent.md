@@ -47,6 +47,13 @@ modules/custom/my_migration/
 
 Contains: CSV/JSON/XML migrations, process plugins, field mapping, file imports, dependencies, error handling
 
+**For field creation & Drush commands:**
+```
+@./docs/drupal-patterns/LESSONS-LEARNED.md
+```
+
+Contains: Field type→widget mappings, common errors, command templates
+
 **For current migration docs**, use Context7:
 ```bash
 # Official Drupal Core documentation
