@@ -4,17 +4,22 @@
 
 **Before ANY task, you MUST:**
 
-1. **Check semantic documentation:**
+1. **Check semantic documentation** using the `semantic-docs` skill:
    ```
    docs/semantic/00_BUSINESS_INDEX.md    # Master feature index
    docs/semantic/tech/*.md               # Logic-to-code mappings
    docs/semantic/schemas/*.json          # Entity schemas
    ```
-   If exists: Use Logic IDs (e.g., SSO-L2, CHK-01) to reference implementations
+   Use the **semantic-docs skill** (`.claude/skills/semantic-docs/`) to search efficiently:
+   - `find-feature.sh FLWG` - Get full technical spec for a feature
+   - `find-logic-id.sh AUTH-L2` - Find specific logic implementation
+   - `trace-code.sh HIER-L3` - Trace logic to source code
+
+   Reference implementations using Logic IDs (e.g., AUTH-L2, FLWG-L1)
 
 2. **Assess complexity and route agents:**
    ```
-   @./docs/drupal-patterns/COMPLEXITY-ROUTING.md
+   @./.claude/docs/drupal-patterns/COMPLEXITY-ROUTING.md
    ```
    **DO NOT skip this step.** Wrong routing wastes context or produces incomplete work.
 
@@ -110,4 +115,4 @@ npm install && npm run build  # Compile assets
 - Create modules too complex for one person
 - Hard-code technology dependencies
 
-**Detailed principles:** `@./docs/drupal-patterns/architecture-principles.md`
+**Detailed principles:** `@./.claude/docs/drupal-patterns/architecture-principles.md`

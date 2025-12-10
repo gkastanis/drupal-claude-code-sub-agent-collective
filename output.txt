@@ -1,0 +1,3619 @@
+Project Path: docs
+
+Source Tree:
+
+```
+docs
+├── COMMAND-SYSTEM.md
+├── OVERVIEW.md
+├── README.md
+├── AGENTS.md
+├── INSTALLATION.md
+├── METRICS.md
+├── COMMAND-USAGE.md
+└── HOOKS.md
+
+```
+
+`/home/zorz/sites/drupal-claude-code-sub-agent-collective/docs/COMMAND-SYSTEM.md`:
+
+```md
+# Command System Architecture
+
+This document describes the command parsing, execution, and slash command systems.
+
+## Command System Overview
+
+The collective provides a multi-layer command system:
+
+```mermaid
+graph TB
+    subgraph "User Input"
+        NATURAL[Natural Language]
+        SLASH[Slash Commands]
+        VAN[/van Command]
+    end
+
+    subgraph "Command Processing"
+        PARSER[CollectiveCommandParser]
+        AUTOCOMPLETE[CommandAutocomplete]
+        HELP[CommandHelpSystem]
+    end
+
+    subgraph "Execution"
+        SYSTEM[CommandSystem]
+        HISTORY[CommandHistoryManager]
+        METRICS[Command Metrics]
+    end
+
+    NATURAL --> PARSER
+    SLASH --> PARSER
+    VAN --> PARSER
+
+    PARSER --> SYSTEM
+    PARSER --> AUTOCOMPLETE
+    SYSTEM --> HISTORY
+    SYSTEM --> METRICS
+    PARSER --> HELP
+```
+
+## Command System Components
+
+```mermaid
+classDiagram
+    class CommandSystem {
+        -CommandParser parser
+        -CommandHistoryManager history
+        -CommandAutocomplete autocomplete
+        -CommandHelpSystem help
+        -Object metrics
+        +executeCommand(input, context)
+        +getSuggestions(partial)
+        +getHelp(query)
+        +getMetrics()
+    }
+
+    class CommandParser {
+        +parse(input)
+        +validateCommand(input)
+        +preprocessCommand(input)
+    }
+
+    class CommandAutocomplete {
+        +getSuggestions(partial, context)
+        +clearCache()
+    }
+
+    class CommandHistoryManager {
+        +addCommand(cmd, result, time)
+        +getHistory(limit)
+        +searchHistory(query)
+        +getStatistics()
+    }
+
+    class CommandHelpSystem {
+        +getHelp(query)
+        +getInteractiveHelp(input)
+        +getErrorHelp(error, command)
+    }
+
+    CommandSystem --> CommandParser
+    CommandSystem --> CommandHistoryManager
+    CommandSystem --> CommandAutocomplete
+    CommandSystem --> CommandHelpSystem
+```
+
+## Command Execution Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant System as CommandSystem
+    participant Parser as CommandParser
+    participant History as HistoryManager
+    participant Metrics
+
+    User->>System: executeCommand(input)
+    System->>System: Start timer
+
+    System->>Parser: validate(input)
+    Parser-->>System: Validation result
+
+    alt Invalid command
+        System-->>User: Error response
+    else Valid command
+        System->>Parser: parse(input)
+        Parser-->>System: Parsed result
+        System->>System: Stop timer
+        System->>History: addCommand(...)
+        System->>Metrics: updateMetrics(...)
+        System-->>User: Execution result
+    end
+```
+
+## Van Routing Command
+
+The `/van` command is the primary entry point for collective routing:
+
+```mermaid
+flowchart TD
+    USER[User: /van create module]
+
+    subgraph "Van Processing"
+        LOAD[Load CLAUDE.md]
+        ANALYZE[Analyze Request]
+        ROUTE[Route to Agent]
+    end
+
+    subgraph "Agent Selection"
+        SIMPLE[Level 1: Direct]
+        SINGLE[Level 2: Single Agent]
+        MULTI[Level 3: Multi-Agent]
+        FULL[Level 4: Full Project]
+    end
+
+    USER --> LOAD
+    LOAD --> ANALYZE
+    ANALYZE --> ROUTE
+
+    ROUTE --> SIMPLE
+    ROUTE --> SINGLE
+    ROUTE --> MULTI
+    ROUTE --> FULL
+```
+
+### Routing Decision Matrix
+
+```mermaid
+graph LR
+    subgraph "Request Patterns"
+        R1[build/create/implement]
+        R2[fix/debug/resolve]
+        R3[test/validate]
+        R4[optimize/polish]
+        R5[research/analyze]
+        R6[setup/configure]
+    end
+
+    subgraph "Agent Routes"
+        A1[component-implementation-agent]
+        A2[feature-implementation-agent]
+        A3[testing-implementation-agent]
+        A4[polish-implementation-agent]
+        A5[research-agent]
+        A6[infrastructure-implementation-agent]
+    end
+
+    R1 --> A1
+    R1 --> A2
+    R2 --> A2
+    R3 --> A3
+    R4 --> A4
+    R5 --> A5
+    R6 --> A6
+```
+
+## TaskMaster Commands
+
+The `/tm` command namespace provides TaskMaster integration:
+
+```mermaid
+graph TB
+    TM[/tm]
+
+    subgraph "Project Setup"
+        INIT[/tm/init]
+        PARSE[/tm/parse-prd]
+    end
+
+    subgraph "Task Management"
+        LIST[/tm/list]
+        SHOW[/tm/show]
+        NEXT[/tm/next]
+        STATUS[/tm/set-status]
+    end
+
+    subgraph "Task Operations"
+        ADD[/tm/add-task]
+        EXPAND[/tm/expand]
+        UPDATE[/tm/update]
+    end
+
+    subgraph "Analysis"
+        ANALYZE[/tm/analyze-complexity]
+        REPORT[/tm/complexity-report]
+    end
+
+    TM --> INIT
+    TM --> PARSE
+    TM --> LIST
+    TM --> SHOW
+    TM --> NEXT
+    TM --> STATUS
+    TM --> ADD
+    TM --> EXPAND
+    TM --> UPDATE
+    TM --> ANALYZE
+    TM --> REPORT
+```
+
+## Command Autocomplete
+
+```mermaid
+flowchart LR
+    INPUT[Partial Input]
+
+    subgraph "Context"
+        RECENT[Recent Commands]
+        STATE[System State]
+        AVAILABLE[Available Commands]
+    end
+
+    SUGGESTIONS[Ranked Suggestions]
+
+    INPUT --> RECENT
+    INPUT --> STATE
+    INPUT --> AVAILABLE
+
+    RECENT --> SUGGESTIONS
+    STATE --> SUGGESTIONS
+    AVAILABLE --> SUGGESTIONS
+```
+
+### Suggestion Ranking
+
+```mermaid
+graph TD
+    INPUT[User Types: /tm l]
+
+    MATCH[Pattern Match]
+
+    S1[/tm/list - High: exact prefix]
+    S2[/tm/learn - Medium: prefix match]
+    S3[/tm/list-tasks - Low: substring]
+
+    RANK[Rank by frequency]
+    RESULT[Ordered Suggestions]
+
+    INPUT --> MATCH
+    MATCH --> S1
+    MATCH --> S2
+    MATCH --> S3
+    S1 --> RANK
+    S2 --> RANK
+    S3 --> RANK
+    RANK --> RESULT
+```
+
+## Command History
+
+```mermaid
+graph LR
+    subgraph "Storage"
+        FILE[command-history.json]
+    end
+
+    subgraph "Entry Structure"
+        CMD[command]
+        RESULT[result]
+        TIME[executionTime]
+        STAMP[timestamp]
+    end
+
+    subgraph "Operations"
+        ADD[addCommand]
+        SEARCH[searchHistory]
+        STATS[getStatistics]
+        CLEAR[clearOldHistory]
+    end
+
+    ADD --> FILE
+    SEARCH --> FILE
+    STATS --> FILE
+    CLEAR --> FILE
+
+    FILE --> CMD
+    FILE --> RESULT
+    FILE --> TIME
+    FILE --> STAMP
+```
+
+## Command Metrics
+
+```mermaid
+graph TB
+    subgraph "Collected Metrics"
+        M1[totalCommands]
+        M2[successfulCommands]
+        M3[failedCommands]
+        M4[averageExecutionTime]
+        M5[slowCommands]
+    end
+
+    subgraph "Calculated"
+        C1[successRate]
+        C2[performanceThreshold]
+        C3[naturalLanguageUsage]
+    end
+
+    M1 --> C1
+    M2 --> C1
+    M4 --> C2
+    M5 --> C2
+```
+
+## Command Preprocessing
+
+Before execution, commands are preprocessed:
+
+```mermaid
+flowchart LR
+    RAW[Raw Input]
+
+    subgraph "Processing Steps"
+        TRIM[Trim whitespace]
+        NORMALIZE[Normalize spaces]
+        CORRECT[Fix typos]
+    end
+
+    CLEAN[Clean Command]
+
+    RAW --> TRIM
+    TRIM --> NORMALIZE
+    NORMALIZE --> CORRECT
+    CORRECT --> CLEAN
+```
+
+### Typo Corrections
+
+| Typo | Correction |
+|------|------------|
+| `/collecitve` | `/collective` |
+| `/agnet` | `/agent` |
+| `/gaet` | `/gate` |
+| `stauts` | `status` |
+| `lsit` | `list` |
+
+## Command Validation
+
+```mermaid
+flowchart TD
+    CMD[Command Input]
+
+    CHECK1{Non-empty string?}
+    CHECK2{Has content?}
+    CHECK3{Safe patterns?}
+
+    VALID[Valid]
+    INVALID[Invalid + Error]
+
+    CMD --> CHECK1
+    CHECK1 --> |No| INVALID
+    CHECK1 --> |Yes| CHECK2
+    CHECK2 --> |No| INVALID
+    CHECK2 --> |Yes| CHECK3
+    CHECK3 --> |No| INVALID
+    CHECK3 --> |Yes| VALID
+```
+
+### Dangerous Pattern Detection
+
+```mermaid
+graph TD
+    CMD[Command]
+
+    subgraph "Blocked Patterns"
+        P1[rm -rf]
+        P2[sudo rm]
+        P3[../../..]
+        P4[system\(]
+        P5[exec\(]
+    end
+
+    CHECK{Contains pattern?}
+    BLOCK[Block execution]
+    ALLOW[Allow execution]
+
+    CMD --> CHECK
+    P1 --> CHECK
+    P2 --> CHECK
+    P3 --> CHECK
+    P4 --> CHECK
+    P5 --> CHECK
+
+    CHECK --> |Yes| BLOCK
+    CHECK --> |No| ALLOW
+```
+
+## Batch Command Execution
+
+```mermaid
+sequenceDiagram
+    participant Caller
+    participant System as CommandSystem
+    participant Executor
+
+    Caller->>System: executeBatch(commands, options)
+
+    alt Sequential (maxConcurrency=1)
+        loop For each command
+            System->>Executor: executeCommand(cmd)
+            Executor-->>System: Result
+            alt Failed && !continueOnError
+                System-->>Caller: Partial results
+            end
+        end
+    else Parallel
+        Note over System: Split into chunks
+        loop For each chunk
+            System->>Executor: Promise.allSettled(chunk)
+            Executor-->>System: Chunk results
+        end
+    end
+
+    System-->>Caller: All results
+```
+
+## Help System
+
+```mermaid
+graph TB
+    QUERY[User Query]
+
+    subgraph "Help Types"
+        GENERAL[General Help]
+        SPECIFIC[Command Help]
+        ERROR[Error Help]
+        INTERACTIVE[Interactive Help]
+    end
+
+    subgraph "Output"
+        DOC[Documentation]
+        EXAMPLES[Examples]
+        SUGGEST[Suggestions]
+    end
+
+    QUERY --> GENERAL
+    QUERY --> SPECIFIC
+    QUERY --> ERROR
+    QUERY --> INTERACTIVE
+
+    GENERAL --> DOC
+    SPECIFIC --> EXAMPLES
+    ERROR --> SUGGEST
+    INTERACTIVE --> DOC
+    INTERACTIVE --> SUGGEST
+```
+
+## Command Export
+
+```mermaid
+graph LR
+    DATA[Command Data]
+
+    subgraph "Formats"
+        JSON[JSON Export]
+        CSV[CSV Export]
+        MD[Markdown Export]
+    end
+
+    DATA --> JSON
+    DATA --> CSV
+    DATA --> MD
+```
+
+### Export Contents
+
+| Format | Includes |
+|--------|----------|
+| **JSON** | Full metrics, history, system state |
+| **CSV** | Command history (timestamp, command, result) |
+| **Markdown** | Metrics summary, recent commands table |
+
+## Slash Command Structure
+
+Each slash command is defined in a Markdown file:
+
+```markdown
+---
+name: command-name
+description: What the command does
+arguments: Optional arguments pattern
+---
+
+# Command Title
+
+[Command instructions and steps]
+```
+
+### Command Directory Structure
+
+```
+.claude/commands/
+├── van.md                    # Main routing command
+├── autocompact.md            # Context management
+├── reset-handoff.md          # Reset handoff state
+├── continue-handoff.md       # Continue handoff chain
+└── tm/                       # TaskMaster namespace
+    ├── init/
+    │   └── init-project.md
+    ├── list/
+    │   ├── list-tasks.md
+    │   └── list-tasks-with-subtasks.md
+    ├── show/
+    │   └── show-task.md
+    ├── set-status/
+    │   ├── to-done.md
+    │   ├── to-in-progress.md
+    │   └── to-pending.md
+    └── ...
+```
+
+## Data Flow
+
+```mermaid
+flowchart TD
+    subgraph "Input Layer"
+        USER[User Input]
+        SLASH[Slash Command]
+        NATURAL[Natural Language]
+    end
+
+    subgraph "Processing Layer"
+        PARSE[Parser]
+        VALIDATE[Validator]
+        PREPROCESS[Preprocessor]
+    end
+
+    subgraph "Execution Layer"
+        EXECUTE[Executor]
+        ROUTE[Router]
+    end
+
+    subgraph "Output Layer"
+        HISTORY[History]
+        METRICS[Metrics]
+        RESULT[Result]
+    end
+
+    USER --> SLASH
+    USER --> NATURAL
+
+    SLASH --> PARSE
+    NATURAL --> PARSE
+
+    PARSE --> VALIDATE
+    VALIDATE --> PREPROCESS
+    PREPROCESS --> EXECUTE
+
+    EXECUTE --> ROUTE
+    ROUTE --> RESULT
+
+    EXECUTE --> HISTORY
+    EXECUTE --> METRICS
+```
+
+## System Maintenance
+
+```mermaid
+sequenceDiagram
+    participant System
+    participant History
+    participant Cache
+    participant Metrics
+
+    Note over System: Maintenance Cycle
+    System->>History: clearOldHistory(30 days)
+    History-->>System: Entries removed
+
+    System->>Cache: clearCache()
+    Cache-->>System: Cache cleared
+
+    System->>Metrics: Trim slowCommands
+    Metrics-->>System: Metrics trimmed
+
+    System->>System: Emit maintenance:complete
+```
+
+## See Also
+
+- [OVERVIEW.md](./OVERVIEW.md) - System architecture overview
+- [AGENTS.md](./AGENTS.md) - Agent routing via commands
+- [HOOKS.md](./HOOKS.md) - Command enforcement hooks
+
+```
+
+`/home/zorz/sites/drupal-claude-code-sub-agent-collective/docs/OVERVIEW.md`:
+
+```md
+# Drupal Claude Code Sub-Agent Collective - Architecture Overview
+
+This document provides a high-level overview of the Drupal Claude Code Sub-Agent Collective architecture, its components, and how they interconnect.
+
+## System Purpose
+
+The Drupal Claude Code Sub-Agent Collective is an NPX-installable framework that transforms Claude Code into a coordinated multi-agent development system specialized for Drupal 10/11 projects. It enforces:
+
+- **Hub-and-Spoke Coordination**: Central routing through the Van command
+- **Test-Driven Development**: Validated handoffs between agents
+- **Drupal Best Practices**: Coding standards, security, and performance validation
+- **Research Integration**: Context7 and TaskMaster for informed development
+
+## High-Level Architecture
+
+```mermaid
+graph TB
+    subgraph "User Interface"
+        USER[User Request]
+        VAN["/van Command"]
+    end
+
+    subgraph "Behavioral Operating System"
+        CLAUDE_MD[CLAUDE.md<br/>Behavioral Rules]
+        DECISION[DECISION.md<br/>Auto-Delegation]
+    end
+
+    subgraph "Core Components"
+        INSTALLER[CollectiveInstaller<br/>NPX Installation]
+        REGISTRY[AgentRegistry<br/>Agent Lifecycle]
+        METRICS[MetricsCollector<br/>Research Validation]
+    end
+
+    subgraph "Agent Collective"
+        ROUTING[routing-agent<br/>Hub Controller]
+        IMPL[Implementation<br/>Agents]
+        QUALITY[Quality Gate<br/>Agents]
+        RESEARCH[research-agent<br/>Context7]
+    end
+
+    subgraph "Enforcement Layer"
+        HOOKS[Hook System<br/>6 Shell Scripts]
+        COMMANDS[Command System<br/>Slash Commands]
+    end
+
+    subgraph "External Integrations"
+        TASKMASTER[TaskMaster<br/>MCP Server]
+        CONTEXT7[Context7<br/>Documentation]
+        PLAYWRIGHT[Playwright<br/>Testing]
+    end
+
+    USER --> VAN
+    VAN --> CLAUDE_MD
+    CLAUDE_MD --> DECISION
+    DECISION --> ROUTING
+
+    INSTALLER --> REGISTRY
+    INSTALLER --> HOOKS
+    INSTALLER --> COMMANDS
+
+    ROUTING --> IMPL
+    ROUTING --> QUALITY
+    ROUTING --> RESEARCH
+
+    HOOKS --> METRICS
+
+    RESEARCH --> CONTEXT7
+    ROUTING --> TASKMASTER
+    QUALITY --> PLAYWRIGHT
+```
+
+## Core Architectural Principles
+
+### 1. Hub-and-Spoke Pattern
+
+All agent communication flows through the central hub (Van routing command). Agents do not communicate peer-to-peer.
+
+```mermaid
+flowchart LR
+    subgraph "Hub"
+        VAN[Van Router]
+    end
+
+    subgraph "Spokes"
+        A1[drupal-architect]
+        A2[module-development-agent]
+        A3[theme-development-agent]
+        A4[security-compliance-agent]
+        A5[research-agent]
+    end
+
+    VAN <--> A1
+    VAN <--> A2
+    VAN <--> A3
+    VAN <--> A4
+    VAN <--> A5
+```
+
+### 2. Layered Architecture
+
+```mermaid
+graph TB
+    subgraph "Layer 4: User Interface"
+        L4[Slash Commands & Van Router]
+    end
+
+    subgraph "Layer 3: Behavioral Control"
+        L3[CLAUDE.md Directives & DECISION.md Logic]
+    end
+
+    subgraph "Layer 2: Agent Orchestration"
+        L2[Agent Registry & Lifecycle Management]
+    end
+
+    subgraph "Layer 1: Core Infrastructure"
+        L1[Installer, Hooks, Metrics Collection]
+    end
+
+    subgraph "Layer 0: External Services"
+        L0[TaskMaster MCP, Context7, Playwright]
+    end
+
+    L4 --> L3
+    L3 --> L2
+    L2 --> L1
+    L1 --> L0
+```
+
+## Directory Structure
+
+```
+drupal-claude-code-sub-agent-collective/
+├── bin/                           # CLI Entry Points
+│   └── claude-code-collective.js  # NPX Command Handler
+│
+├── lib/                           # Core Library
+│   ├── index.js                   # Main Entry Point
+│   ├── installer.js               # CollectiveInstaller Class
+│   ├── validator.js               # Installation Validator
+│   ├── AgentRegistry.js           # Agent Lifecycle Manager
+│   ├── AgentSpawner.js            # Dynamic Agent Creation
+│   ├── AgentTemplateSystem.js     # Agent Template Processing
+│   ├── command-system.js          # Command Execution Engine
+│   ├── command-parser.js          # Natural Language Parsing
+│   ├── merge-strategies.js        # Config Conflict Resolution
+│   ├── mcp-config-manager.js      # MCP Server Configuration
+│   └── metrics/                   # Research Metrics
+│       ├── MetricsCollector.js    # Base Collector
+│       ├── JITLoadingMetrics.js   # H1: Context Loading
+│       ├── HubSpokeMetrics.js     # H2: Coordination
+│       └── TDDHandoffMetrics.js   # H3: Handoff Quality
+│
+├── templates/                     # Installation Templates
+│   ├── CLAUDE.md                  # Behavioral OS Template
+│   ├── .claude/                   # Claude Configuration
+│   │   ├── agents/                # Agent Definitions (15+)
+│   │   ├── hooks/                 # Enforcement Scripts (6)
+│   │   └── commands/              # Slash Commands
+│   ├── .claude-collective/        # Collective Framework
+│   │   ├── tests/                 # Test Contracts
+│   │   └── metrics/               # Metrics Storage
+│   └── .taskmaster/               # TaskMaster Config
+│
+├── scripts/                       # Testing & Utilities
+└── package.json                   # NPM Package Definition
+```
+
+## Key Components
+
+### 1. Installation System
+
+The `CollectiveInstaller` handles project setup:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant NPX as npx drupal-claude-collective
+    participant Installer as CollectiveInstaller
+    participant FileMapper as FileMapping
+    participant MCP as MCPConfigManager
+
+    User->>NPX: init [options]
+    NPX->>Installer: install()
+    Installer->>Installer: checkExistingInstallation()
+    Installer->>Installer: createDirectories()
+    Installer->>Installer: setupTaskMaster()
+    Installer->>FileMapper: getFilteredMapping()
+    FileMapper-->>Installer: Template Mappings
+    Installer->>Installer: installTemplates()
+    Installer->>MCP: generateConfig()
+    MCP-->>Installer: .mcp.json
+    Installer->>Installer: setupHooks()
+    Installer->>Installer: installAgents()
+    Installer->>Installer: validateInstallation()
+    Installer-->>User: Installation Complete
+```
+
+### 2. Agent Registry
+
+The `AgentRegistry` manages agent lifecycle:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Registered: register()
+    Registered --> Active: initialize
+    Active --> Working: invoked
+    Working --> Active: completed
+    Active --> Warning: health issues
+    Warning --> Active: resolved
+    Active --> Inactive: timeout
+    Inactive --> Active: reactivated
+    Active --> Unregistered: unregister()
+    Unregistered --> [*]
+```
+
+### 3. Metrics Collection
+
+Research validation through three hypothesis collectors:
+
+```mermaid
+graph LR
+    subgraph "H1: JIT Context Loading"
+        JIT[JITLoadingMetrics]
+        JIT --> |context_size| M1[Context Reduction]
+        JIT --> |load_time| M2[Load Efficiency]
+    end
+
+    subgraph "H2: Hub-Spoke Coordination"
+        HUB[HubSpokeMetrics]
+        HUB --> |routing_compliance| M3[Routing Accuracy]
+        HUB --> |peer_violations| M4[No P2P Comms]
+    end
+
+    subgraph "H3: TDD Handoffs"
+        TDD[TDDHandoffMetrics]
+        TDD --> |success_rate| M5[Handoff Success]
+        TDD --> |contract_coverage| M6[Validation Coverage]
+    end
+
+    M1 --> AGGREGATE[Aggregated Report]
+    M2 --> AGGREGATE
+    M3 --> AGGREGATE
+    M4 --> AGGREGATE
+    M5 --> AGGREGATE
+    M6 --> AGGREGATE
+```
+
+## Request Flow
+
+A typical development request flows through the system:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Van as /van Command
+    participant Claude as CLAUDE.md
+    participant Decision as DECISION.md
+    participant Agent as Selected Agent
+    participant Hook as Hooks System
+    participant Gate as Quality Gate
+
+    User->>Van: "Create custom Drupal module"
+    Van->>Claude: Load behavioral rules
+    Claude->>Decision: Route request
+    Decision->>Agent: Deploy drupal-architect
+    Agent->>Agent: Design architecture
+    Agent->>Hook: Signal completion
+    Hook->>Hook: TDD Validation
+    Hook->>Decision: Handoff to next agent
+    Decision->>Agent: Deploy module-development-agent
+    Agent->>Agent: Implement module
+    Agent->>Hook: Signal completion
+    Hook->>Gate: Quality validation
+    Gate->>Gate: Security, Standards, Performance
+    Gate-->>User: Delivery Complete
+```
+
+## Data Flow
+
+### Configuration Data
+
+```mermaid
+flowchart TD
+    subgraph "Source: Templates"
+        T1[templates/CLAUDE.md]
+        T2[templates/.claude/agents/]
+        T3[templates/.claude/hooks/]
+        T4[templates/.taskmaster/]
+    end
+
+    subgraph "Transform: Installer"
+        INSTALL[CollectiveInstaller]
+        MERGE[MergeStrategies]
+        CONFIG[MCPConfigManager]
+    end
+
+    subgraph "Destination: Project"
+        D1[CLAUDE.md]
+        D2[.claude/agents/]
+        D3[.claude/hooks/]
+        D4[.taskmaster/]
+        D5[.mcp.json]
+    end
+
+    T1 --> INSTALL
+    T2 --> INSTALL
+    T3 --> INSTALL
+    T4 --> INSTALL
+
+    INSTALL --> MERGE
+    MERGE --> D1
+    MERGE --> D2
+    MERGE --> D3
+    MERGE --> D4
+
+    INSTALL --> CONFIG
+    CONFIG --> D5
+```
+
+### Runtime Data
+
+```mermaid
+flowchart LR
+    subgraph "Input"
+        USER[User Request]
+        CONTEXT[Project Context]
+    end
+
+    subgraph "Processing"
+        PARSE[Command Parser]
+        ROUTE[Van Router]
+        AGENT[Agent Execution]
+    end
+
+    subgraph "Output"
+        CODE[Generated Code]
+        METRICS[Metrics Data]
+        HISTORY[Command History]
+    end
+
+    USER --> PARSE
+    CONTEXT --> ROUTE
+    PARSE --> ROUTE
+    ROUTE --> AGENT
+    AGENT --> CODE
+    AGENT --> METRICS
+    PARSE --> HISTORY
+```
+
+## Integration Points
+
+### External Services
+
+| Service | Purpose | Connection |
+|---------|---------|------------|
+| **TaskMaster** | Task coordination | MCP Server via .mcp.json |
+| **Context7** | Drupal documentation | MCP Server via .mcp.json |
+| **Playwright** | Browser testing | MCP Server (optional) |
+
+### Claude Code Integration
+
+```mermaid
+graph TB
+    subgraph "Claude Code"
+        CC[Claude Code CLI]
+        SETTINGS[.claude/settings.json]
+        AGENTS[.claude/agents/]
+        HOOKS[.claude/hooks/]
+        COMMANDS[.claude/commands/]
+    end
+
+    subgraph "Collective"
+        COLLECTIVE[drupal-claude-collective]
+    end
+
+    COLLECTIVE --> |installs| SETTINGS
+    COLLECTIVE --> |installs| AGENTS
+    COLLECTIVE --> |installs| HOOKS
+    COLLECTIVE --> |installs| COMMANDS
+
+    CC --> |reads| SETTINGS
+    CC --> |uses| AGENTS
+    CC --> |triggers| HOOKS
+    CC --> |executes| COMMANDS
+```
+
+## See Also
+
+- [AGENTS.md](./AGENTS.md) - Detailed agent system documentation
+- [HOOKS.md](./HOOKS.md) - Hook system and enforcement layer
+- [INSTALLATION.md](./INSTALLATION.md) - Installation process and data flow
+- [COMMAND-SYSTEM.md](./COMMAND-SYSTEM.md) - Command parsing and execution
+- [METRICS.md](./METRICS.md) - Research metrics and hypothesis validation
+
+```
+
+`/home/zorz/sites/drupal-claude-code-sub-agent-collective/docs/README.md`:
+
+```md
+# Drupal Claude Code Sub-Agent Collective Documentation
+
+This folder contains high-level architecture documentation for the Drupal Claude Code Sub-Agent Collective.
+
+## Documentation Index
+
+| Document | Description |
+|----------|-------------|
+| [OVERVIEW.md](./OVERVIEW.md) | High-level system architecture, component overview, and data flow |
+| [AGENTS.md](./AGENTS.md) | Agent system, lifecycle management, and coordination patterns |
+| [HOOKS.md](./HOOKS.md) | Hook system, TDD validation, and enforcement layer |
+| [INSTALLATION.md](./INSTALLATION.md) | Installation process, file mapping, and configuration |
+| [COMMAND-SYSTEM.md](./COMMAND-SYSTEM.md) | Command parsing, slash commands, and /van routing |
+| [METRICS.md](./METRICS.md) | Research metrics collection and hypothesis validation |
+
+## Architecture at a Glance
+
+```mermaid
+graph TB
+    subgraph "User Layer"
+        USER[User Request]
+        VAN[/van Command]
+    end
+
+    subgraph "Behavioral Layer"
+        CLAUDE[CLAUDE.md]
+        DECISION[DECISION.md]
+    end
+
+    subgraph "Agent Layer"
+        ROUTING[routing-agent]
+        DRUPAL[Drupal Agents]
+        QUALITY[Quality Agents]
+    end
+
+    subgraph "Enforcement Layer"
+        HOOKS[Hook System]
+        METRICS[Metrics Collection]
+    end
+
+    subgraph "External Layer"
+        TM[TaskMaster MCP]
+        C7[Context7 MCP]
+    end
+
+    USER --> VAN
+    VAN --> CLAUDE
+    CLAUDE --> DECISION
+    DECISION --> ROUTING
+    ROUTING --> DRUPAL
+    ROUTING --> QUALITY
+    DRUPAL --> HOOKS
+    QUALITY --> HOOKS
+    HOOKS --> METRICS
+    ROUTING --> TM
+    ROUTING --> C7
+```
+
+## Quick Links
+
+### For Users
+- **Getting Started**: See [INSTALLATION.md](./INSTALLATION.md) for installation instructions
+- **Using Commands**: See [COMMAND-SYSTEM.md](./COMMAND-SYSTEM.md) for available commands
+- **Understanding Agents**: See [AGENTS.md](./AGENTS.md) for agent capabilities
+
+### For Developers
+- **System Architecture**: See [OVERVIEW.md](./OVERVIEW.md) for component diagrams
+- **Hook Development**: See [HOOKS.md](./HOOKS.md) for hook system details
+- **Metrics & Research**: See [METRICS.md](./METRICS.md) for hypothesis validation
+
+## Key Concepts
+
+### Hub-and-Spoke Pattern
+All agent communication flows through the central hub (Van routing command). Agents do not communicate peer-to-peer.
+
+### TDD Handoffs
+Every agent handoff is validated through test-driven contracts before routing to the next agent.
+
+### JIT Context Loading
+Behavioral rules are loaded on-demand rather than pre-loaded, reducing context overhead.
+
+### Drupal Specialization
+All agents are specialized for Drupal 10/11 development with built-in coding standards, security validation, and best practices.
+
+## Diagram Legend
+
+The documentation uses Mermaid diagrams throughout:
+
+| Diagram Type | Used For |
+|--------------|----------|
+| `graph TB/LR` | Component relationships, data flow |
+| `flowchart` | Decision trees, processes |
+| `sequenceDiagram` | Temporal flows, API calls |
+| `classDiagram` | Object structures, relationships |
+| `stateDiagram` | State machines, lifecycle |
+
+## Version
+
+Documentation version: 1.5.2
+Last updated: 2024
+
+## Contributing
+
+When updating documentation:
+1. Keep Mermaid diagrams simple and focused
+2. Use consistent naming across documents
+3. Cross-reference related sections with links
+4. Include both conceptual and technical details
+
+```
+
+`/home/zorz/sites/drupal-claude-code-sub-agent-collective/docs/AGENTS.md`:
+
+```md
+# Agent System Architecture
+
+This document describes the agent system, including agent types, lifecycle management, and coordination patterns.
+
+## Agent Overview
+
+The collective includes 15 specialized agents organized into functional categories:
+
+```mermaid
+graph TB
+    subgraph "Coordination (1)"
+        ROUTING[routing-agent<br/>Hub Controller]
+    end
+
+    subgraph "Core Drupal (5)"
+        ARCH[drupal-architect]
+        MOD[module-development-agent]
+        THEME[theme-development-agent]
+        CONFIG[configuration-management-agent]
+        MIGRATE[content-migration-agent]
+    end
+
+    subgraph "Quality & Security (2)"
+        SECURITY[security-compliance-agent]
+        PERF[performance-devops-agent]
+    end
+
+    subgraph "Testing (3)"
+        FUNC[functional-testing-agent]
+        UNIT[unit-testing-agent]
+        VIS[visual-regression-agent]
+    end
+
+    subgraph "Project Management (4)"
+        PM[enhanced-project-manager-agent]
+        RESEARCH[research-agent]
+        WORKFLOW[workflow-agent]
+        SEMANTIC[semantic-architect-agent]
+    end
+
+    ROUTING --> ARCH
+    ROUTING --> MOD
+    ROUTING --> THEME
+    ROUTING --> CONFIG
+    ROUTING --> MIGRATE
+    ROUTING --> SECURITY
+    ROUTING --> PERF
+    ROUTING --> FUNC
+    ROUTING --> UNIT
+    ROUTING --> VIS
+    ROUTING --> PM
+    ROUTING --> RESEARCH
+    ROUTING --> WORKFLOW
+    ROUTING --> SEMANTIC
+```
+
+## Agent Categories
+
+### 1. Coordination Agent
+
+| Agent | Purpose | Key Capabilities |
+|-------|---------|------------------|
+| **routing-agent** | Central hub for all request routing | Request analysis, agent selection, coordination |
+
+### 2. Core Drupal Agents
+
+| Agent | Purpose | Key Capabilities |
+|-------|---------|------------------|
+| **drupal-architect** | Site architecture design | Content modeling, module selection, system design |
+| **module-development-agent** | Custom module creation | Drupal 10/11 APIs, dependency injection, Entity API |
+| **theme-development-agent** | Theme development | Twig templates, SCSS, JavaScript behaviors |
+| **configuration-management-agent** | Config export/import | Update hooks, deployment configuration |
+| **content-migration-agent** | Data migration | Migration plugins, content transformation |
+
+### 3. Quality & Security Agents
+
+| Agent | Purpose | Key Capabilities |
+|-------|---------|------------------|
+| **security-compliance-agent** | Consolidated quality validation | Standards, security, performance, accessibility |
+| **performance-devops-agent** | Caching & deployment | Performance optimization, CI/CD setup |
+
+### 4. Testing Agents
+
+| Agent | Purpose | Key Capabilities |
+|-------|---------|------------------|
+| **functional-testing-agent** | Browser automation | Playwright testing, user journey validation |
+| **unit-testing-agent** | PHPUnit testing | Drupal test base, kernel tests |
+| **visual-regression-agent** | Screenshot comparison | Visual diff testing |
+
+### 5. Project Management Agents
+
+| Agent | Purpose | Key Capabilities |
+|-------|---------|------------------|
+| **enhanced-project-manager-agent** | TaskMaster coordination | Task breakdown, dependency management |
+| **research-agent** | Technical research | Context7 integration, best practices |
+| **workflow-agent** | Complex orchestration | Multi-agent workflows |
+| **semantic-architect-agent** | Documentation mapping | Knowledge graph, code-business logic mapping |
+
+## Agent Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Installed: Installation
+    Installed --> Registered: AgentRegistry.register()
+    Registered --> Idle: Initialization
+    Idle --> Selected: Van routing
+    Selected --> Active: Task assignment
+    Active --> Executing: Begin work
+    Executing --> Validating: Work complete
+    Validating --> HandingOff: TDD passed
+    Validating --> Executing: TDD failed (retry)
+    HandingOff --> Idle: Handoff complete
+
+    Active --> Error: Exception
+    Error --> Idle: Recovery
+    Error --> Disabled: Max retries
+    Disabled --> [*]
+```
+
+## Agent Registry
+
+The `AgentRegistry` class manages all agent lifecycle:
+
+```mermaid
+classDiagram
+    class AgentRegistry {
+        -Map agents
+        -Array activityLog
+        -Object statistics
+        +initialize()
+        +register(agentInfo)
+        +unregister(agentId)
+        +query(criteria)
+        +getAgent(agentId)
+        +updateStatus(agentId, status)
+        +updateActivity(agentId, data)
+        +checkHealth(agentId)
+        +getStatistics()
+    }
+
+    class AgentInfo {
+        +String id
+        +String name
+        +String template
+        +String path
+        +Object metadata
+        +String status
+        +Array statusHistory
+        +Object activity
+        +Object performance
+        +Object health
+    }
+
+    AgentRegistry "1" --> "*" AgentInfo : manages
+```
+
+### Registry Operations
+
+```mermaid
+sequenceDiagram
+    participant System
+    participant Registry as AgentRegistry
+    participant Agent
+    participant Storage
+
+    Note over System,Storage: Registration Flow
+    System->>Registry: register(agentInfo)
+    Registry->>Registry: validateAgentInfo()
+    Registry->>Agent: Create entry
+    Registry->>Storage: saveRegistry()
+    Registry-->>System: Registration result
+
+    Note over System,Storage: Query Flow
+    System->>Registry: query(criteria)
+    Registry->>Registry: Filter agents
+    Registry-->>System: Matching agents
+
+    Note over System,Storage: Health Check Flow
+    System->>Registry: checkHealth(agentId)
+    Registry->>Agent: Validate file exists
+    Registry->>Agent: Check performance
+    Registry->>Agent: Update health status
+    Registry-->>System: Health result
+```
+
+## Agent Communication
+
+### Hub-and-Spoke Pattern
+
+All communication flows through the central hub (routing-agent):
+
+```mermaid
+flowchart TB
+    subgraph "Incoming"
+        REQ[User Request]
+    end
+
+    subgraph "Hub"
+        VAN[/van Command<br/>routing-agent]
+    end
+
+    subgraph "Outgoing"
+        A1[Agent 1]
+        A2[Agent 2]
+        A3[Agent 3]
+    end
+
+    subgraph "Return"
+        RES[Response]
+    end
+
+    REQ --> VAN
+    VAN --> A1
+    VAN --> A2
+    VAN --> A3
+    A1 --> VAN
+    A2 --> VAN
+    A3 --> VAN
+    VAN --> RES
+
+    style VAN fill:#f9f,stroke:#333,stroke-width:4px
+```
+
+### Handoff Protocol
+
+```mermaid
+sequenceDiagram
+    participant Source as Source Agent
+    participant Hook as Hook System
+    participant Hub as routing-agent
+    participant Target as Target Agent
+
+    Source->>Source: Complete work
+    Source->>Hook: Signal handoff
+    Hook->>Hook: TDD Validation
+
+    alt Validation Passed
+        Hook->>Hub: Handoff approved
+        Hub->>Target: Route to next agent
+        Target->>Target: Continue workflow
+    else Validation Failed
+        Hook->>Source: Retry required
+        Source->>Source: Fix issues
+        Source->>Hook: Re-signal handoff
+    end
+```
+
+## Agent Definition Structure
+
+Each agent is defined in a Markdown file with YAML frontmatter:
+
+```markdown
+---
+name: module-development-agent
+description: Creates custom Drupal modules following best practices
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+capabilities:
+  - Drupal 10/11 module development
+  - Dependency injection patterns
+  - Entity API usage
+  - Service registration
+---
+
+# Module Development Agent
+
+## Purpose
+[Agent description and responsibilities]
+
+## Workflow
+[Step-by-step process]
+
+## Quality Standards
+[Requirements for completion]
+
+## Handoff Template
+[Format for handoff messages]
+```
+
+## Agent Selection Matrix
+
+The routing-agent uses this matrix for agent selection:
+
+```mermaid
+graph TD
+    REQ[Request Analysis]
+
+    REQ --> |Architecture needed| ARCH[drupal-architect]
+    REQ --> |Module work| MOD[module-development-agent]
+    REQ --> |Theme work| THEME[theme-development-agent]
+    REQ --> |Config changes| CONFIG[configuration-management-agent]
+    REQ --> |Migration| MIGRATE[content-migration-agent]
+    REQ --> |Security review| SEC[security-compliance-agent]
+    REQ --> |Performance| PERF[performance-devops-agent]
+    REQ --> |Testing| TEST{Test Type}
+    REQ --> |Research| RESEARCH[research-agent]
+    REQ --> |Complex project| PM[enhanced-project-manager-agent]
+
+    TEST --> |Functional| FUNC[functional-testing-agent]
+    TEST --> |Unit| UNIT[unit-testing-agent]
+    TEST --> |Visual| VIS[visual-regression-agent]
+```
+
+## Complexity-Based Routing
+
+| Level | Description | Agents Used | Example |
+|-------|-------------|-------------|---------|
+| **1** | Simple config/edits | 0 (direct execution) | Add field, enable module |
+| **2** | Single feature | 2-4 | Custom block, form |
+| **3** | Multi-component | 5-9 | FAQ system, member directory |
+| **4** | Full project | 8-12+ | Complete site build |
+
+```mermaid
+graph LR
+    subgraph "Level 1"
+        L1[Direct Drush/File Operations]
+    end
+
+    subgraph "Level 2"
+        L2A[drupal-architect]
+        L2B[module-development-agent]
+        L2C[security-compliance-agent]
+    end
+
+    subgraph "Level 3"
+        L3A[enhanced-project-manager-agent]
+        L3B[Multiple Implementation Agents]
+        L3C[Quality Gates]
+        L3D[Testing Agents]
+    end
+
+    subgraph "Level 4"
+        L4A[Full Phased Deployment]
+        L4B[All Agent Categories]
+        L4C[Comprehensive Validation]
+    end
+```
+
+## Agent Performance Tracking
+
+```mermaid
+graph TB
+    subgraph "Metrics Collected"
+        M1[Invocation Count]
+        M2[Processing Time]
+        M3[Success Rate]
+        M4[Error Count]
+    end
+
+    subgraph "Health Indicators"
+        H1[File Integrity]
+        H2[Response Time]
+        H3[Reliability Score]
+        H4[Resource Usage]
+    end
+
+    subgraph "Analysis"
+        A[Performance Report]
+    end
+
+    M1 --> A
+    M2 --> A
+    M3 --> A
+    M4 --> A
+    H1 --> A
+    H2 --> A
+    H3 --> A
+    H4 --> A
+```
+
+## Dynamic Agent Creation
+
+The system supports creating new agents at runtime:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Spawner as AgentSpawner
+    participant Templates as TemplateSystem
+    participant Registry as AgentRegistry
+
+    User->>Spawner: Create new agent
+    Spawner->>Templates: Load base template
+    Templates->>Spawner: Template content
+    Spawner->>Spawner: Process variables
+    Spawner->>Spawner: Write agent file
+    Spawner->>Registry: register(newAgent)
+    Registry-->>User: Agent ready
+```
+
+## See Also
+
+- [OVERVIEW.md](./OVERVIEW.md) - System architecture overview
+- [HOOKS.md](./HOOKS.md) - Hook system and TDD validation
+- [INSTALLATION.md](./INSTALLATION.md) - Agent installation process
+
+```
+
+`/home/zorz/sites/drupal-claude-code-sub-agent-collective/docs/INSTALLATION.md`:
+
+```md
+# Installation System Architecture
+
+This document describes the installation process, file mapping, template processing, and configuration management.
+
+## Installation Overview
+
+The collective is installed via NPX with an interactive or express mode:
+
+```mermaid
+graph TB
+    subgraph "Entry Points"
+        NPX[npx drupal-claude-collective init]
+        CLI[CLI: claude-code-collective.js]
+    end
+
+    subgraph "Installation Modes"
+        INTERACTIVE[InteractiveInstaller]
+        EXPRESS[Express Mode]
+    end
+
+    subgraph "Core Installer"
+        INSTALLER[CollectiveInstaller]
+    end
+
+    subgraph "Sub-Systems"
+        MAPPING[FileMapping]
+        MERGE[MergeStrategies]
+        MCP[MCPConfigManager]
+        TEMPLATES[Template Processing]
+    end
+
+    NPX --> CLI
+    CLI --> INTERACTIVE
+    CLI --> EXPRESS
+
+    INTERACTIVE --> INSTALLER
+    EXPRESS --> INSTALLER
+
+    INSTALLER --> MAPPING
+    INSTALLER --> MERGE
+    INSTALLER --> MCP
+    INSTALLER --> TEMPLATES
+```
+
+## Installation Sequence
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant CLI as claude-code-collective.js
+    participant Installer as CollectiveInstaller
+    participant FS as File System
+    participant Validator
+
+    User->>CLI: npx drupal-claude-collective init
+    CLI->>Installer: new CollectiveInstaller(options)
+
+    Note over Installer: Check Existing Installation
+    Installer->>FS: Check .claude/ exists
+    FS-->>Installer: Exists/Not exists
+
+    alt Exists without --force
+        Installer->>User: Prompt for overwrite
+    end
+
+    Note over Installer: Create Directory Structure
+    Installer->>FS: mkdir .claude/agents
+    Installer->>FS: mkdir .claude/hooks
+    Installer->>FS: mkdir .claude/commands
+    Installer->>FS: mkdir .claude-collective/tests
+    Installer->>FS: mkdir .taskmaster/
+
+    Note over Installer: Setup TaskMaster
+    Installer->>FS: Copy .taskmaster/ template
+    Installer->>FS: Write config.json
+
+    Note over Installer: Install Templates
+    Installer->>Installer: Process CLAUDE.md template
+    Installer->>FS: Write CLAUDE.md
+
+    Note over Installer: Configure Settings
+    Installer->>FS: Write .claude/settings.json
+
+    Note over Installer: Configure MCP
+    Installer->>Installer: Generate .mcp.json
+    Installer->>FS: Write .mcp.json
+
+    Note over Installer: Setup Hooks
+    Installer->>FS: Write hook scripts
+    Installer->>FS: chmod 755 hooks
+
+    Note over Installer: Install Agents
+    Installer->>FS: Write agent definitions
+
+    Note over Installer: Validate
+    Installer->>Validator: validateInstallation()
+    Validator->>FS: Check all required files
+    Validator-->>Installer: Validation result
+
+    Installer-->>User: Installation complete
+```
+
+## File Mapping System
+
+The `FileMapping` class manages template-to-target file relationships:
+
+```mermaid
+classDiagram
+    class FileMapping {
+        -String projectDir
+        -Object options
+        +getFilteredMapping(type) Array
+        +getCoreMapping() Array
+        +getAgentMapping() Array
+        +getHookMapping() Array
+        +getConfigMapping() Array
+        +getTestMapping() Array
+    }
+
+    class MappingEntry {
+        +String source
+        +String target
+        +String description
+        +Boolean overwrite
+        +Boolean executable
+        +String category
+    }
+
+    FileMapping "1" --> "*" MappingEntry : produces
+```
+
+### Mapping Categories
+
+```mermaid
+graph TB
+    subgraph "Core Files"
+        C1[CLAUDE.md]
+        C2[.claude-collective/CLAUDE.md]
+        C3[.claude-collective/DECISION.md]
+    end
+
+    subgraph "Agent Files"
+        A1[routing-agent.md]
+        A2[drupal-architect.md]
+        A3[module-development-agent.md]
+        A4[15+ more agents...]
+    end
+
+    subgraph "Hook Files"
+        H1[directive-enforcer.sh]
+        H2[collective-metrics.sh]
+        H3[test-driven-handoff.sh]
+        H4[3 more hooks...]
+    end
+
+    subgraph "Config Files"
+        CF1[settings.json]
+        CF2[.mcp.json]
+        CF3[config.json]
+    end
+
+    subgraph "Command Files"
+        CMD1[van.md]
+        CMD2[tm/*.md]
+    end
+```
+
+## Template Processing
+
+```mermaid
+flowchart LR
+    subgraph "Input"
+        TEMPLATE[Template File]
+        VARS[Variables]
+    end
+
+    subgraph "Processing"
+        READ[Read Template]
+        REPLACE[Replace Placeholders]
+    end
+
+    subgraph "Output"
+        RESULT[Processed Content]
+    end
+
+    TEMPLATE --> READ
+    VARS --> REPLACE
+    READ --> REPLACE
+    REPLACE --> RESULT
+```
+
+### Template Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{{PROJECT_ROOT}}` | Absolute project path | `/home/user/drupal-site` |
+| `{{INSTALL_DATE}}` | Installation timestamp | `2024-01-15T10:30:00Z` |
+| `{{VERSION}}` | Collective version | `1.5.2` |
+| `{{USER_NAME}}` | Current user | `developer` |
+| `{{PROJECT_NAME}}` | Project directory name | `my-drupal-site` |
+
+## Merge Strategies
+
+When files already exist, the `MergeStrategies` class handles conflicts:
+
+```mermaid
+flowchart TD
+    EXISTING[Existing File]
+    NEW[New Template]
+
+    CHECK{Files Identical?}
+
+    SKIP[Skip - No changes]
+    CONFLICT{Strategy?}
+
+    SMART[Smart Merge]
+    FORCE[Force Overwrite]
+    SKIP_CONFLICT[Skip Conflicts]
+
+    BACKUP[Create Backup]
+    WRITE[Write New File]
+    MERGE[Merge Contents]
+
+    EXISTING --> CHECK
+    NEW --> CHECK
+
+    CHECK --> |Yes| SKIP
+    CHECK --> |No| CONFLICT
+
+    CONFLICT --> |smart-merge| SMART
+    CONFLICT --> |force| FORCE
+    CONFLICT --> |skip-conflicts| SKIP_CONFLICT
+
+    FORCE --> BACKUP
+    BACKUP --> WRITE
+
+    SMART --> MERGE
+    MERGE --> WRITE
+
+    SKIP_CONFLICT --> SKIP
+```
+
+### Smart Merge for Settings
+
+```mermaid
+graph LR
+    subgraph "Existing"
+        E1[User hooks]
+        E2[User allowedTools]
+        E3[User configs]
+    end
+
+    subgraph "New"
+        N1[Collective hooks]
+        N2[Collective allowedTools]
+        N3[Collective configs]
+    end
+
+    subgraph "Merged"
+        M1[All hooks combined]
+        M2[All tools combined]
+        M3[Collective + User configs]
+    end
+
+    E1 --> M1
+    N1 --> M1
+    E2 --> M2
+    N2 --> M2
+    E3 --> M3
+    N3 --> M3
+```
+
+## MCP Configuration
+
+The `MCPConfigManager` generates `.mcp.json`:
+
+```mermaid
+flowchart TD
+    OPTIONS[Installation Options]
+
+    CHECK1{--with-playwright?}
+    CHECK2{--with-context7?}
+    CHECK3{--with-all-mcps?}
+
+    TM[Add TaskMaster MCP]
+    PW[Add Playwright MCP]
+    C7[Add Context7 MCP]
+
+    CONFIG[Generate .mcp.json]
+    VALIDATE[Validate Configuration]
+    WRITE[Write File]
+
+    OPTIONS --> TM
+    TM --> CHECK1
+    CHECK1 --> |Yes| PW
+    CHECK1 --> |No| CHECK2
+
+    PW --> CHECK2
+    CHECK2 --> |Yes| C7
+    CHECK2 --> |No| CONFIG
+
+    C7 --> CONFIG
+
+    OPTIONS --> CHECK3
+    CHECK3 --> |Yes| TM
+    CHECK3 --> |Yes| PW
+    CHECK3 --> |Yes| C7
+
+    CONFIG --> VALIDATE
+    VALIDATE --> WRITE
+```
+
+### MCP Server Profiles
+
+```mermaid
+graph TB
+    subgraph "Default Profile"
+        D1[TaskMaster Only<br/>~20MB, Low CPU]
+    end
+
+    subgraph "With Playwright"
+        P1[TaskMaster + Playwright<br/>~220MB, High CPU]
+    end
+
+    subgraph "With Context7"
+        C1[TaskMaster + Context7<br/>~50MB, Low CPU]
+    end
+
+    subgraph "All MCPs"
+        A1[All Servers<br/>~250MB, High CPU]
+    end
+```
+
+## Directory Creation
+
+```mermaid
+graph TB
+    ROOT[Project Root]
+
+    ROOT --> CLAUDE[.claude/]
+    CLAUDE --> AGENTS[agents/]
+    CLAUDE --> HOOKS[hooks/]
+    CLAUDE --> COMMANDS[commands/]
+
+    ROOT --> COLLECTIVE[.claude-collective/]
+    COLLECTIVE --> TESTS[tests/]
+    TESTS --> HANDOFFS[handoffs/]
+    TESTS --> DIRECTIVES[directives/]
+    TESTS --> CONTRACTS[contracts/]
+    COLLECTIVE --> METRICS[metrics/]
+
+    ROOT --> TASKMASTER[.taskmaster/]
+    TASKMASTER --> TASKS[tasks/]
+    TASKMASTER --> DOCS[docs/]
+    TASKMASTER --> REPORTS[reports/]
+    TASKMASTER --> TEMPLATES[templates/]
+```
+
+## Installation Options
+
+```mermaid
+graph LR
+    subgraph "Flags"
+        F1[--yes: Express mode]
+        F2[--force: Overwrite]
+        F3[--minimal: Core only]
+        F4[--with-playwright]
+        F5[--with-context7]
+        F6[--with-all-mcps]
+    end
+
+    subgraph "Modes"
+        M1[smart-merge]
+        M2[force]
+        M3[skip-conflicts]
+    end
+
+    subgraph "Backup Strategies"
+        B1[full]
+        B2[simple]
+        B3[none]
+    end
+```
+
+## Validation
+
+Post-installation validation ensures all required files exist:
+
+```mermaid
+flowchart TD
+    START[Start Validation]
+
+    C1{CLAUDE.md exists?}
+    C2{settings.json exists?}
+    C3{hooks/ directory exists?}
+    C4{agents/ directory exists?}
+    C5{tests/ directory exists?}
+
+    PASS[Validation Passed]
+    FAIL[Validation Failed]
+
+    START --> C1
+    C1 --> |Yes| C2
+    C1 --> |No| FAIL
+    C2 --> |Yes| C3
+    C2 --> |No| FAIL
+    C3 --> |Yes| C4
+    C3 --> |No| FAIL
+    C4 --> |Yes| C5
+    C4 --> |No| FAIL
+    C5 --> |Yes| PASS
+    C5 --> |No| FAIL
+```
+
+## Installation Status
+
+The `getInstallationStatus()` method checks current state:
+
+```mermaid
+graph LR
+    subgraph "Status Checks"
+        S1[installed: Boolean]
+        S2[behavioral: Boolean]
+        S3[testing: Boolean]
+        S4[hooks: Boolean]
+        S5[agents: Array]
+        S6[issues: Array]
+    end
+
+    subgraph "Files Checked"
+        F1[.claude/ exists]
+        F2[CLAUDE.md exists]
+        F3[.claude-collective/tests/ exists]
+        F4[.claude/hooks/ exists]
+        F5[.claude/agents/*.md count]
+    end
+
+    F1 --> S1
+    F2 --> S2
+    F3 --> S3
+    F4 --> S4
+    F5 --> S5
+```
+
+## Repair Process
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant CLI
+    participant Installer
+    participant Validator
+
+    User->>CLI: npx drupal-claude-collective repair
+    CLI->>Validator: validateInstallation()
+    Validator-->>CLI: Issues found
+
+    loop For each issue
+        CLI->>Installer: Fix issue
+        Installer->>Installer: Re-install missing file
+    end
+
+    CLI->>Validator: Re-validate
+    Validator-->>CLI: Validation passed
+    CLI-->>User: Repair complete
+```
+
+## Clean Uninstall
+
+```mermaid
+flowchart TD
+    START[npx drupal-claude-collective clean]
+
+    PROMPT{Confirm removal?}
+
+    REMOVE1[Remove .claude/]
+    REMOVE2[Remove .claude-collective/]
+    REMOVE3[Remove CLAUDE.md]
+    REMOVE4[Remove .mcp.json]
+
+    KEEP[Keep .taskmaster/]
+
+    DONE[Uninstall complete]
+
+    START --> PROMPT
+    PROMPT --> |Yes| REMOVE1
+    PROMPT --> |No| DONE
+
+    REMOVE1 --> REMOVE2
+    REMOVE2 --> REMOVE3
+    REMOVE3 --> REMOVE4
+    REMOVE4 --> KEEP
+    KEEP --> DONE
+```
+
+## Data Flow Summary
+
+```mermaid
+flowchart LR
+    subgraph "Source"
+        NPM[NPM Package<br/>templates/]
+    end
+
+    subgraph "Transform"
+        INSTALL[CollectiveInstaller<br/>Template Processing]
+    end
+
+    subgraph "Destination"
+        PROJECT[Project Directory<br/>.claude/, .mcp.json, etc.]
+    end
+
+    subgraph "Runtime"
+        CLAUDE[Claude Code<br/>Uses installed files]
+    end
+
+    NPM --> INSTALL
+    INSTALL --> PROJECT
+    PROJECT --> CLAUDE
+```
+
+## See Also
+
+- [OVERVIEW.md](./OVERVIEW.md) - System architecture overview
+- [AGENTS.md](./AGENTS.md) - Agent installation details
+- [HOOKS.md](./HOOKS.md) - Hook installation and configuration
+
+```
+
+`/home/zorz/sites/drupal-claude-code-sub-agent-collective/docs/METRICS.md`:
+
+```md
+# Research Metrics Architecture
+
+This document describes the metrics collection system used to validate research hypotheses about agent coordination patterns.
+
+## Research Hypotheses
+
+The collective is designed to validate three core hypotheses:
+
+```mermaid
+graph TB
+    subgraph "H1: JIT Context Loading"
+        JIT[Just-In-Time Loading]
+        JIT --> JIT_GOAL[30% context reduction]
+    end
+
+    subgraph "H2: Hub-Spoke Coordination"
+        HUB[Centralized Routing]
+        HUB --> HUB_GOAL[95% routing accuracy]
+    end
+
+    subgraph "H3: TDD Handoffs"
+        TDD[Test-Driven Handoffs]
+        TDD --> TDD_GOAL[98% handoff success]
+    end
+```
+
+## Metrics System Components
+
+```mermaid
+classDiagram
+    class MetricsCollector {
+        -String sessionId
+        -Array dataBuffer
+        -Object config
+        +initialize()
+        +store(eventType, data)
+        +retrieve(filters)
+        +aggregate(timeRange)
+        +export(format)
+    }
+
+    class JITLoadingMetrics {
+        +recordContextLoad(size, time)
+        +measureRetention()
+        +calculateEfficiency()
+    }
+
+    class HubSpokeMetrics {
+        +recordRouting(source, target)
+        +detectViolation()
+        +calculateCompliance()
+    }
+
+    class TDDHandoffMetrics {
+        +recordHandoff(success, agent)
+        +measureValidation()
+        +calculateSuccessRate()
+    }
+
+    MetricsCollector <|-- JITLoadingMetrics
+    MetricsCollector <|-- HubSpokeMetrics
+    MetricsCollector <|-- TDDHandoffMetrics
+```
+
+## H1: JIT Context Loading
+
+### Theory
+
+On-demand context loading is more efficient than pre-loading all behavioral rules.
+
+### Metrics Collected
+
+```mermaid
+graph LR
+    subgraph "Measurements"
+        M1[Context Size<br/>tokens]
+        M2[Load Time<br/>milliseconds]
+        M3[Memory Usage<br/>MB]
+        M4[Retention Rate<br/>percentage]
+        M5[Relevance Score<br/>0-1]
+    end
+
+    subgraph "Targets"
+        T1[30% size reduction]
+        T2[50% load time reduction]
+        T3[40% memory reduction]
+    end
+
+    M1 --> T1
+    M2 --> T2
+    M3 --> T3
+```
+
+### Data Collection Flow
+
+```mermaid
+sequenceDiagram
+    participant Agent
+    participant System as CLAUDE.md System
+    participant Collector as JITLoadingMetrics
+
+    Agent->>System: Request context
+    System->>System: Load on-demand
+    System->>Collector: Record load event
+    Collector->>Collector: Measure size/time
+
+    Note over Collector: Store metrics
+    Collector->>Collector: Calculate efficiency
+```
+
+## H2: Hub-Spoke Coordination
+
+### Theory
+
+Centralized routing through a hub outperforms distributed peer-to-peer agent communication.
+
+### Metrics Collected
+
+```mermaid
+graph LR
+    subgraph "Measurements"
+        M1[Routing Compliance<br/>percentage]
+        M2[P2P Violations<br/>count]
+        M3[Coordination Overhead<br/>time]
+        M4[Routing Errors<br/>count]
+        M5[Agent Selection Accuracy<br/>percentage]
+    end
+
+    subgraph "Targets"
+        T1[95% compliance]
+        T2[0 violations]
+        T3[<10% overhead]
+    end
+
+    M1 --> T1
+    M2 --> T2
+    M3 --> T3
+```
+
+### Violation Detection
+
+```mermaid
+flowchart TD
+    COMM[Agent Communication]
+
+    CHECK{Via Hub?}
+
+    VALID[Valid Routing]
+    VIOLATION[P2P Violation]
+
+    RECORD[Record Metric]
+    ALERT[Alert & Log]
+
+    COMM --> CHECK
+    CHECK --> |Yes| VALID
+    CHECK --> |No| VIOLATION
+
+    VALID --> RECORD
+    VIOLATION --> ALERT
+    ALERT --> RECORD
+```
+
+## H3: TDD Handoffs
+
+### Theory
+
+Test-driven, contract-based handoffs improve quality and reduce integration failures.
+
+### Metrics Collected
+
+```mermaid
+graph LR
+    subgraph "Measurements"
+        M1[Handoff Success Rate<br/>percentage]
+        M2[Validation Time<br/>milliseconds]
+        M3[Retry Rate<br/>percentage]
+        M4[Contract Coverage<br/>percentage]
+        M5[Error Detection Rate<br/>percentage]
+    end
+
+    subgraph "Targets"
+        T1[98% success rate]
+        T2[50% defect reduction]
+        T3[90% test coverage]
+    end
+
+    M1 --> T1
+    M2 --> T2
+    M3 --> T3
+```
+
+### Handoff Validation Flow
+
+```mermaid
+sequenceDiagram
+    participant Source as Source Agent
+    participant Hook as Handoff Hook
+    participant Collector as TDDHandoffMetrics
+    participant Target as Target Agent
+
+    Source->>Hook: Signal completion
+    Hook->>Hook: Run TDD validation
+
+    alt Validation Passed
+        Hook->>Collector: Record success
+        Hook->>Target: Route handoff
+    else Validation Failed
+        Hook->>Collector: Record failure
+        Hook->>Source: Request retry
+    end
+
+    Collector->>Collector: Update statistics
+```
+
+## Metrics Storage
+
+```mermaid
+graph TB
+    subgraph "Data Flow"
+        COLLECT[Collect Event]
+        BUFFER[Buffer Events]
+        FLUSH[Flush to Disk]
+    end
+
+    subgraph "Storage Locations"
+        SNAP[snapshots/<br/>Raw events]
+        AGG[aggregations/<br/>Computed stats]
+        REPORT[reports/<br/>Analysis]
+        SESSION[sessions/<br/>Session summaries]
+    end
+
+    COLLECT --> BUFFER
+    BUFFER --> FLUSH
+    FLUSH --> SNAP
+    SNAP --> AGG
+    AGG --> REPORT
+    FLUSH --> SESSION
+```
+
+### Directory Structure
+
+```
+.claude-collective/metrics/
+├── snapshots/               # Raw metric events
+│   └── snapshot-{timestamp}.json
+├── aggregations/            # Computed aggregations
+│   └── aggregation-{timestamp}.json
+├── reports/                 # Analysis reports
+│   └── report-{date}.md
+├── sessions/                # Session summaries
+│   └── {sessionId}.json
+├── baseline.json            # Pre-collective baseline
+└── config.json              # Metrics configuration
+```
+
+## Baseline Comparison
+
+```mermaid
+graph LR
+    subgraph "Baseline (Pre-Collective)"
+        B1[Context: 10000 tokens]
+        B2[Routing: N/A]
+        B3[Handoffs: 0%]
+    end
+
+    subgraph "Current Metrics"
+        C1[Context: ? tokens]
+        C2[Routing: ?%]
+        C3[Handoffs: ?%]
+    end
+
+    subgraph "Improvement"
+        I1[H1: Delta]
+        I2[H2: Delta]
+        I3[H3: Delta]
+    end
+
+    B1 --> I1
+    C1 --> I1
+    B2 --> I2
+    C2 --> I2
+    B3 --> I3
+    C3 --> I3
+```
+
+## Statistical Analysis
+
+```mermaid
+graph TB
+    subgraph "Sample Collection"
+        COLLECT[Collect N samples]
+    end
+
+    subgraph "Analysis"
+        SIZE[Check sample size]
+        MEAN[Calculate mean]
+        VAR[Calculate variance]
+        CONF[Calculate confidence]
+    end
+
+    subgraph "Validation"
+        THRESHOLD[Compare to threshold]
+        RESULT[Hypothesis result]
+    end
+
+    COLLECT --> SIZE
+    SIZE --> MEAN
+    MEAN --> VAR
+    VAR --> CONF
+    CONF --> THRESHOLD
+    THRESHOLD --> RESULT
+```
+
+### Confidence Levels
+
+| Sample Size | Confidence Level |
+|-------------|------------------|
+| < 30 | 0.50 (Insufficient) |
+| 30-99 | 0.70 (Moderate) |
+| 100-499 | 0.85 (Good) |
+| 500-999 | 0.90 (Very Good) |
+| 1000+ | 0.95 (Excellent) |
+
+## Aggregation
+
+```mermaid
+flowchart TD
+    RAW[Raw Metrics]
+
+    subgraph "Time Aggregation"
+        HOUR[Hourly]
+        DAY[Daily]
+        WEEK[Weekly]
+    end
+
+    subgraph "Type Aggregation"
+        H1[JIT Metrics]
+        H2[Hub-Spoke Metrics]
+        H3[TDD Metrics]
+    end
+
+    COMBINED[Combined Report]
+
+    RAW --> HOUR
+    RAW --> DAY
+    RAW --> WEEK
+
+    HOUR --> H1
+    HOUR --> H2
+    HOUR --> H3
+
+    DAY --> H1
+    DAY --> H2
+    DAY --> H3
+
+    WEEK --> H1
+    WEEK --> H2
+    WEEK --> H3
+
+    H1 --> COMBINED
+    H2 --> COMBINED
+    H3 --> COMBINED
+```
+
+## Export Formats
+
+```mermaid
+graph LR
+    DATA[Metrics Data]
+
+    JSON[JSON<br/>Full data]
+    CSV[CSV<br/>Tabular]
+    MD[Markdown<br/>Report]
+
+    DATA --> JSON
+    DATA --> CSV
+    DATA --> MD
+```
+
+### JSON Export Structure
+
+```json
+{
+  "timestamp": "ISO-8601",
+  "sessionId": "string",
+  "hypotheses": {
+    "h1_jitLoading": {
+      "validated": false,
+      "confidence": 0.85,
+      "metrics": {...}
+    },
+    "h2_hubSpoke": {
+      "validated": true,
+      "confidence": 0.92,
+      "metrics": {...}
+    },
+    "h3_tddHandoffs": {
+      "validated": true,
+      "confidence": 0.88,
+      "metrics": {...}
+    }
+  }
+}
+```
+
+## Lifecycle Management
+
+```mermaid
+sequenceDiagram
+    participant System
+    participant Collector as MetricsCollector
+    participant Storage
+
+    Note over Collector: Initialization
+    System->>Collector: initialize()
+    Collector->>Storage: Create directories
+    Collector->>Storage: Load baseline
+    Collector->>Collector: Start timers
+
+    Note over Collector: Collection
+    loop During session
+        System->>Collector: store(event, data)
+        Collector->>Collector: Buffer event
+
+        alt Buffer full
+            Collector->>Storage: Flush buffer
+        end
+    end
+
+    Note over Collector: Shutdown
+    System->>Collector: shutdown()
+    Collector->>Storage: Flush remaining
+    Collector->>Storage: Save session summary
+    Collector->>Collector: Stop timers
+```
+
+## Data Cleanup
+
+```mermaid
+flowchart TD
+    TIMER[Cleanup Timer]
+
+    CHECK[Check file age]
+    CUTOFF{Older than retention?}
+
+    DELETE[Delete file]
+    KEEP[Keep file]
+
+    EMIT[Emit cleanup event]
+
+    TIMER --> CHECK
+    CHECK --> CUTOFF
+    CUTOFF --> |Yes| DELETE
+    CUTOFF --> |No| KEEP
+    DELETE --> EMIT
+```
+
+### Retention Policy
+
+| Data Type | Default Retention |
+|-----------|-------------------|
+| Snapshots | 30 days |
+| Aggregations | 90 days |
+| Reports | 365 days |
+| Sessions | 30 days |
+
+## Real-Time Monitoring
+
+```mermaid
+graph LR
+    EVENT[Metric Event]
+
+    subgraph "Real-Time"
+        EMIT[Emit 'metric_collected']
+        LISTENER[Event Listeners]
+    end
+
+    subgraph "Actions"
+        LOG[Log to console]
+        ALERT[Trigger alert]
+        UPDATE[Update dashboard]
+    end
+
+    EVENT --> EMIT
+    EMIT --> LISTENER
+    LISTENER --> LOG
+    LISTENER --> ALERT
+    LISTENER --> UPDATE
+```
+
+## Configuration
+
+```json
+{
+  "hypotheses": {
+    "h1_jitLoading": {
+      "name": "JIT Context Loading",
+      "targetReduction": 0.3,
+      "confidenceThreshold": 0.95
+    },
+    "h2_hubSpoke": {
+      "name": "Hub-and-Spoke Coordination",
+      "targetCompliance": 0.9,
+      "confidenceThreshold": 0.95
+    },
+    "h3_tddHandoffs": {
+      "name": "Test-Driven Development Handoffs",
+      "targetSuccessRate": 0.8,
+      "confidenceThreshold": 0.95
+    }
+  },
+  "collection": {
+    "bufferSize": 100,
+    "flushInterval": 30000,
+    "enableValidation": true
+  },
+  "analysis": {
+    "minSampleSize": 30,
+    "confidenceLevel": 0.95
+  }
+}
+```
+
+## See Also
+
+- [OVERVIEW.md](./OVERVIEW.md) - System architecture overview
+- [HOOKS.md](./HOOKS.md) - Metrics collection hooks
+- [AGENTS.md](./AGENTS.md) - Agent performance tracking
+
+```
+
+`/home/zorz/sites/drupal-claude-code-sub-agent-collective/docs/COMMAND-USAGE.md`:
+
+```md
+# Drupal Claude Code Collective - Command System Usage Guide
+
+## Overview
+
+The Drupal Claude Code Collective command system provides both natural language and structured command interfaces for controlling the Drupal-focused multi-agent orchestration system. This guide covers all available commands, usage patterns, and best practices.
+
+## Quick Start
+
+### Basic Commands
+```bash
+# Check system status
+/collective status
+
+# List available agents
+/agent list
+
+# Validate quality gates
+/gate status
+
+# Get help
+/collective help
+```
+
+### Natural Language Commands
+```bash
+# These work just as well as structured commands
+show me the system status
+list all available agents
+validate the quality gates
+help me understand the routing system
+```
+
+## Command Namespaces
+
+### 🎯 `/collective` - System Coordination
+
+The collective namespace handles system-wide operations and coordination.
+
+#### `/collective status [--verbose]`
+Shows overall system health and status.
+
+**Examples:**
+```bash
+/collective status
+/collective status --verbose
+```
+
+**Natural Language:**
+- "show system status"
+- "how is the collective doing"
+- "check system health"
+
+#### `/collective route <request>`
+Routes requests to the appropriate agent using intelligent selection.
+
+**Examples:**
+```bash
+/collective route create a custom block plugin showing recent articles
+/collective route implement event registration with Webform
+/collective route fix node access control bug --skip-test
+```
+
+**Natural Language:**
+- "route create a custom field widget to the right agent"
+- "send this task to the appropriate agent: build FAQ system with voting"
+
+#### `/collective agents [--detailed]`
+Lists all available agents in the collective.
+
+**Examples:**
+```bash
+/collective agents
+/collective agents --detailed
+```
+
+#### `/collective metrics [--detailed]`
+Displays collective performance metrics and hypothesis validation.
+
+**Examples:**
+```bash
+/collective metrics
+/collective metrics --detailed
+```
+
+#### `/collective validate [phase] [--strict]`
+Validates collective system integrity.
+
+**Examples:**
+```bash
+/collective validate
+/collective validate system --strict
+/collective validate agents
+```
+
+#### `/collective help [topic]`
+Shows help information for collective commands.
+
+**Examples:**
+```bash
+/collective help
+/collective help route
+/collective help metrics
+```
+
+### 🤖 `/agent` - Agent Management
+
+The agent namespace handles individual agent operations and management.
+
+#### `/agent list [--detailed]`
+Lists all available agents with their current status.
+
+**Examples:**
+```bash
+/agent list
+/agent list --detailed
+```
+
+**Natural Language:**
+- "show me all agents"
+- "list available agents"
+- "what agents do we have"
+
+#### `/agent spawn <type> [specialization] [--template] [--skip-contract]`
+Creates a new specialized agent instance.
+
+**Available Types:**
+- `module-development` - Custom Drupal module development
+- `theme-development` - Drupal theme and front-end
+- `functional-testing` - Behat/Playwright testing
+- `drupal-architect` - Site architecture and planning
+- `performance-devops` - Performance optimization and DevOps
+- `behavioral-transformation` - CLAUDE.md behavioral system
+
+**Examples:**
+```bash
+/agent spawn functional-testing behat-scenarios
+/agent spawn module-development --template=custom
+/agent spawn theme-development responsive-design --skip-contract
+```
+
+**Natural Language:**
+- "spawn a testing agent for functional Behat work"
+- "create a module development agent"
+- "I need a new Drupal architect agent"
+
+#### `/agent status <id> [--verbose]`
+Shows detailed status for a specific agent.
+
+**Examples:**
+```bash
+/agent status routing-agent
+/agent status module-development-agent --verbose
+```
+
+#### `/agent route <request>`
+Tests routing logic without actually executing the request.
+
+**Examples:**
+```bash
+/agent route create a custom field formatter for dates
+/agent route fix entity access control bug
+```
+
+#### `/agent health [id] [--verbose]`
+Checks agent health and performance metrics.
+
+**Examples:**
+```bash
+/agent health
+/agent health routing-agent --verbose
+```
+
+#### `/agent handoff <from> <to> [--skip-test]`
+Executes manual agent handoff between two agents.
+
+**Examples:**
+```bash
+/agent handoff module-development-agent functional-testing-agent
+/agent handoff routing-agent theme-development-agent --skip-test
+```
+
+#### `/agent help [topic]`
+Shows help for agent commands.
+
+**Examples:**
+```bash
+/agent help
+/agent help spawn
+/agent help handoff
+```
+
+### 🚪 `/gate` - Quality Gate Enforcement
+
+The gate namespace handles quality gate validation and compliance.
+
+#### `/gate status [--verbose]`
+Shows quality gate status and compliance levels.
+
+**Examples:**
+```bash
+/gate status
+/gate status --verbose
+```
+
+**Natural Language:**
+- "check quality gates"
+- "show gate status"
+- "are all gates passing"
+
+#### `/gate validate [phase] [--strict]`
+Validates quality gate requirements for specific phases.
+
+**Available Phases:**
+- `planning` - Planning phase validation
+- `infrastructure` - Infrastructure setup validation
+- `implementation` - Implementation quality validation
+- `testing` - Test coverage and quality validation
+- `polish` - Code quality and documentation validation
+- `completion` - Final delivery validation
+
+**Examples:**
+```bash
+/gate validate
+/gate validate implementation --strict
+/gate validate testing
+```
+
+#### `/gate bypass <gate> <reason> [--emergency]`
+Emergency quality gate bypass (use with extreme caution).
+
+**Examples:**
+```bash
+/gate bypass testing-gate "Critical hotfix deployment"
+/gate bypass completion-gate "Security emergency patch" --emergency
+```
+
+#### `/gate history [limit]`
+Shows quality gate validation history.
+
+**Examples:**
+```bash
+/gate history
+/gate history 20
+```
+
+#### `/gate help [topic]`
+Shows help for gate commands.
+
+**Examples:**
+```bash
+/gate help
+/gate help bypass
+/gate help validate
+```
+
+## Command Aliases
+
+For convenience, the following aliases are available:
+
+```bash
+/c → /collective
+/a → /agent
+/g → /gate
+/status → /collective status
+/route → /collective route
+/spawn → /agent spawn
+```
+
+## Natural Language Support
+
+The command system understands natural language instructions and converts them to appropriate commands:
+
+### Status Queries
+- "show status" → `/collective status`
+- "how are things" → `/collective status`
+- "system health check" → `/collective status --verbose`
+
+### Agent Operations
+- "list agents" → `/agent list`
+- "show available agents" → `/agent list --detailed`
+- "spawn testing agent" → `/agent spawn functional-testing`
+- "create module development agent" → `/agent spawn module-development`
+
+### Gate Operations
+- "check gates" → `/gate status`
+- "validate gates" → `/gate validate`
+- "gate compliance" → `/gate status --verbose`
+
+### Routing Operations
+- "route this task" → `/collective route`
+- "send to agent" → `/collective route`
+- "delegate work" → `/collective route`
+
+## Advanced Features
+
+### Command History
+Access your recent command history:
+```bash
+/collective history
+/collective history 20
+```
+
+### System Metrics
+Monitor system performance:
+```bash
+/collective metrics --detailed
+/agent metrics routing-agent
+```
+
+### Batch Operations
+Execute multiple commands (via command system API):
+```javascript
+const commands = [
+  '/collective status',
+  '/agent list',
+  '/gate validate'
+];
+await commandSystem.executeBatch(commands);
+```
+
+### Export Data
+Export command history and metrics:
+```javascript
+// JSON export
+const jsonData = await commandSystem.exportData('json');
+
+// Markdown report
+const report = await commandSystem.exportData('markdown');
+```
+
+## Performance and Optimization
+
+### Response Time Expectations
+- Simple commands: < 50ms
+- Complex routing: < 200ms
+- System validation: < 500ms
+
+### Autocomplete
+- Tab completion available for all commands
+- Intelligent suggestions based on context
+- Fuzzy matching for typo correction
+
+### Caching
+- Command suggestions are cached
+- Recent commands cached for quick access
+- System state cached for contextual help
+
+## Best Practices
+
+### 1. Regular Status Checks
+Monitor system health regularly:
+```bash
+/collective status --verbose
+```
+
+### 2. Proper Agent Management
+- List agents before spawning new ones
+- Check agent health periodically
+- Use appropriate specializations
+
+### 3. Quality Gate Compliance
+- Validate gates before major operations
+- Use strict mode for production deployments
+- Document all bypasses with clear reasons
+
+### 4. Efficient Routing
+- Use descriptive task descriptions
+- Let the system choose the best agent
+- Monitor routing success rates
+
+### 5. Help Usage
+- Use `/help` for general guidance
+- Use specific help for detailed information
+- Try natural language when unsure
+
+## Troubleshooting
+
+### Common Issues
+
+**Command Not Recognized**
+```bash
+# Check spelling and try suggestions
+/collective status
+# Or use natural language
+show system status
+```
+
+**Agent Not Found**
+```bash
+# List available agents first
+/agent list
+# Then reference by correct ID
+/agent status routing-agent
+```
+
+**Gate Validation Failures**
+```bash
+# Check detailed status
+/gate status --verbose
+# Review specific phase requirements
+/gate validate implementation --strict
+```
+
+**Slow Response Times**
+```bash
+# Check system metrics
+/collective metrics
+# Run maintenance
+/collective maintain --repair
+```
+
+### Error Recovery
+The system provides helpful error messages and suggestions:
+- Typo correction suggestions
+- Available command alternatives
+- Context-sensitive help
+- Usage examples for failed commands
+
+## Integration Examples
+
+### Workflow Automation
+```bash
+# Check system readiness
+/collective status
+
+# Validate environment
+/gate validate planning
+
+# Route development task
+/collective route "implement member directory with filtering"
+
+# Monitor progress
+/agent status module-development-agent
+
+# Validate completion
+/gate validate implementation
+```
+
+### Debugging Session
+```bash
+# Check overall health
+/collective status --verbose
+
+# List problematic agents
+/agent health --verbose
+
+# Review recent failures
+/collective history 10
+
+# Run system maintenance
+/collective maintain --repair
+```
+
+### Quality Assurance
+```bash
+# Validate all gates
+/gate status --verbose
+
+# Run system tests
+/collective test --coverage
+
+# Generate compliance report
+/gate report --format=markdown
+
+# Export metrics
+/collective metrics --detailed
+```
+
+## API Integration
+
+For programmatic access, use the CommandSystem class:
+
+```javascript
+const CommandSystem = require('./lib/command-system');
+
+const commandSystem = new CommandSystem({
+  enableMetrics: true,
+  enableAutocomplete: true,
+  performanceThreshold: 100
+});
+
+// Execute commands
+const result = await commandSystem.executeCommand('/collective status');
+
+// Get suggestions
+const suggestions = commandSystem.getSuggestions('/agent sp');
+
+// Access history
+const history = commandSystem.getCommandHistory(10);
+
+// Get help
+const help = commandSystem.getHelp('collective route');
+```
+
+## Conclusion
+
+The Drupal Claude Code Collective command system provides a powerful, intuitive interface for managing the Drupal-focused multi-agent orchestration system. Whether you prefer structured commands or natural language, the system adapts to your working style while maintaining the precision needed for complex Drupal development operations.
+
+For additional help:
+- Type `/help` for general assistance
+- Use `--help` with any command for specific guidance
+- Explore natural language alternatives when commands feel complex
+- Leverage autocomplete for discovery and efficiency
+
+The system learns from your usage patterns to provide increasingly relevant suggestions and faster command execution over time.
+```
+
+`/home/zorz/sites/drupal-claude-code-sub-agent-collective/docs/HOOKS.md`:
+
+```md
+# Hook System Architecture
+
+This document describes the hook system that enforces behavioral rules, validates handoffs, and collects research metrics.
+
+## Hook Overview
+
+The collective includes 6 enforcement hooks that integrate with Claude Code's hook system:
+
+```mermaid
+graph TB
+    subgraph "Claude Code Events"
+        PRE[PreToolUse]
+        POST[PostToolUse]
+        SUBSTART[SubagentStart]
+        SUBSTOP[SubagentStop]
+    end
+
+    subgraph "Enforcement Hooks"
+        H1[directive-enforcer.sh]
+        H2[collective-metrics.sh]
+        H3[routing-executor.sh]
+        H4[load-behavioral-system.sh]
+        H5[block-destructive-commands.sh]
+        H6[test-driven-handoff.sh]
+    end
+
+    PRE --> H1
+    PRE --> H5
+    POST --> H2
+    POST --> H3
+    SUBSTART --> H4
+    SUBSTOP --> H6
+```
+
+## Hook Descriptions
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| **directive-enforcer.sh** | PreToolUse | Enforces behavioral directives |
+| **collective-metrics.sh** | PostToolUse | Collects research metrics |
+| **routing-executor.sh** | PostToolUse | Executes routing decisions |
+| **load-behavioral-system.sh** | SubagentStart | Loads context for agents |
+| **block-destructive-commands.sh** | PreToolUse | Security: blocks dangerous operations |
+| **test-driven-handoff.sh** | SubagentStop | TDD validation and handoff chaining |
+
+## Hook Flow
+
+### Complete Request Lifecycle
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Claude as Claude Code
+    participant Pre as PreToolUse Hooks
+    participant Tool
+    participant Post as PostToolUse Hooks
+    participant Sub as SubagentStop Hook
+
+    User->>Claude: Request
+    Claude->>Pre: Hook: directive-enforcer
+    Pre->>Pre: Check directives
+
+    alt Directive Violation
+        Pre-->>Claude: BLOCK
+        Claude-->>User: Violation message
+    else Allowed
+        Pre-->>Claude: ALLOW
+        Claude->>Tool: Execute
+        Tool-->>Claude: Result
+        Claude->>Post: Hook: collective-metrics
+        Post->>Post: Record metrics
+        Post-->>Claude: Continue
+
+        alt Agent Task
+            Claude->>Sub: Hook: test-driven-handoff
+            Sub->>Sub: TDD Validation
+
+            alt Handoff Detected
+                Sub-->>Claude: BLOCK + Next Agent
+                Claude->>Claude: Auto-delegate
+            else No Handoff
+                Sub-->>Claude: ALLOW
+            end
+        end
+
+        Claude-->>User: Response
+    end
+```
+
+## Test-Driven Handoff Hook
+
+The most complex hook, responsible for TDD validation and workflow automation:
+
+```mermaid
+flowchart TB
+    START[Agent Completes]
+
+    subgraph "Input Processing"
+        PARSE[Parse JSON Input]
+        EXTRACT[Extract Agent Output]
+    end
+
+    subgraph "TDD Checkpoint"
+        TOKEN[Validate Handoff Token]
+        OUTPUT[Validate Agent Output]
+        CONTRACT[Validate State Contract]
+        TEST[Run Vitest Tests]
+    end
+
+    subgraph "Handoff Detection"
+        DETECT[Detect Handoff Pattern]
+        NORMALIZE[Normalize Unicode]
+        MATCH[Match Agent Name]
+    end
+
+    subgraph "Actions"
+        BLOCK[Block + Route to Next]
+        ALLOW[Allow Completion]
+        FAIL[Fail + Require Fix]
+    end
+
+    START --> PARSE
+    PARSE --> EXTRACT
+    EXTRACT --> TOKEN
+    TOKEN --> OUTPUT
+    OUTPUT --> CONTRACT
+    CONTRACT --> TEST
+
+    TEST --> |Pass| DETECT
+    TEST --> |Fail| FAIL
+
+    DETECT --> NORMALIZE
+    NORMALIZE --> MATCH
+
+    MATCH --> |Found| BLOCK
+    MATCH --> |Not Found| ALLOW
+```
+
+### Handoff Pattern Detection
+
+```mermaid
+graph LR
+    OUTPUT[Agent Output]
+    REGEX[Pattern: Use the X subagent to...]
+    NORMALIZE[Unicode Normalization]
+    EXTRACT[Extract Agent Name]
+    ROUTE[Route to Agent]
+
+    OUTPUT --> NORMALIZE
+    NORMALIZE --> REGEX
+    REGEX --> EXTRACT
+    EXTRACT --> ROUTE
+```
+
+## Hook Configuration
+
+Hooks are configured in `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": {
+          "toolName": "*"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/directive-enforcer.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/block-destructive-commands.sh"
+          }
+        ]
+      }
+    ],
+    "postToolUse": [
+      {
+        "matcher": {
+          "toolName": "*"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/collective-metrics.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/routing-executor.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": {},
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/test-driven-handoff.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## Hook Response Types
+
+```mermaid
+graph TB
+    subgraph "Response Actions"
+        ALLOW[Allow<br/>Continue execution]
+        BLOCK[Block<br/>Prevent + route]
+        WARN[Warn<br/>Log + continue]
+        FAIL[Fail<br/>Stop workflow]
+    end
+
+    subgraph "JSON Responses"
+        J1["{ decision: 'allow' }"]
+        J2["{ decision: 'block', reason: '...' }"]
+        J3["{ decision: 'warn', message: '...' }"]
+        J4["{ decision: 'fail', error: '...' }"]
+    end
+
+    ALLOW --> J1
+    BLOCK --> J2
+    WARN --> J3
+    FAIL --> J4
+```
+
+## TDD Validation Checkpoints
+
+### Agent-Level Checkpoint
+
+```mermaid
+flowchart TD
+    START[Agent Signals Completion]
+    CHECK[COLLECTIVE_HANDOFF_READY?]
+
+    subgraph "Validation"
+        DEPS[Check Dependencies]
+        VITEST[Run Vitest Tests]
+        BUILD[Run npm build]
+    end
+
+    subgraph "Results"
+        PASS[Checkpoint Passed]
+        RETRY[Block + Retry Agent]
+    end
+
+    START --> CHECK
+    CHECK --> |Yes| DEPS
+    CHECK --> |No| PASS
+    DEPS --> VITEST
+    VITEST --> |Pass| BUILD
+    VITEST --> |Fail| RETRY
+    BUILD --> |Pass| PASS
+    BUILD --> |Fail| RETRY
+```
+
+### Orchestrator Phase Checkpoint
+
+```mermaid
+flowchart TD
+    OUTPUT[Orchestrator Output]
+    DETECT[Detect Phase Completion]
+
+    subgraph "Phase Markers"
+        M1[ORCHESTRATION STATUS...COMPLETED]
+        M2[ALL TASKS SUCCESSFULLY COMPLETED]
+        M3[PHASE...HAS BEEN COMPLETED]
+    end
+
+    VALIDATE[Route to tdd-validation-agent]
+    CONTINUE[Continue Orchestration]
+
+    OUTPUT --> DETECT
+    DETECT --> M1
+    DETECT --> M2
+    DETECT --> M3
+
+    M1 --> |Match| VALIDATE
+    M2 --> |Match| VALIDATE
+    M3 --> |Match| VALIDATE
+
+    M1 --> |No Match| CONTINUE
+    M2 --> |No Match| CONTINUE
+    M3 --> |No Match| CONTINUE
+```
+
+## Metrics Collection Hook
+
+```mermaid
+graph LR
+    subgraph "Input"
+        TOOL[Tool Execution]
+        RESULT[Execution Result]
+        TIME[Execution Time]
+    end
+
+    subgraph "Collection"
+        METRICS[collective-metrics.sh]
+    end
+
+    subgraph "Storage"
+        SNAP[Snapshots]
+        AGG[Aggregations]
+        REPORT[Reports]
+    end
+
+    TOOL --> METRICS
+    RESULT --> METRICS
+    TIME --> METRICS
+
+    METRICS --> SNAP
+    METRICS --> AGG
+    SNAP --> REPORT
+    AGG --> REPORT
+```
+
+## Security Hooks
+
+### Block Destructive Commands
+
+```mermaid
+graph TD
+    CMD[Command Input]
+
+    subgraph "Dangerous Patterns"
+        P1[rm -rf]
+        P2[sudo rm]
+        P3[../../..]
+        P4[system\(\"]
+        P5[exec\(]
+    end
+
+    CHECK{Pattern Match?}
+    BLOCK[Block Execution]
+    ALLOW[Allow Execution]
+
+    CMD --> CHECK
+    CHECK --> |Match| BLOCK
+    CHECK --> |No Match| ALLOW
+
+    P1 --> CHECK
+    P2 --> CHECK
+    P3 --> CHECK
+    P4 --> CHECK
+    P5 --> CHECK
+```
+
+### Sensitive File Protection
+
+```mermaid
+graph TD
+    FILE[File Access Request]
+
+    subgraph "Protected Files"
+        F1[.env / .env.*]
+        F2[settings.php]
+        F3[*.key / *.pem]
+        F4[SSH Keys]
+    end
+
+    CHECK{Protected?}
+    BLOCK[Block Access]
+    ALLOW[Allow Access]
+
+    FILE --> CHECK
+    F1 --> CHECK
+    F2 --> CHECK
+    F3 --> CHECK
+    F4 --> CHECK
+
+    CHECK --> |Yes| BLOCK
+    CHECK --> |No| ALLOW
+```
+
+## Hook Data Flow
+
+```mermaid
+flowchart LR
+    subgraph "Input Sources"
+        STDIN[stdin: JSON]
+        ENV[Environment Variables]
+        FILES[Project Files]
+    end
+
+    subgraph "Processing"
+        HOOK[Hook Script]
+    end
+
+    subgraph "Output Destinations"
+        STDOUT[stdout: JSON Response]
+        STDERR[stderr: User Messages]
+        LOG[/tmp/*.log]
+        METRICS[.claude-collective/metrics/]
+    end
+
+    STDIN --> HOOK
+    ENV --> HOOK
+    FILES --> HOOK
+
+    HOOK --> STDOUT
+    HOOK --> STDERR
+    HOOK --> LOG
+    HOOK --> METRICS
+```
+
+## Error Handling
+
+```mermaid
+flowchart TD
+    ERROR[Hook Error]
+
+    subgraph "Error Types"
+        E1[Parse Error]
+        E2[Validation Error]
+        E3[Execution Error]
+        E4[Timeout]
+    end
+
+    subgraph "Recovery Actions"
+        R1[Log + Continue]
+        R2[Block + Report]
+        R3[Retry Hook]
+        R4[Fallback Behavior]
+    end
+
+    ERROR --> E1
+    ERROR --> E2
+    ERROR --> E3
+    ERROR --> E4
+
+    E1 --> R1
+    E2 --> R2
+    E3 --> R3
+    E4 --> R4
+```
+
+## Hook Development Guidelines
+
+### Input Processing
+
+```bash
+# Read JSON from stdin
+INPUT_JSON=$(cat | sed 's/\\!/!/g')
+
+# Parse with jq (preferred)
+EVENT=$(echo "$INPUT_JSON" | jq -r '.hook_event_name')
+
+# Fallback to grep/sed
+EVENT=$(echo "$INPUT_JSON" | grep -o '"hook_event_name":"[^"]*"' | cut -d'"' -f4)
+```
+
+### Response Format
+
+```bash
+# Allow action
+cat <<EOF
+{
+  "decision": "allow"
+}
+EOF
+
+# Block with reason
+cat <<EOF
+{
+  "decision": "block",
+  "reason": "Explanation for user"
+}
+EOF
+```
+
+### Logging
+
+```bash
+LOG_FILE="/tmp/hook-name.log"
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
+}
+
+# User-visible messages go to stderr
+echo "User message" >&2
+```
+
+## See Also
+
+- [OVERVIEW.md](./OVERVIEW.md) - System architecture overview
+- [AGENTS.md](./AGENTS.md) - Agent system and handoffs
+- [METRICS.md](./METRICS.md) - Research metrics collection
+
+```

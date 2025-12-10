@@ -205,11 +205,75 @@ your-project/
 │   └── commands/               # Command system
 │       ├── van.md              # Routing command
 │       └── tm/                 # TaskMaster commands
+│   └── skills/                # Claude Code skills
+│       └── semantic-docs/     # Semantic documentation navigator
 └── .claude-collective/
     ├── tests/                  # Test framework
     ├── metrics/                # Usage tracking
     └── package.json           # Testing setup
 ```
+
+## Semantic Documentation Skill
+
+The collective includes a **semantic-docs skill** for navigating business-logic-to-code mappings. This skill helps agents (and developers) understand how features are implemented by providing machine-readable documentation that maps:
+
+- **User Stories** → **Logic IDs** → **Source Code**
+
+### What It Does
+
+When you have semantic documentation in `docs/semantic/`, agents can:
+
+```bash
+# Find where a feature is implemented
+$SKILL_DIR/scripts/find-feature.sh AUTH
+
+# Trace a Logic ID to actual code
+$SKILL_DIR/scripts/trace-code.sh AUTH-L2
+
+# Look up entity schemas
+$SKILL_DIR/scripts/find-entity.sh node_article
+
+# Find user story implementations
+$SKILL_DIR/scripts/find-user-story.sh US-004
+
+# List all documented features
+$SKILL_DIR/scripts/list-features.sh
+```
+
+### Documentation Structure
+
+```
+docs/semantic/
+├── 00_BUSINESS_INDEX.md    # Master feature index
+├── tech/*.md               # Technical specs by feature
+├── schemas/*.json          # Entity schemas (fields, relationships)
+└── SUMMARY.md              # Quick reference
+```
+
+### Logic ID Format
+
+Logic IDs follow the pattern `FEATURE-L#`:
+- `AUTH-L1` - First authentication logic unit
+- `MIGR-L3` - Third migration logic unit
+- `ACCS-L2` - Second access control logic unit
+
+### When to Use
+
+The skill triggers when asking:
+- "Where is [feature] implemented?"
+- "What does [Logic ID] do?"
+- "How does [workflow] work?"
+- "What fields does [entity] have?"
+
+### Generating Semantic Docs
+
+Use the **semantic-architect-agent** to generate semantic documentation for your project:
+
+```
+"Generate semantic documentation for the authentication system"
+```
+
+This creates the `docs/semantic/` structure with business-to-code mappings that all agents can reference.
 
 ## How It Works
 

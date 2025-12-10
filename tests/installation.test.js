@@ -367,7 +367,7 @@ describe('NPX Installation Tests', () => {
       const content = await fs.readFile(claudeMdPath, 'utf8');
 
       // Should contain core template content
-      expect(content).toContain('Complexity Assessment & Routing');
+      expect(content).toContain('CRITICAL: Read First');
     });
   });
 

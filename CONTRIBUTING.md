@@ -28,6 +28,13 @@ We're looking for feedback and contributions in these key areas:
 - Suggest improvements to documentation references
 - Test with `/selwynpolit/d9book` (1,989 snippets) and `/drupal/core` (97 snippets)
 
+### 📚 **Semantic Documentation Skill**
+- Test the semantic-docs skill for navigating business-logic-to-code mappings
+- Generate semantic documentation for your project using semantic-architect-agent
+- Report accuracy of Logic ID tracing to source code
+- Suggest improvements to documentation structure and search patterns
+- Test with different Drupal project types (content types, migrations, access control)
+
 ## 🚀 How to Contribute
 
 ### 1. **Testing & Feedback**
@@ -138,6 +145,13 @@ How important is this to your workflow?
 - DDEV integration improvements
 - Troubleshooting documentation
 - Example workflows and use cases
+
+##### 🗺️ **Semantic Documentation Skill**
+- Improve Logic ID parsing and code tracing
+- Add support for additional Drupal component types
+- Enhance entity schema extraction
+- Add Mermaid diagram generation for execution flows
+- Improve search patterns for Drupal-specific code patterns
 
 ##### ⚡ **Testing & Reliability**
 - Behat test generation improvements
