@@ -5,7 +5,90 @@ All notable changes to the TaskMaster Agent autonomous development system will b
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.7.0] - 2025-12-11
+
+### 📚 Added
+- **Persistent Memory Integration**: New `/setup-memory` slash command for [claude-mem](https://github.com/thedotmack/claude-mem) installation
+  - Guides users through installing claude-mem plugin for cross-session memory
+  - Adds "Optional: Persistent Memory" section to CLAUDE.md template
+  - Memory preserves project context, decisions, and history across sessions
+
+## [1.6.2] - 2025-12-11
+
+### 📚 Added
+- **Condition-Based Waiting Skill**: Eliminate flaky tests by replacing arbitrary sleeps with condition polling
+  - Behat/Mink `spin()` pattern for Drupal testing
+  - JavaScript `waitFor()` patterns for async operations
+  - Drupal AJAX waiting helpers
+
+- **Git Advanced Workflows Skill**: Advanced Git techniques for history management and recovery
+  - Interactive rebase for commit cleanup
+  - Cherry-pick for selective commits
+  - Bisect for bug hunting
+  - Worktrees for parallel development
+  - Reflog for recovery from mistakes
+
+## [1.6.1] - 2025-12-11
+
+### 📚 Added
+- **Semantic Docs Skill**: Business-logic-to-code navigation system
+  - Shell scripts for searching Logic IDs, features, and entities
+  - `find-feature.sh`, `find-logic-id.sh`, `trace-code.sh` helpers
+  - ENTITY-LOOKUP.md for schema reference
+  - SEARCH.md for advanced search patterns
+
+## [1.6.0] - 2025-12-11
+
+### 🔄 Changed
+- **CLAUDE.md Simplification**: Applied progressive disclosure patterns
+  - Reduced CLAUDE.md from verbose instructions to concise reference
+  - Moved detailed patterns to skill files and docs
+  - Improved scannability with clear section headers
+
+## [1.5.2] - 2025-12-10
+
+### 🔧 Fixed
+- Removed redundant comment line in CLAUDE.md template
+
+## [1.5.1] - 2025-12-10
+
+### 🔧 Fixed
+- Restored essential Complexity Assessment & Routing section to CLAUDE.md
+
+## [1.5.0] - 2025-12-10
+
+### 📚 Added
+- **Architecture Principles Integration**: Rich Hickey and Eskil Steenberg principles
+  - Module-level design guidance for maintainable Drupal code
+  - Clean interface design patterns
+  - Dependency management best practices
+
+## [1.4.0] - 2025-12-09
+
+### 📚 Added
+- **Semantic Architect Enhancements**: Improved documentation quality
+  - Human review warnings for generated documentation
+  - Code structure visualization with Mermaid diagrams
+  - Post-task update hooks for documentation refresh
+
+## [1.3.0] - 2025-12-08
+
+### 📚 Added
+- **Selective MCP Server Configuration**: Playwright opt-out by default
+  - Prevents zombie browser processes in dev environments
+  - Use `--with-playwright` flag when visual regression testing needed
+
+## [1.2.2] - 2025-12-08
+
+### 🔧 Fixed
+- Tool invocation syntax in semantic-architect-agent Research & Analysis Process
+
+## [1.2.1] - 2025-12-08
+
+### 🔧 Fixed
+- YAML syntax error in semantic-architect-agent frontmatter
+
+## [1.2.0] - 2025-12-07
 
 ### 📚 Added
 - **Semantic Architect Agent**: New documentation agent for Knowledge Graph generation
@@ -19,17 +102,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔄 Changed
 - **Agent Count**: Updated from 14 to 15 agents across all documentation
-  - README.md: Updated agent listings and file structure
-  - AGENT-AUDIT.md: Updated counts and added semantic-architect-agent to ESSENTIAL category
-  - USER-GUIDE.md: Updated agent listings and routing examples with Drupal-specific scenarios
-  - templates/CLAUDE.md: Added semantic-architect-agent to Available Agents section
-  - templates/.claude-collective/agents.md: Added to Research & Documentation category
 
 ### 🧪 Added
 - **Installation Tests**: New tests for semantic-architect-agent
-  - Validates agent template exists with required sections
-  - Verifies agent is installed to target directory
-  - Confirms agent appears in catalog with correct description
 
 ## [1.1.1] - 2025-01-08
 

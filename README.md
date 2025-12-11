@@ -144,6 +144,23 @@ npx drupal-claude-collective init --force
 npx drupal-claude-collective init --yes
 ```
 
+### Optional: Persistent Memory with claude-mem
+
+Enable cross-session memory using [claude-mem](https://github.com/thedotmack/claude-mem) - a plugin that preserves project context, decisions, and history across Claude Code sessions.
+
+After installation, run the setup command in Claude Code:
+```
+/setup-memory
+```
+
+This guides you through installing claude-mem. Once installed:
+- Previous session context automatically appears in new sessions
+- Search past decisions with `mem-search: [query]`
+- View history at http://localhost:37777
+- Use `<private>` tags to exclude sensitive content
+
+**Requirements**: Node.js 18+, Claude Code with plugin support.
+
 ### MCP Server Configuration
 
 The collective automatically generates `.mcp.json` with selective MCP server configuration:
