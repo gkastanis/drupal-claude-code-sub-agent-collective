@@ -5,6 +5,16 @@ All notable changes to the TaskMaster Agent autonomous development system will b
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2025-12-11
+
+### 📚 Added
+- **Native Sandboxing Support**: OS-level isolation for safer autonomous agent execution
+  - Pre-configured sandbox settings in `settings.json` optimized for Drupal development
+  - New `/setup-sandbox` slash command with documentation
+  - `docker` and `ddev` excluded from sandbox (incompatible)
+  - Local port binding enabled for dev servers
+  - Reduces permission prompts while maintaining security
+
 ## [1.7.0] - 2025-12-11
 
 ### 📚 Added

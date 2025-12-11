@@ -2,6 +2,15 @@
   "deniedTools": [
     "mcp__task-master__initialize_project"
   ],
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": ["docker", "ddev"],
+    "allowUnsandboxedCommands": true,
+    "network": {
+      "allowLocalBinding": true
+    }
+  },
   "hooks": {
     "SessionStart": [
       {

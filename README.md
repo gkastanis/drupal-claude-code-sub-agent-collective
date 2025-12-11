@@ -161,6 +161,34 @@ This guides you through installing claude-mem. Once installed:
 
 **Requirements**: Node.js 18+, Claude Code with plugin support.
 
+### Sandboxing for Autonomous Execution
+
+The collective includes pre-configured [sandbox settings](https://code.claude.com/docs/en/sandboxing) for safer, more autonomous agent execution:
+
+```json
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "excludedCommands": ["docker", "ddev"]
+  }
+}
+```
+
+**Benefits:**
+- Fewer permission prompts (agents work more autonomously)
+- OS-level filesystem and network isolation
+- Protection against prompt injection attacks
+
+**Enable sandboxing:**
+```
+/sandbox
+```
+
+Or run `/setup-sandbox` for Drupal-specific guidance.
+
+**Note**: `docker` and `ddev` are excluded as they're incompatible with sandboxing. macOS/Linux only.
+
 ### MCP Server Configuration
 
 The collective automatically generates `.mcp.json` with selective MCP server configuration:
