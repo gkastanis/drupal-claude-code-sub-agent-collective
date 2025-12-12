@@ -35,7 +35,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jodagreyhame/drupal-claude-code-sub-agent-collective.git"
+    "url": "git+https://github.com/gkastanis/drupal-claude-code-sub-agent-collective.git"
   },
   "engines": {
     "node": ">=16.0.0"
