@@ -590,7 +590,7 @@ Most of these are enforced automatically through hooks and behavioral constraint
 
 ## Support
 
-- **Issues**: Report bugs and suggestions on [GitHub Issues](https://github.com/jodagreyhame/drupal-claude-code-sub-agent-collective/issues)
+- **Issues**: Report bugs and suggestions on [GitHub Issues](https://github.com/gkastanis/drupal-claude-code-sub-agent-collective/issues)
 - **NPM Package**: [drupal-claude-collective](https://www.npmjs.com/package/drupal-claude-collective)
 - **Validation**: Run `npx drupal-claude-collective validate` for diagnostics
 
