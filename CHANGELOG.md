@@ -5,6 +5,13 @@ All notable changes to the TaskMaster Agent autonomous development system will b
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.3] - 2025-12-16
+
+### 🗑️ Removed
+- **claude-mem integration**: Removed `/setup-memory` command and documentation
+  - Plugin not production ready - caused issues in testing
+  - May reconsider in future when claude-mem matures
+
 ## [1.8.0] - 2025-12-11
 
 ### 📚 Added
@@ -14,14 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `docker` and `ddev` excluded from sandbox (incompatible)
   - Local port binding enabled for dev servers
   - Reduces permission prompts while maintaining security
-
-## [1.7.0] - 2025-12-11
-
-### 📚 Added
-- **Persistent Memory Integration**: New `/setup-memory` slash command for [claude-mem](https://github.com/thedotmack/claude-mem) installation
-  - Guides users through installing claude-mem plugin for cross-session memory
-  - Adds "Optional: Persistent Memory" section to CLAUDE.md template
-  - Memory preserves project context, decisions, and history across sessions
 
 ## [1.6.2] - 2025-12-11
 

@@ -116,15 +116,3 @@ npm install && npm run build  # Compile assets
 - Hard-code technology dependencies
 
 **Detailed principles:** `@./.claude/docs/drupal-patterns/architecture-principles.md`
-
----
-
-## Optional: Persistent Memory
-
-Enable cross-session memory with [claude-mem](https://github.com/thedotmack/claude-mem):
-
-```
-/setup-memory
-```
-
-This preserves project context, decisions, and history across sessions.
