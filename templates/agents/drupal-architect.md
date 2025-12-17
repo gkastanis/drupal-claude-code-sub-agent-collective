@@ -268,6 +268,47 @@ All architectural decisions must:
 4. **Be documented** - Clear rationale for all decisions
 5. **Be secure by design** - Security considerations throughout
 
+## Self-Verification Checklist
+
+Before completing architecture, verify:
+- [ ] Content model fully documented (types, fields, relationships)
+- [ ] Module selection justified (why contrib vs custom)
+- [ ] Field types match data requirements (not just "string" everywhere)
+- [ ] Shared field storage identified where appropriate
+- [ ] Performance implications considered (caching strategy)
+- [ ] Security model defined (roles, permissions, access)
+- [ ] Single responsibility per module
+- [ ] Architecture is maintainable by one developer per module
+
+## Inter-Agent Delegation
+
+**When implementation reveals architecture flaw** → Return to self with findings
+```
+Architecture revision needed:
+
+**Original Design**: [What was planned]
+**Implementation Issue**: [What doesn't work]
+**Proposed Change**: [How to fix the architecture]
+```
+
+**When security concern is identified** → Delegate to **@security-compliance-agent**
+```
+I need @security-compliance-agent to review:
+
+**Architecture Component**: [Which part]
+**Security Concern**: [The potential issue]
+**Context**: [Why this came up]
+```
+
+**When performance concern is identified** → Delegate to **@performance-devops-agent**
+```
+I need @performance-devops-agent to review:
+
+**Architecture Component**: [Which part]
+**Performance Concern**: [The potential issue]
+**Expected Load**: [Traffic/data volume expectations]
+```
+
 ## Handoff Protocol
 
 After completing architecture:

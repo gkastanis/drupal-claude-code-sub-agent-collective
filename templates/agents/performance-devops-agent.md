@@ -97,16 +97,51 @@ foreach ($nids as $nid) {
 $nodes = Node::loadMultiple($nids);
 ```
 
-## Quality Checks
+## Self-Verification Checklist
 
-- ✅ CSS/JS aggregation enabled
-- ✅ Page cache configured
-- ✅ Redis/Memcache for cache backend
-- ✅ No N+1 query problems
-- ✅ Image optimization (WebP, lazy loading)
-- ✅ CDN configured for static assets
-- ✅ Cron running regularly
-- ✅ Views using caching
+Before completing, verify:
+- [ ] CSS/JS aggregation enabled in production
+- [ ] Page cache configured and working
+- [ ] Redis/Memcache configured for cache backend
+- [ ] No N+1 query problems (checked with Devel/Webprofiler)
+- [ ] Image optimization enabled (WebP, lazy loading)
+- [ ] CDN configured for static assets
+- [ ] Cron running regularly
+- [ ] Views using caching with appropriate tags
+- [ ] Render cache (#cache) used in custom code
+- [ ] Database indexes added for custom queries
+
+## Inter-Agent Delegation
+
+**When slow query is caused by code logic** → Delegate to **@module-development-agent**
+```
+I need to delegate to @module-development-agent:
+
+**Context**: Slow database query identified
+**Query**: [The problematic query or code]
+**File/Line**: [Location in code]
+**Problem**: [N+1, missing index, inefficient logic]
+**Suggested Fix**: [How to optimize]
+```
+
+**When cache configuration needs update hooks** → Delegate to **@configuration-management-agent**
+```
+I need to delegate to @configuration-management-agent:
+
+**Context**: Cache configuration changes
+**Changes**: [What cache settings changed]
+**Needed**: Update hook to apply in other environments
+```
+
+**When performance issue is architectural** → Delegate to **@drupal-architect**
+```
+I need to delegate to @drupal-architect:
+
+**Context**: Performance issue is fundamental to design
+**Problem**: [What's causing the bottleneck]
+**Current Architecture**: [How it works now]
+**Suggestion**: [Architectural change needed]
+```
 
 ## Handoff Protocol
 

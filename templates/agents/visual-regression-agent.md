@@ -172,14 +172,49 @@ jobs:
           path: backstop_data/html_report/
 ```
 
-## Quality Validation (When Tests Are Set Up)
+## Self-Verification Checklist
 
-- ✅ Baseline screenshots version controlled
-- ✅ Dynamic content standardized
-- ✅ Key breakpoints tested
-- ✅ Diff threshold configured (<0.1%)
-- ✅ Tests run automatically on PRs
-- ✅ Critical pages covered (homepage, content types, forms)
+Before completing, verify:
+- [ ] Baseline screenshots created and version controlled
+- [ ] Dynamic content standardized (dates, user names, etc.)
+- [ ] Key breakpoints tested (mobile, tablet, desktop)
+- [ ] Diff threshold configured appropriately (<0.1%)
+- [ ] Tests integrated into CI/CD pipeline
+- [ ] Critical pages covered (homepage, content types, forms)
+- [ ] Interactive states tested (hover, focus, open menus)
+- [ ] Font loading handled (wait for fonts.ready)
+
+## Inter-Agent Delegation
+
+**When visual bug is CSS/theme issue** → Delegate to **@theme-development-agent**
+```
+I need to delegate to @theme-development-agent:
+
+**Context**: Visual regression test failing
+**Page/Component**: [What's being tested]
+**Visual Diff**: [Description of the difference]
+**Screenshot**: [Path to diff screenshot]
+**Breakpoint**: [mobile/tablet/desktop]
+```
+
+**When visual bug is caused by markup change** → Delegate to **@module-development-agent**
+```
+I need to delegate to @module-development-agent:
+
+**Context**: Visual regression caused by markup change
+**Component**: [What changed]
+**Expected Markup**: [What it should be]
+**Actual Markup**: [What it is now]
+```
+
+**When server-side testing is needed** → Delegate to **@functional-testing-agent**
+```
+I need to delegate to @functional-testing-agent:
+
+**Context**: Issue is server-side, not visual
+**Problem**: [What's not working]
+**Reason**: Visual tests show correct rendering but functionality broken
+```
 
 ## Handoff Protocol
 

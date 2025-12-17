@@ -212,14 +212,49 @@ behat --tags="@content&&~@slow"  # Content but not slow
 behat --tags="@access"        # Access control tests
 ```
 
-## Quality Validation (When Tests Are Written)
+## Self-Verification Checklist
 
-- ✅ Tests follow BDD principles (Given/When/Then)
-- ✅ Scenarios are independent and isolated
-- ✅ Test data is cleaned up after scenarios
-- ✅ Proper tags for organization
-- ✅ Clear, business-readable language
-- ✅ NO JavaScript/AJAX testing (use Playwright instead)
+Before completing, verify:
+- [ ] Tests follow BDD principles (Given/When/Then)
+- [ ] Scenarios are independent and isolated
+- [ ] Test data is cleaned up after scenarios
+- [ ] Proper tags for test organization (@smoke, @content, etc.)
+- [ ] Clear, business-readable language
+- [ ] NO JavaScript/AJAX testing (delegated to @visual-regression-agent)
+- [ ] All scenarios pass locally
+- [ ] Critical user workflows covered
+
+## Inter-Agent Delegation
+
+**When tests reveal source code bugs** → Delegate to **@module-development-agent**
+```
+I need to delegate to @module-development-agent:
+
+**Context**: Behat test for [feature] failing
+**Test File**: features/[name].feature
+**Bug Found**: [What's broken in the code]
+**Expected**: [What should happen]
+**Actual**: [What happens instead]
+```
+
+**When JavaScript/AJAX testing is needed** → Delegate to **@visual-regression-agent**
+```
+I need to delegate to @visual-regression-agent:
+
+**Context**: Feature requires JavaScript testing
+**User Story**: [What needs to be tested]
+**Reason**: Behat cannot test JS/AJAX - needs Playwright
+```
+
+**When access control test fails unexpectedly** → Delegate to **@security-compliance-agent**
+```
+I need @security-compliance-agent to review:
+
+**Context**: Access control test failing
+**Expected Access**: [Who should have access]
+**Actual Access**: [Who actually has access]
+**Route/Permission**: [Specific route or permission]
+```
 
 ## Handoff Protocol
 

@@ -240,14 +240,36 @@ drush config-split:export dev    # Export dev config
 drush config-split:import dev    # Import dev config
 ```
 
-## Quality Validation
+## Self-Verification Checklist
 
-- ✅ All configuration in version control
-- ✅ Update hooks tested in staging first
-- ✅ Batch operations for large data changes
-- ✅ Environment-specific configs separated
-- ✅ Configuration validated before import
-- ✅ Rollback plan documented
+Before completing, verify:
+- [ ] All configuration exported to `config/sync`
+- [ ] Update hooks tested locally (drush updb works)
+- [ ] Batch operations used for large data changes
+- [ ] Environment-specific configs use config_split
+- [ ] Configuration validates without errors (drush config:import --preview)
+- [ ] Rollback plan documented
+- [ ] No sensitive data in exported configs
+
+## Inter-Agent Delegation
+
+**When update hooks have code bugs** → Delegate to **@module-development-agent**
+```
+I need to delegate to @module-development-agent:
+
+**Context**: Writing update hook for [feature]
+**Bug Found**: [The specific problem]
+**File/Line**: [module].install:[line]
+```
+
+**When config schema is wrong** → Delegate to **@module-development-agent**
+```
+I need to delegate to @module-development-agent:
+
+**Context**: Config schema validation failing
+**Error**: [Schema error message]
+**File**: config/schema/[module].schema.yml
+```
 
 ## Handoff Protocol
 

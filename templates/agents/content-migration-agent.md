@@ -105,14 +105,47 @@ drush migrate:reset-status migration_id
 - `entity_generate` - Create entities if missing
 - `file_copy`, `image_import` - File handling
 
-## Quality Checks
+## Self-Verification Checklist
 
-- ✅ Content model documented
-- ✅ Migration dependencies defined
-- ✅ Rollback tested
-- ✅ Error handling implemented
-- ✅ Source data validated
-- ✅ Files/images imported correctly
+Before completing, verify:
+- [ ] Content model documented with field mappings
+- [ ] Migration dependencies defined correctly
+- [ ] Rollback tested (`drush mr migration_id` works)
+- [ ] Error handling implemented for bad source data
+- [ ] Source data validated before migration
+- [ ] Files/images imported and referenced correctly
+- [ ] No orphaned entities after migration
+- [ ] Migration is idempotent (can re-run safely)
+
+## Inter-Agent Delegation
+
+**When migration plugin has code bugs** → Delegate to **@module-development-agent**
+```
+I need to delegate to @module-development-agent:
+
+**Context**: Writing migration source/process plugin
+**Bug Found**: [The specific problem]
+**File/Line**: src/Plugin/migrate/[type]/[Plugin].php:[line]
+```
+
+**When content model needs redesign** → Delegate to **@drupal-architect**
+```
+I need to delegate to @drupal-architect:
+
+**Context**: Migration revealed content model issue
+**Problem**: [What doesn't work with the current model]
+**Suggestion**: [Proposed change]
+```
+
+**When field types don't match source data** → Delegate to **@module-development-agent**
+```
+I need to delegate to @module-development-agent:
+
+**Context**: Source data doesn't fit target field
+**Source Data**: [Example of problematic data]
+**Target Field**: [Field type and settings]
+**Needed**: Custom process plugin or field adjustment
+```
 
 ## Handoff Protocol
 
