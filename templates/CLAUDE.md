@@ -97,6 +97,39 @@ npm install && npm run build  # Compile assets
 
 ---
 
+## Error Handling
+
+1. Use exceptions for error conditions instead of NULL or FALSE returns
+2. Never catch `\Exception` - only catch exceptions you can handle
+3. Catch the narrowest exception possible (RuntimeException not Exception)
+4. Don't catch just to log (unless error doesn't affect caller)
+5. New exceptions should inherit from existing exception classes
+
+---
+
+## Data Objects
+
+Use data objects instead of arrays. Convert arrays to objects ASAP.
+PHP 8.4+: Use property hooks for get/set methods.
+Exception: Drupal render/form APIs can use arrays.
+
+---
+
+## JSON & Logging
+
+- Use `\GuzzleHttp\Utils::jsonDecode/jsonEncode` (not PHP's json_*)
+- Use LoggerInterface methods (debug/info/warning/error) - no custom debug flags
+- Avoid "Service" namespace (Drupal\my_module\Service) - use logical groupings
+
+---
+
+## Variable Naming
+
+- `$snake_case` for local variables and function parameters
+- `$lowerCamelCase` for class properties/attributes
+
+---
+
 ## Architecture Checklist
 
 **Before writing code, ASK:**

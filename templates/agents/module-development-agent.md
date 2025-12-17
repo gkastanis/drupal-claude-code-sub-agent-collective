@@ -109,6 +109,47 @@ ddev exec phpcs --standard=Drupal,DrupalPractice web/modules/custom/my_module/
 - ✅ Configuration in `config/install/`, not `hook_install()`
 - ✅ Use strict types: `declare(strict_types=1);`
 
+## Implementation Preferences
+
+**Guard Clauses First:**
+Use guard clauses to decrease cyclomatic complexity. Return early when preconditions aren't met - avoid nested conditionals.
+
+**Functional Array Style:**
+Avoid `foreach` with nested `if`, `break`, `continue`.
+Prefer: `array_filter()`, `array_map()`, `array_reduce()`
+
+**`final` Classes by Default:**
+Declare every class `final` unless explicitly intended for extension.
+
+**Constructor Property Promotion:**
+```php
+public function __construct(
+    private readonly ConfigFactoryInterface $config,
+    private readonly LoggerChannelInterface $logger,
+) {}
+```
+
+**No Getters/Setters:**
+- Getter only needed → use `public readonly`
+- Getter + setter needed → make property public
+
+**OOP Hooks (Drupal 11):**
+- Thin wrapper: delegate to invokable class with `@Hook` attribute
+- Provide `LegacyHook` bridge for procedural modules
+- See: https://www.drupal.org/node/3442349
+
+## Self-Verification Checklist
+
+Before completing, verify:
+- [ ] Class is `final` with `declare(strict_types=1);`
+- [ ] All dependencies injected via constructor
+- [ ] No static calls to `\Drupal::`
+- [ ] Hooks use OOP attribute pattern
+- [ ] Services listed in `<module>.services.yml`
+- [ ] Visibility minimized (private > protected > public)
+- [ ] Guard clauses used for early returns
+- [ ] Functional array operations preferred
+
 ## Architecture Guidelines
 
 **Read architecture principles**:

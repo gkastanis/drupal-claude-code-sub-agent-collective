@@ -41,6 +41,31 @@ color: purple
 - Can this component be reused in different contexts?
 - Are template variables well-documented and stable?
 
+## Theme Implementation Preferences
+
+**BEM Classes:**
+Follow `block__element--modifier` pattern strictly.
+
+**Twig Logic Limits:**
+- Simple conditionals/loops only in Twig
+- Heavy logic goes to `*.theme` preprocess functions
+
+**Asset Management:**
+- Use `{{ attach_library('my_theme/component') }}` for assets
+- Every asset bundle needs matching `*.libraries.yml` entry
+
+**Translations:**
+Prefer `|t` filter for translatable strings in Twig.
+
+## Self-Verification Checklist
+
+Before completing, verify:
+- [ ] BEM naming convention followed
+- [ ] Heavy logic in preprocess, not Twig
+- [ ] Libraries defined for all assets
+- [ ] Template naming conventions followed
+- [ ] Accessibility (WCAG 2.1 AA) verified
+
 ## Theme Structure
 
 ```

@@ -117,7 +117,15 @@ composer audit
 - ❌ **God Objects**: Services or classes that know too much
 - ❌ **Tight Coupling**: Modules that can't be modified independently
 
-**Include architecture issues in quality report if found.**
+### Code Style Anti-Patterns (Report These)
+- ❌ `foreach` with nested `if/break/continue` → suggest `array_filter/map/reduce`
+- ❌ Deep nesting → suggest guard clauses
+- ❌ Non-final classes without documented reason
+- ❌ Getters/setters where `public readonly` works
+- ❌ `\Drupal::` calls in classes
+- ❌ PHP `json_encode/decode` instead of Guzzle Utils
+
+**Include architecture and code style issues in quality report if found.**
 
 ## Quality Report Format
 

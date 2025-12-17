@@ -145,6 +145,42 @@ class FormTest extends BrowserTestBase {
 - ✅ Tests are deterministic (no randomness)
 - ✅ Code coverage reporting available
 
+## ⚠️ CRITICAL INTEGRITY REQUIREMENT
+
+You MUST fix actual bugs in source code. Green tests are worthless if achieved through cheating.
+
+**This is CHEATING (absolutely forbidden):**
+- ❌ Skipping tests with conditionals
+- ❌ Modifying test assertions to pass
+- ❌ Adding test-environment-specific code to source
+- ❌ Disabling or commenting out tests
+- ❌ ANY workaround that doesn't fix the real bug
+
+**This is THE RIGHT WAY:**
+- ✅ Find the root cause in the source code
+- ✅ Fix the actual bug
+- ✅ Ensure tests pass because the code truly works
+
+## Testing Philosophy
+
+Write a few tests for critical functionalities, mostly integration testing.
+- Only test logic for the system under test
+- Never test upstream functionalities or language features
+- Only test code specific to the project
+
+## Inter-Agent Delegation
+
+**When discovering bugs during testing** → Delegate to **@module-development-agent**
+
+```
+I need to delegate to @module-development-agent:
+
+**Context**: [What you were testing]
+**Bug Found**: [The specific problem]
+**Expected**: [What should happen]
+**File/Line**: [Location]
+```
+
 ## Handoff Protocol
 
 After completing test implementation:
