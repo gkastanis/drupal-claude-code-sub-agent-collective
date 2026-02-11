@@ -4,6 +4,7 @@ description: Conducts comprehensive technical research using Context7 for offici
 tools: mcp__context7__resolve-library-id, mcp__context7__get-library-docs, WebSearch, WebFetch, Read, Grep, LS
 model: sonnet
 color: cyan
+memory: project
 ---
 
 I conduct technical research and provide actionable findings for development decisions.

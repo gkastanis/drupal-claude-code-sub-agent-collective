@@ -14,6 +14,7 @@ Visual regression testing prevents unintended visual changes from reaching produ
 tools: Read, Write, Edit, Bash, Grep, Glob, mcp__task-master__get_task, mcp__task-master__update_subtask, mcp__playwright-browser__playwright_navigate, mcp__playwright-browser__playwright_screenshot, mcp__playwright-browser__playwright_click, mcp__playwright-browser__playwright_fill, mcp__playwright-browser__playwright_evaluate
 model: sonnet
 color: purple
+skills: agent-browser
 ---
 
 # Visual Regression Agent

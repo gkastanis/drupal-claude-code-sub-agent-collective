@@ -34,6 +34,8 @@ program
   .option('--backup <strategy>', 'Backup strategy: full, simple, or none', 'full')
   .option('--with-playwright', 'Include Playwright MCP server for visual regression testing')
   .option('--with-context7', 'Include Context7 MCP server for documentation lookup')
+  .option('--with-ddev', 'Include DDEV MCP server for database queries and container management')
+  .option('--with-sequential-thinking', 'Include Sequential Thinking MCP for structured problem decomposition')
   .option('--with-all-mcps', 'Include all available MCP servers (highest resource usage)')
   .argument('[path]', 'Installation directory', '.')
   .action(async (path, options) => {
@@ -50,17 +52,13 @@ program
           express: true,
           withPlaywright: options.withPlaywright,
           withContext7: options.withContext7,
+          withDdev: options.withDdev,
+          withSequentialThinking: options.withSequentialThinking,
           withAllMcps: options.withAllMcps,
           targetPath: path
         });
 
         await installer.install();
-
-        console.log(chalk.green('\n✅ Express installation completed!'));
-        console.log(chalk.yellow('\n💡 Next steps:'));
-        console.log('1. Review CLAUDE.md for behavioral directives');
-        console.log('2. Test agent routing with a Drupal development request');
-        console.log('3. Run: npx drupal-claude-collective validate');
 
       } else {
         // Interactive mode (default)
@@ -69,6 +67,8 @@ program
           minimal: options.minimal,
           withPlaywright: options.withPlaywright,
           withContext7: options.withContext7,
+          withDdev: options.withDdev,
+          withSequentialThinking: options.withSequentialThinking,
           withAllMcps: options.withAllMcps,
           targetPath: path
         });

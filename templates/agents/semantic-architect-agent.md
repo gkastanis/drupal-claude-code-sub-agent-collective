@@ -24,6 +24,7 @@ description: |
 tools: Read, Glob, Grep, Write, mcp__task-master__get_task, mcp__task-master__update_subtask
 model: sonnet
 color: purple
+skills: discover
 ---
 
 # Semantic Architect Agent

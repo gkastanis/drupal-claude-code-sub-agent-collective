@@ -102,7 +102,7 @@ describe('MCPConfigManager', () => {
         withPlaywright: true,
         withContext7: true
       }));
-      expect(customConfig.meta.profile).toBe('custom-full');
+      expect(customConfig.meta.profile).toBe('custom');
     });
 
     test('should include version in metadata', () => {
@@ -230,7 +230,9 @@ describe('MCPConfigManager', () => {
 
       expect(optional).toContain('playwright');
       expect(optional).toContain('context7');
-      expect(optional).toHaveLength(2);
+      expect(optional).toContain('ddev');
+      expect(optional).toContain('sequential-thinking');
+      expect(optional).toHaveLength(4);
     });
   });
 
@@ -257,9 +259,9 @@ describe('MCPConfigManager', () => {
       const config = JSON.parse(mcpManager.generateConfig({ withAllMcps: true }));
       const usage = mcpManager.getResourceUsage(config);
 
-      expect(usage.memory).toBe('~250MB');
+      expect(usage.memory).toBe('~275MB');
       expect(usage.cpu).toBe('High');
-      expect(usage.servers).toBe(3);
+      expect(usage.servers).toBe(5);
     });
 
     test('should handle unknown servers gracefully', () => {

@@ -4,7 +4,9 @@
 
 **Before ANY task, you MUST:**
 
-1. **Check semantic documentation** using the `semantic-docs` skill:
+1. **Discover first** -- use `/discover FEATURE` or `/discover "search terms"` before Glob/Grep to get Logic IDs and file paths directly from semantic documentation. Falls back gracefully if no semantic docs exist.
+
+2. **Check semantic documentation** using the `semantic-docs` skill:
    ```
    docs/semantic/00_BUSINESS_INDEX.md    # Master feature index
    docs/semantic/tech/*.md               # Logic-to-code mappings
@@ -17,13 +19,13 @@
 
    Reference implementations using Logic IDs (e.g., AUTH-L2, FLWG-L1)
 
-2. **Assess complexity and route agents:**
+3. **Assess complexity and route agents:**
    ```
    @./.claude/docs/drupal-patterns/COMPLEXITY-ROUTING.md
    ```
    **DO NOT skip this step.** Wrong routing wastes context or produces incomplete work.
 
-3. **If no semantic docs exist** for complex tasks: Run semantic-architect-agent first
+4. **If no semantic docs exist** for complex tasks: Run semantic-architect-agent first
 
 ---
 
@@ -64,72 +66,6 @@ npm install && npm run build  # Compile assets
 
 ---
 
-## Drupal Development Rules
-
-**YOU MUST follow these rules:**
-
-1. Use services + dependency injection - NEVER `\Drupal::*` calls
-2. Use Entity API for CRUD - NEVER raw SQL
-3. Wrap translatable text in `t()` or `TranslatableMarkup`
-4. Do NOT add fields to user bundle unless explicitly told
-5. New modules require: `.info.yml`, `.module`, `/src` (PSR-4), `.services.yml`
-6. Config defaults go in `config/install/`
-7. Front-end: use library system, no inline JS/CSS
-
-**Translation rules:**
-- Context = module name (PHP string, not constant)
-- English in code, translations in `/translations/*.po` with msgctxt
-
-**Comments & Behat:**
-- End full sentences with `.`
-- Exception: NO periods in Behat annotations (@Then, @Given, @When)
-- Feature file tag = filename without `.feature`
-- Don't check field visibility when Drupal states control it
-
----
-
-## Security & Performance
-
-**IMPORTANT:**
-- Sanitize inputs: `Xss::filter()` or render arrays
-- Cache output: use `#cache` metadata
-- Minimize database calls - use caching layers
-
----
-
-## Error Handling
-
-1. Use exceptions for error conditions instead of NULL or FALSE returns
-2. Never catch `\Exception` - only catch exceptions you can handle
-3. Catch the narrowest exception possible (RuntimeException not Exception)
-4. Don't catch just to log (unless error doesn't affect caller)
-5. New exceptions should inherit from existing exception classes
-
----
-
-## Data Objects
-
-Use data objects instead of arrays. Convert arrays to objects ASAP.
-PHP 8.4+: Use property hooks for get/set methods.
-Exception: Drupal render/form APIs can use arrays.
-
----
-
-## JSON & Logging
-
-- Use `\GuzzleHttp\Utils::jsonDecode/jsonEncode` (not PHP's json_*)
-- Use LoggerInterface methods (debug/info/warning/error) - no custom debug flags
-- Avoid "Service" namespace (Drupal\my_module\Service) - use logical groupings
-
----
-
-## Variable Naming
-
-- `$snake_case` for local variables and function parameters
-- `$lowerCamelCase` for class properties/attributes
-
----
-
 ## Architecture Checklist
 
 **Before writing code, ASK:**
@@ -147,6 +83,7 @@ Exception: Drupal render/form APIs can use arrays.
 - Expose internal implementation in APIs
 - Create modules too complex for one person
 - Hard-code technology dependencies
+- Add fields to user bundle unless explicitly told
 
 **Detailed principles:** `@./.claude/docs/drupal-patterns/architecture-principles.md`
 

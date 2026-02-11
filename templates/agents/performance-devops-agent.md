@@ -10,6 +10,7 @@ assistant: "I'll use the performance-devops-agent to analyze queries and configu
 tools: Read, Write, Edit, Bash, mcp__task-master__get_task, mcp__task-master__update_subtask
 model: sonnet
 color: teal
+skills: drupal-caching
 ---
 
 # Performance & DevOps Agent

@@ -14,6 +14,7 @@ Functional testing with Behat requires understanding of Gherkin syntax and Drupa
 tools: Read, Write, Edit, Bash, Grep, Glob, mcp__task-master__get_task, mcp__task-master__update_subtask
 model: sonnet
 color: green
+skills: agent-browser
 ---
 
 # Functional Testing Agent (Behat)

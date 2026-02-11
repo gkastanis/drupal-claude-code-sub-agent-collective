@@ -30,6 +30,26 @@
         "memory": "~30MB",
         "cpu": "Low"
       }
+    }{{/if}}{{#if includeDdev}},
+    "ddev": {
+      "command": "ddev-mcp",
+      "args": [],
+      "env": {},
+      "description": "DDEV Integration - Database queries, container management, Drupal CLI",
+      "resourceUsage": {
+        "memory": "~10MB",
+        "cpu": "Low"
+      }
+    }{{/if}}{{#if includeSequentialThinking}},
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {},
+      "description": "Sequential Thinking - Structured problem decomposition for complex architectural decisions",
+      "resourceUsage": {
+        "memory": "~15MB",
+        "cpu": "Low"
+      }
     }{{/if}}
   },
   "meta": {

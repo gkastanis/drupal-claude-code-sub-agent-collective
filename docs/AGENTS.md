@@ -253,6 +253,8 @@ Each agent is defined in a Markdown file with YAML frontmatter:
 ---
 name: module-development-agent
 description: Creates custom Drupal modules following best practices
+memory: project
+skills: drupal-service-di, drupal-hook-patterns, drupal-coding-standards
 tools:
   - Read
   - Write
@@ -281,6 +283,17 @@ capabilities:
 ## Handoff Template
 [Format for handoff messages]
 ```
+
+### v2.1 Frontmatter Fields
+
+| Field | Purpose | Example |
+|-------|---------|---------|
+| `memory: project` | Enables cross-session persistence via `.claude/agent-memory/` | Architecture decisions, patterns |
+| `skills: skill1, skill2` | JIT-loads shared SKILL.md files when agent is invoked | `drupal-entity-api, drupal-service-di` |
+
+**Agents with `memory: project`**: drupal-architect, module-development-agent, security-compliance-agent, research-agent, configuration-management-agent
+
+**Agents with `skills:`**: drupal-architect, module-development-agent, security-compliance-agent, performance-devops-agent, theme-development-agent
 
 ## Agent Selection Matrix
 

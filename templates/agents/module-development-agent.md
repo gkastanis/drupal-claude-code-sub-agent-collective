@@ -8,8 +8,10 @@ assistant: "I'll use the module-development-agent to implement this custom block
 </example>
 
 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__task-master__get_task, mcp__task-master__update_subtask
-model: sonnet
+model: opus
 color: green
+memory: project
+skills: drupal-service-di, drupal-hook-patterns, drupal-coding-standards, drupal-testing, verification-before-completion
 ---
 
 # Module Development Agent

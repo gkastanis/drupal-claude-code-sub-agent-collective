@@ -10,6 +10,7 @@ assistant: "I'll use the theme-development-agent to implement this theme compone
 tools: Read, Write, Edit, Glob, Grep, Bash, mcp__task-master__get_task, mcp__task-master__update_subtask
 model: sonnet
 color: purple
+skills: twig-templating, drupal-testing, verification-before-completion
 ---
 
 # Theme Development Agent

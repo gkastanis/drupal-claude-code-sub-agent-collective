@@ -39,7 +39,7 @@ graph TB
     end
 
     subgraph "Enforcement Layer"
-        HOOKS[Hook System<br/>6 Shell Scripts]
+        HOOKS[Hook System<br/>8 Shell Scripts]
         COMMANDS[Command System<br/>Slash Commands]
     end
 
@@ -151,11 +151,14 @@ drupal-claude-code-sub-agent-collective/
 │       └── TDDHandoffMetrics.js   # H3: Handoff Quality
 │
 ├── templates/                     # Installation Templates
-│   ├── CLAUDE.md                  # Behavioral OS Template
+│   ├── CLAUDE.md                  # Behavioral OS Template (~96 lines)
 │   ├── .claude/                   # Claude Configuration
-│   │   ├── agents/                # Agent Definitions (15+)
-│   │   ├── hooks/                 # Enforcement Scripts (6)
-│   │   └── commands/              # Slash Commands
+│   │   ├── agents/                # Agent Definitions (15, with memory + skills)
+│   │   ├── hooks/                 # Enforcement Scripts (8 + shared lib)
+│   │   ├── rules/                 # Auto-loaded behavioral rules (6 files)
+│   │   ├── agent-memory/          # Persistent agent knowledge (5 agents)
+│   │   ├── commands/              # Slash Commands
+│   │   └── skills/                # Drupal skills (10 total)
 │   ├── .claude-collective/        # Collective Framework
 │   │   ├── tests/                 # Test Contracts
 │   │   └── metrics/               # Metrics Storage
@@ -367,6 +370,9 @@ graph TB
         AGENTS[.claude/agents/]
         HOOKS[.claude/hooks/]
         COMMANDS[.claude/commands/]
+        RULES[.claude/rules/]
+        SKILLS[.claude/skills/]
+        MEMORY[.claude/agent-memory/]
     end
 
     subgraph "Collective"
@@ -377,11 +383,16 @@ graph TB
     COLLECTIVE --> |installs| AGENTS
     COLLECTIVE --> |installs| HOOKS
     COLLECTIVE --> |installs| COMMANDS
+    COLLECTIVE --> |installs| RULES
+    COLLECTIVE --> |installs| SKILLS
+    COLLECTIVE --> |seeds| MEMORY
 
     CC --> |reads| SETTINGS
     CC --> |uses| AGENTS
     CC --> |triggers| HOOKS
     CC --> |executes| COMMANDS
+    CC --> |auto-loads| RULES
+    CC --> |JIT loads| SKILLS
 ```
 
 ## See Also

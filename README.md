@@ -134,6 +134,12 @@ npx drupal-claude-collective init --with-playwright
 # With Context7 for documentation lookup
 npx drupal-claude-collective init --with-context7
 
+# With DDEV for database queries and container management
+npx drupal-claude-collective init --with-ddev
+
+# With Sequential Thinking for structured problem decomposition
+npx drupal-claude-collective init --with-sequential-thinking
+
 # With all MCP servers (highest resource usage)
 npx drupal-claude-collective init --with-all-mcps
 
@@ -180,6 +186,8 @@ The collective automatically generates `.mcp.json` with selective MCP server con
 - ✅ **Task Master** (~20MB memory, Low CPU) - Required for /van commands and workflow management
 - ❌ **Playwright** - Excluded by default to prevent zombie processes on Linux
 - ❌ **Context7** - Excluded by default
+- ❌ **DDEV** - Excluded by default (requires `ddev-mcp` installed)
+- ❌ **Sequential Thinking** - Excluded by default
 
 **Why exclude Playwright by default?**
 Playwright MCP server has a known issue on Linux where it can create zombie processes consuming 99% CPU after CLI exit. Only enable it when you need visual regression testing and use cleanup scripts if necessary.
@@ -190,7 +198,9 @@ Playwright MCP server has a known issue on Linux where it can create zombie proc
 | Default (Task Master only) | ~20MB | Low | Backend development, module work |
 | + Playwright | ~220MB | High | Visual regression testing |
 | + Context7 | ~50MB | Low | Documentation-heavy research |
-| All MCPs | ~250MB | High | Full-stack development with testing |
+| + DDEV | ~30MB | Low | Database queries, Drupal CLI via DDEV |
+| + Sequential Thinking | ~35MB | Low | Complex architectural decisions |
+| All MCPs | ~275MB | High | Full-stack development with testing |
 
 **Adding MCP Servers Later**:
 You can modify `.mcp.json` manually or re-run installation with different flags:
@@ -203,39 +213,69 @@ npx drupal-claude-collective init --with-playwright --force
 
 ```
 your-project/
-├── CLAUDE.md                    # Behavioral rules for agents
+├── CLAUDE.md                    # Behavioral rules for agents (~96 lines, lean)
 ├── .mcp.json                    # MCP server configuration (Task Master by default)
 ├── .claude/
-│   ├── settings.json           # Hook configuration
-│   ├── agents/                 # 15 agent definitions
+│   ├── settings.json           # Hook configuration (8 hooks across 6 events)
+│   ├── settings.local.json     # Personal overrides (not overwritten on updates)
+│   ├── agents/                 # 15 agent definitions (with memory + skills frontmatter)
 │   │   ├── routing-agent.md
-│   │   ├── drupal-architect.md
-│   │   ├── module-development-agent.md
-│   │   ├── theme-development-agent.md
-│   │   ├── configuration-management-agent.md
+│   │   ├── drupal-architect.md          # memory: project, skills: drupal-entity-api, drupal-service-di, discover, drupal-testing, verification-before-completion
+│   │   ├── module-development-agent.md  # model: opus, memory: project, skills: drupal-service-di, drupal-hook-patterns, drupal-coding-standards, drupal-testing, verification-before-completion
+│   │   ├── theme-development-agent.md   # skills: twig-templating, drupal-testing, verification-before-completion
+│   │   ├── configuration-management-agent.md  # memory: project, skills: drupal-testing, verification-before-completion
 │   │   ├── content-migration-agent.md
-│   │   ├── security-compliance-agent.md
-│   │   ├── performance-devops-agent.md
+│   │   ├── security-compliance-agent.md # memory: project, skills: drupal-security-patterns, drupal-coding-standards
+│   │   ├── performance-devops-agent.md  # skills: drupal-caching
 │   │   ├── functional-testing-agent.md
 │   │   ├── unit-testing-agent.md
 │   │   ├── visual-regression-agent.md
 │   │   ├── enhanced-project-manager-agent.md
-│   │   ├── research-agent.md
+│   │   ├── research-agent.md            # memory: project
 │   │   ├── semantic-architect-agent.md
 │   │   └── workflow-agent.md
-│   ├── hooks/                  # Enforcement scripts (6 hooks + shared lib)
+│   ├── hooks/                  # Enforcement scripts (8 hooks + shared lib)
 │   │   ├── lib/hook-utils.sh
-│   │   ├── block-destructive-commands.sh
-│   │   ├── block-sensitive-files.sh
-│   │   ├── collective-metrics.sh
-│   │   ├── load-behavioral-system.sh
-│   │   ├── semantic-docs-update-hook.sh
-│   │   └── test-driven-handoff.sh
+│   │   ├── block-destructive-commands.sh    # PreToolUse(Bash)
+│   │   ├── block-sensitive-files.sh         # PreToolUse(Read|Grep)
+│   │   ├── collective-metrics.sh            # PostToolUse(*)
+│   │   ├── load-behavioral-system.sh        # SessionStart
+│   │   ├── semantic-docs-update-hook.sh     # PostToolUse(Edit|Write)
+│   │   ├── test-driven-handoff.sh           # PostToolUse(Task)/SubagentStop
+│   │   ├── pre-compact-state.sh             # PreCompact (NEW v2.1)
+│   │   └── subagent-context-inject.sh       # SubagentStart (NEW v2.1)
+│   ├── rules/                  # Auto-loaded behavioral rules (NEW v2.1)
+│   │   ├── drupal-services.md       # DI, Entity API, service registration
+│   │   ├── drupal-security.md       # Input sanitization, XSS, access control
+│   │   ├── translation-rules.md     # t(), .po conventions, Twig |t
+│   │   ├── code-quality.md          # Grep after changes, magic numbers, naming
+│   │   ├── css-conventions.md       # BEM, specific selectors, asset management
+│   │   ├── error-handling.md        # Exception hierarchy, fail fast
+│   │   └── testing-verification.md  # Verify before completion, script storage, drush escaping
+│   ├── agent-memory/           # Persistent agent knowledge (NEW v2.1)
+│   │   ├── drupal-architect/MEMORY.md
+│   │   ├── module-development-agent/MEMORY.md
+│   │   ├── security-compliance-agent/MEMORY.md
+│   │   ├── research-agent/MEMORY.md
+│   │   └── configuration-management-agent/MEMORY.md
+│   ├── skills/                 # Claude Code skills (15 total: 3 existing + 7 Drupal + 3 cross-project + 2 testing)
+│   │   ├── semantic-docs/           # Semantic documentation navigator
+│   │   ├── drupal-entity-api/       # Field types, CRUD, view modes (NEW v2.1)
+│   │   ├── drupal-service-di/       # Service definitions, DI patterns (NEW v2.1)
+│   │   ├── drupal-caching/          # Cache bins, tags, contexts (NEW v2.1)
+│   │   ├── drupal-security-patterns/ # OWASP, access control (NEW v2.1)
+│   │   ├── drupal-coding-standards/ # PHPCS, PHPStan, naming (NEW v2.1)
+│   │   ├── drupal-hook-patterns/    # OOP hooks, form alters (NEW v2.1)
+│   │   ├── twig-templating/         # Template patterns, filters (NEW v2.1)
+│   │   ├── agent-browser/           # CLI browser automation with DDEV integration
+│   │   ├── discover/                # Docs-first codebase discovery (with scripts/)
+│   │   ├── prd/                     # PRD generator for Drupal features
+│   │   ├── drupal-testing/          # Curl smoke tests, drush eval patterns
+│   │   └── verification-before-completion/  # Verification gate before claiming done
 │   └── commands/               # Command system
 │       ├── van.md              # Routing command
+│       ├── drupal-verify.md    # Drupal implementation verification
 │       └── tm/                 # TaskMaster commands
-│   └── skills/                # Claude Code skills
-│       └── semantic-docs/     # Semantic documentation navigator
 └── .claude-collective/
     ├── INDEX.md               # Agent/command index + behavioral rules (startup)
     ├── DECISION.md            # Auto-delegation decision engine (startup)
@@ -430,7 +470,35 @@ Attempted to access: web/sites/default/settings.php
 
 If you need agents to access a specific file, add it to the allowlist in `.claude/sensitive-files.json`.
 
-## Upgrading from v1.x
+## Upgrading
+
+### Upgrading to v2.1 (from v2.0)
+
+v2.1 adds rules directory, agent memory, 12 new skills, 2 new hooks, 2 new MCP servers, and a practical testing/verification system.
+
+**What changed:**
+- `.claude/rules/` directory with 7 topic-based rule files (auto-loaded by Claude Code), including `testing-verification.md`
+- CLAUDE.md slimmed from ~161 to ~96 lines (rules extracted to `.claude/rules/`)
+- Agent memory system: 5 agents get `memory: project` frontmatter for cross-session persistence
+- 7 new Drupal-specific skills extracted from agent definitions (JIT loaded via `skills:` frontmatter)
+- 3 new cross-project skills: `agent-browser` (CLI browser automation), `discover` (docs-first codebase discovery), `prd` (PRD generator)
+- 2 new testing skills: `drupal-testing` (curl smoke tests, drush eval patterns) and `verification-before-completion` (verification gate before claiming done)
+- `/drupal-verify` command for on-demand Drupal implementation verification
+- `scripts/tests/` directory convention for agent-created verification scripts
+- `module-development-agent` upgraded to opus model
+- 2 new hooks: `pre-compact-state.sh` (PreCompact) and `subagent-context-inject.sh` (SubagentStart)
+- 2 new optional MCP servers: `ddev` (database/CLI integration) and `sequential-thinking` (problem decomposition)
+- `settings.local.json` with documented personal overrides
+- Hook count: 6 → 8 across 6 event types
+
+**How to upgrade:**
+```bash
+npx drupal-claude-collective init --force
+```
+
+**Breaking changes:** None. All existing commands, agent names, and configuration remain compatible. Rules previously inline in CLAUDE.md are now in `.claude/rules/` (auto-loaded by Claude Code).
+
+### Upgrading to v2.0 (from v1.x)
 
 v2.0.0 is a major infrastructure overhaul that reduces complexity while maintaining full backward compatibility.
 
@@ -443,11 +511,10 @@ v2.0.0 is a major infrastructure overhaul that reduces complexity while maintain
 
 **How to upgrade:**
 ```bash
-# Re-run the installer with --force to update all files
 npx drupal-claude-collective init --force
 ```
 
-**Breaking changes:** None. All existing `/tm:*` commands, agent names, and configuration files remain compatible. The consolidated command files accept the same arguments as their predecessor variants.
+**Breaking changes:** None. All existing `/tm:*` commands, agent names, and configuration files remain compatible.
 
 ## Current State
 
@@ -478,19 +545,24 @@ npx drupal-claude-collective init --force
 After installing:
 
 ```bash
-# 1. Validate installation
+# 1. Restart Claude Code (hooks need to load)
+
+# 2. Validate installation
 npx drupal-claude-collective validate
 
-# 2. Check status
-npx drupal-claude-collective status
+# 3. Generate semantic docs (enables /discover and fast code navigation)
+# In Claude Code: "Generate semantic documentation for this project"
+# This creates docs/semantic/ with business index and Logic ID mappings.
+# All agents use this for efficient code discovery instead of Glob/Grep.
 
-# 3. Restart Claude Code (if hooks were installed)
+# 4. Try /discover to verify semantic docs work
+# In Claude Code: "/discover --status"
 
-# 4. Try a simple task
+# 5. Try a simple task
 # In Claude Code: "Add a 'Featured' boolean field to the Article content type"
 # Expected: Direct execution via drush
 
-# 5. Try a Level 2 feature
+# 6. Try a Level 2 feature
 # In Claude Code: "Create a custom block plugin that displays the 5 most recent articles"
 # Expected: module-development-agent → security-compliance-agent → functional-testing-agent
 ```
@@ -534,6 +606,13 @@ npx drupal-claude-collective status
 - **PHP_CodeSniffer**: With Drupal standards (`drupal/coder`)
 - **PHPStan**: For static analysis (recommended)
 - **Playwright**: For functional testing (optional but recommended)
+
+### Optional External Tools (for specific skills/MCPs)
+- **agent-browser**: CLI browser automation (`npm install -g agent-browser && agent-browser install`). Used by `agent-browser` skill.
+- **ddev-mcp**: DDEV MCP server for database/CLI integration. Install via DDEV add-on. Used by `--with-ddev` flag.
+- **qmd**: Fast document search. Used by `discover` skill for full-text search (optional -- falls back to grep).
+
+These are NOT installed by the collective. Install them separately if you need the corresponding skills or MCP servers.
 
 ## What This Is and Isn't
 

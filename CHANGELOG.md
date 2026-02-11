@@ -2,6 +2,46 @@
 
 All notable changes to the Drupal Claude Code Sub-Agent Collective.
 
+## [Unreleased]
+
+### Added
+- **3 new skills**: `agent-browser` (CLI browser automation with DDEV integration), `discover` (docs-first codebase discovery with scripts), `prd` (Drupal-adapted PRD generator with user stories).
+- **2 new testing skills**: `drupal-testing` (curl smoke tests, drush eval patterns, test script templates) and `verification-before-completion` (5-step verification gate preventing unverified completion claims).
+- **`testing-verification.md` auto-loaded rule**: Enforces verify-before-completion behavior on every turn - preferred methods, script storage rules, drush eval escaping.
+- **`/drupal-verify` command**: On-demand Drupal implementation verification using curl smoke tests and drush eval checks.
+- **`scripts/tests/` directory convention**: Standard location for agent-created verification scripts with `index.md` seed file.
+- **2 new MCP servers**: `ddev` (database queries, container management via `ddev-mcp`) and `sequential-thinking` (structured problem decomposition via `@modelcontextprotocol/server-sequential-thinking`).
+- **CLI flags**: `--with-ddev` and `--with-sequential-thinking` for selective MCP server inclusion.
+- Agent skills frontmatter updates: `functional-testing-agent` and `visual-regression-agent` get `agent-browser`; `drupal-architect` and `semantic-architect-agent` get `discover`; `enhanced-project-manager-agent` gets `prd`.
+- Testing skills added to 4 core agents: `module-development-agent`, `drupal-architect`, `configuration-management-agent`, `theme-development-agent` all get `drupal-testing` and `verification-before-completion`.
+- `/discover` added as recommended first step in `templates/CLAUDE.md` before Glob/Grep.
+- Discovery commands section added to `INDEX.md`: `/discover` and `/prd`.
+- Testing commands section added to `INDEX.md`: `/drupal-verify`.
+- Behavioral rule #5 added to `INDEX.md`: verify before completion.
+
+### Changed
+- `module-development-agent` model upgraded from sonnet to opus.
+- Skill count: 10 → 15 (7 new file mapping entries, 6 new installer directories).
+- Rule count: 6 → 7 (+testing-verification.md).
+- File mapping types: 11 → 12 (+scripts).
+- Optional MCP servers: 2 → 4 (existing: playwright, context7; new: ddev, sequential-thinking).
+- MCP config profile logic updated for 4+ optional servers.
+- Full-config resource estimate: ~250MB → ~275MB (5 servers instead of 3).
+- Updated README.md: installation options, MCP table, file tree, upgrading section, agent skills.
+- Updated docs/v2-session-kickstart.md: skill count, MCP count, commands section, repo tree, agents table.
+
+### Fixed
+- 3 MCP config tests updated for new server count and resource calculations.
+
+### Verified
+- All 172 unit tests pass.
+
+### Note on external dependencies
+- `agent-browser`: Requires `npm install -g agent-browser && agent-browser install` on host. Skill works inside DDEV.
+- `ddev-mcp`: Requires DDEV MCP server installed (`ddev-mcp` command available). Auto-detects project from `.ddev/config.yaml`.
+- `qmd` (used by discover): Optional. Discovery falls back gracefully to grep-based search when not available.
+- `sequential-thinking`: Installed automatically via `npx -y` on first use (no manual setup).
+
 ## [2.0.0-dev] - 2025-02-11
 
 ### Fixed

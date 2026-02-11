@@ -3,6 +3,7 @@ name: enhanced-project-manager-agent
 description: Coordinates project development phases using TaskMaster. Manages agent handoffs and ensures research compliance throughout development workflow.
 tools: mcp__task-master__get_tasks, mcp__task-master__next_task, mcp__task-master__set_task_status, mcp__task-master__add_dependency, mcp__task-master__validate_dependencies, mcp__task-master__parse_prd, mcp__task-master__generate, Task, TodoWrite, LS, Read
 color: purple
+skills: prd
 ---
 
 ## Enhanced Project Manager - ACTUAL EXECUTION COORDINATOR

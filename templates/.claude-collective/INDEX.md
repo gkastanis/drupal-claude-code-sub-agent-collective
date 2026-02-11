@@ -23,8 +23,10 @@
 ## Commands
 
 **Routing**: /van (agent routing), /mock (testing), /autocompact (context save)
+**Discovery**: /discover (docs-first codebase discovery), /prd (PRD generator)
 **Handoff**: /continue-handoff, /reset-handoff
 **TaskMaster** (/tm:\*): list, show, next, add-task, expand, set-status, parse-prd, analyze-complexity, update-task, update-subtask, add-dependency, fix-dependencies, complexity-report, generate, models, init, remove-task, remove-subtask, validate-dependencies
+**Testing**: /drupal-verify (verify Drupal implementations)
 **Workflows**: /implement, /update-docs, /verify-changes
 **TaskMaster Workflows**: /tm:workflows/auto-implement-tasks, /tm:workflows/smart-workflow, /tm:workflows/command-pipeline
 
@@ -39,19 +41,13 @@ Load ONLY when needed -- never at startup:
 
 ## Behavioral Rules
 
-Rules from production usage analysis (150 sessions, 1,131 messages):
+Detailed rules are in `.claude/rules/` (auto-loaded by topic). Key rules:
 
-1. **Grep after multi-file changes**: After modifying functions, constants, or variables across files, grep the codebase for remaining references to catch missed locations.
-
-2. **Verify Drupal service changes**: After service or Twig changes, verify: service injections are correct, DB table and column names exist, Twig filters actually exist in the project.
-
-3. **Use config over magic numbers**: Search for existing config constants before hardcoding values (e.g., * 8 for hours, * 5 for weekdays). Use system-configured values.
-
-4. **Remove from ALL locations**: When removing or disabling something, remove from ALL locations (controller, template, Twig, JS, config) and grep to confirm nothing was missed.
-
-5. **Write files to project directory**: Write output files to the appropriate project directory, not inline in chat.
-
-6. **Target specific CSS selectors**: For CSS fixes, target specific elements within context (.parent .child), not parent containers.
+1. **Grep after multi-file changes** - catch missed references.
+2. **Verify Drupal service changes** - confirm injections, table names, Twig filters.
+3. **Use config over magic numbers** - search for existing constants first.
+4. **Remove from ALL locations** - grep to confirm nothing was missed.
+5. **Verify before completion** - run tests (curl smoke or drush eval), document results, store scripts in `scripts/tests/`.
 
 ## Quality
 

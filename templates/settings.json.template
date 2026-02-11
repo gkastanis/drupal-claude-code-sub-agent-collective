@@ -2,6 +2,19 @@
   "deniedTools": [
     "mcp__task-master__initialize_project"
   ],
+  "statusLine": {
+    "type": "command",
+    "command": "branch=$(git branch --show-current 2>/dev/null || echo 'detached'); ddev_status=$(ddev status 2>/dev/null | grep -o 'running\\|stopped' | head -1 || echo 'no-ddev'); echo \"$branch | ddev:$ddev_status\""
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "spinnerVerbs": {
+    "mode": "append",
+    "verbs": ["Bootstrapping", "Caching", "Rendering", "Migrating", "Deploying", "Theming", "Hooking"]
+  },
+  "showTurnDuration": true,
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -121,6 +134,28 @@
           {
             "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/semantic-docs-update-hook.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-state.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/subagent-context-inject.sh"
           }
         ]
       }

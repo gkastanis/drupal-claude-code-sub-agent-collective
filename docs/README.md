@@ -33,6 +33,12 @@ graph TB
         QUALITY[Quality Agents]
     end
 
+    subgraph "Knowledge Layer"
+        RULES[Rules Directory]
+        SKILLS[Drupal Skills]
+        MEMORY[Agent Memory]
+    end
+
     subgraph "Enforcement Layer"
         HOOKS[Hook System]
         METRICS[Metrics Collection]
@@ -50,10 +56,13 @@ graph TB
     ROUTING --> DRUPAL
     ROUTING --> QUALITY
     DRUPAL --> HOOKS
+    DRUPAL --> SKILLS
     QUALITY --> HOOKS
     HOOKS --> METRICS
     ROUTING --> TM
     ROUTING --> C7
+    ROUTING --> RULES
+    DRUPAL --> MEMORY
 ```
 
 ## Quick Links
@@ -77,7 +86,19 @@ All agent communication flows through the central hub (Van routing command). Age
 Every agent handoff is validated through test-driven contracts before routing to the next agent.
 
 ### JIT Context Loading
-Behavioral rules are loaded on-demand rather than pre-loaded, reducing context overhead.
+Behavioral rules are loaded on-demand rather than pre-loaded, reducing context overhead. CLAUDE.md is ~96 lines at startup.
+
+### Rules Directory (v2.1)
+Behavioral rules live in `.claude/rules/` as topic files (auto-loaded by Claude Code). This replaces inline rules in CLAUDE.md, keeping startup context lean.
+
+### Agent Memory (v2.1)
+Agents with `memory: project` frontmatter persist knowledge across sessions via `.claude/agent-memory/` seed files. Architecture decisions, coding patterns, and research caches survive restarts.
+
+### Skills Extraction (v2.1)
+Domain knowledge extracted from agent definitions into shareable SKILL.md files. Agents reference skills via `skills:` frontmatter for JIT loading.
+
+### Context Compaction Resilience (v2.1)
+PreCompact hook saves agent state to recovery file. SessionStart hook restores it. No more lost context during compaction.
 
 ### Drupal Specialization
 All agents are specialized for Drupal 10/11 development with built-in coding standards, security validation, and best practices.
@@ -96,8 +117,8 @@ The documentation uses Mermaid diagrams throughout:
 
 ## Version
 
-Documentation version: 1.5.2
-Last updated: 2024
+Documentation version: 2.1.0
+Last updated: 2025
 
 ## Contributing
 

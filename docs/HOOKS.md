@@ -4,44 +4,52 @@ This document describes the hook system that enforces behavioral rules, validate
 
 ## Hook Overview
 
-The collective includes 6 enforcement hooks that integrate with Claude Code's hook system:
+The collective includes 8 enforcement hooks that integrate with Claude Code's hook system:
 
 ```mermaid
 graph TB
     subgraph "Claude Code Events"
+        SESSION[SessionStart]
         PRE[PreToolUse]
         POST[PostToolUse]
+        COMPACT[PreCompact]
         SUBSTART[SubagentStart]
         SUBSTOP[SubagentStop]
     end
 
     subgraph "Enforcement Hooks"
-        H1[directive-enforcer.sh]
-        H2[collective-metrics.sh]
-        H3[routing-executor.sh]
-        H4[load-behavioral-system.sh]
-        H5[block-destructive-commands.sh]
+        H1[load-behavioral-system.sh]
+        H2[block-destructive-commands.sh]
+        H3[block-sensitive-files.sh]
+        H4[collective-metrics.sh]
+        H5[semantic-docs-update-hook.sh]
         H6[test-driven-handoff.sh]
+        H7[pre-compact-state.sh]
+        H8[subagent-context-inject.sh]
     end
 
-    PRE --> H1
-    PRE --> H5
-    POST --> H2
-    POST --> H3
-    SUBSTART --> H4
-    SUBSTOP --> H6
+    SESSION --> H1
+    PRE --> H2
+    PRE --> H3
+    POST --> H4
+    POST --> H5
+    POST --> H6
+    COMPACT --> H7
+    SUBSTART --> H8
 ```
 
 ## Hook Descriptions
 
-| Hook | Event | Purpose |
-|------|-------|---------|
-| **directive-enforcer.sh** | PreToolUse | Enforces behavioral directives |
-| **collective-metrics.sh** | PostToolUse | Collects research metrics |
-| **routing-executor.sh** | PostToolUse | Executes routing decisions |
-| **load-behavioral-system.sh** | SubagentStart | Loads context for agents |
-| **block-destructive-commands.sh** | PreToolUse | Security: blocks dangerous operations |
-| **test-driven-handoff.sh** | SubagentStop | TDD validation and handoff chaining |
+| Hook | Event | Lines | Purpose |
+|------|-------|-------|---------|
+| **load-behavioral-system.sh** | SessionStart | 18 | Loads INDEX.md + DECISION.md at startup, recovers compact state |
+| **block-destructive-commands.sh** | PreToolUse | 242 | Security: blocks rm -rf, force push, etc. |
+| **block-sensitive-files.sh** | PreToolUse | 220 | Security: blocks Read/Grep on .env, settings.php, credentials |
+| **collective-metrics.sh** | PostToolUse | 106 | Collects routing, performance, research metrics |
+| **semantic-docs-update-hook.sh** | PostToolUse | 75 | Reminds to update semantic docs after dev tasks |
+| **test-driven-handoff.sh** | PostToolUse/SubagentStop | 172 | TDD validation and handoff chaining |
+| **pre-compact-state.sh** | PreCompact | ~40 | Saves active agent/task state before context compaction |
+| **subagent-context-inject.sh** | SubagentStart | ~60 | Validates agent name, injects recovery context and memory path |
 
 ## Hook Flow
 
@@ -57,12 +65,12 @@ sequenceDiagram
     participant Sub as SubagentStop Hook
 
     User->>Claude: Request
-    Claude->>Pre: Hook: directive-enforcer
-    Pre->>Pre: Check directives
+    Claude->>Pre: Hook: block-destructive-commands
+    Pre->>Pre: Check command patterns
 
-    alt Directive Violation
+    alt Dangerous Command
         Pre-->>Claude: BLOCK
-        Claude-->>User: Violation message
+        Claude-->>User: Blocked message
     else Allowed
         Pre-->>Claude: ALLOW
         Claude->>Tool: Execute
@@ -159,49 +167,51 @@ Hooks are configured in `.claude/settings.json`:
 ```json
 {
   "hooks": {
-    "preToolUse": [
+    "SessionStart": [
       {
-        "matcher": {
-          "toolName": "*"
-        },
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/directive-enforcer.sh"
-          },
-          {
-            "type": "command",
-            "command": ".claude/hooks/block-destructive-commands.sh"
-          }
-        ]
+        "matcher": {},
+        "hooks": [{ "type": "command", "command": ".claude/hooks/load-behavioral-system.sh" }]
       }
     ],
-    "postToolUse": [
+    "PreToolUse": [
       {
-        "matcher": {
-          "toolName": "*"
-        },
+        "matcher": { "toolName": "Bash" },
+        "hooks": [{ "type": "command", "command": ".claude/hooks/block-destructive-commands.sh" }]
+      },
+      {
+        "matcher": { "toolName": "Read|Grep" },
+        "hooks": [{ "type": "command", "command": ".claude/hooks/block-sensitive-files.sh" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": { "toolName": ".*" },
         "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/collective-metrics.sh"
-          },
-          {
-            "type": "command",
-            "command": ".claude/hooks/routing-executor.sh"
-          }
+          { "type": "command", "command": ".claude/hooks/collective-metrics.sh" },
+          { "type": "command", "command": ".claude/hooks/semantic-docs-update-hook.sh" }
         ]
+      },
+      {
+        "matcher": { "toolName": "Task" },
+        "hooks": [{ "type": "command", "command": ".claude/hooks/test-driven-handoff.sh" }]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": {},
+        "hooks": [{ "type": "command", "command": ".claude/hooks/pre-compact-state.sh" }]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": { "agentName": ".*" },
+        "hooks": [{ "type": "command", "command": ".claude/hooks/subagent-context-inject.sh" }]
       }
     ],
     "SubagentStop": [
       {
         "matcher": {},
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/test-driven-handoff.sh"
-          }
-        ]
+        "hooks": [{ "type": "command", "command": ".claude/hooks/test-driven-handoff.sh" }]
       }
     ]
   }
@@ -487,6 +497,89 @@ log() {
 # User-visible messages go to stderr
 echo "User message" >&2
 ```
+
+## PreCompact Hook (v2.1)
+
+Saves active agent state before context compaction to prevent losing task context.
+
+```mermaid
+flowchart TD
+    COMPACT[Context Compaction Triggered]
+    SAVE[Save State to .claude/compact-recovery.json]
+
+    subgraph "State Saved"
+        S1[Active Agent Name]
+        S2[Current Task Context]
+        S3[Handoff State]
+        S4[Timestamp]
+    end
+
+    RECOVER[SessionStart: Recover State]
+    DELETE[Delete Recovery File]
+
+    COMPACT --> SAVE
+    SAVE --> S1
+    SAVE --> S2
+    SAVE --> S3
+    SAVE --> S4
+
+    S1 --> RECOVER
+    RECOVER --> DELETE
+```
+
+### Recovery Flow
+
+The `load-behavioral-system.sh` hook checks for the recovery file on SessionStart:
+1. If `.claude/compact-recovery.json` exists, reads and outputs saved state
+2. Injects recovered context into the session
+3. Deletes the recovery file after successful injection
+
+## SubagentStart Hook (v2.1)
+
+Validates agent names and injects project context when agents spawn.
+
+```mermaid
+flowchart TD
+    SPAWN[Agent Spawning]
+
+    VALIDATE{Agent in 15-agent registry?}
+    WARN[Warning: Unknown agent name]
+    INJECT[Inject Context]
+
+    subgraph "Injected Context"
+        I1[Compact Recovery Data]
+        I2[Agent Memory Path]
+        I3[Drupal Version from composer.json]
+    end
+
+    SPAWN --> VALIDATE
+    VALIDATE --> |No| WARN
+    VALIDATE --> |Yes| INJECT
+    WARN --> INJECT
+
+    INJECT --> I1
+    INJECT --> I2
+    INJECT --> I3
+```
+
+### Agent Registry Validation
+
+The hook validates against the 15 known agents:
+- routing-agent, drupal-architect, module-development-agent
+- theme-development-agent, configuration-management-agent, content-migration-agent
+- security-compliance-agent, performance-devops-agent
+- functional-testing-agent, unit-testing-agent, visual-regression-agent
+- enhanced-project-manager-agent, research-agent, workflow-agent, semantic-architect-agent
+
+Unknown agent names are logged as warnings but execution continues.
+
+## Shared Utilities (lib/hook-utils.sh)
+
+All hooks source `lib/hook-utils.sh` for:
+- JSON parsing (with jq fallback to grep/sed)
+- Unicode dash normalization for handoff pattern matching
+- Handoff pattern detection
+- Logging utilities
 
 ## See Also
 

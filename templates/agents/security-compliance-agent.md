@@ -10,6 +10,8 @@ assistant: "I'll use the security-compliance-agent to perform security and stand
 tools: Read, Glob, Grep, Bash, mcp__task-master__get_task, mcp__task-master__update_subtask
 model: sonnet
 color: red
+memory: project
+skills: drupal-security-patterns, drupal-coding-standards
 ---
 
 # Security & Compliance Agent

@@ -66,7 +66,11 @@ sequenceDiagram
     Note over Installer: Create Directory Structure
     Installer->>FS: mkdir .claude/agents
     Installer->>FS: mkdir .claude/hooks
+    Installer->>FS: mkdir .claude/hooks/lib
     Installer->>FS: mkdir .claude/commands
+    Installer->>FS: mkdir .claude/rules
+    Installer->>FS: mkdir .claude/agent-memory (+ 5 subdirs)
+    Installer->>FS: mkdir .claude/skills (+ 10 skill dirs)
     Installer->>FS: mkdir .claude-collective/tests
     Installer->>FS: mkdir .taskmaster/
 
@@ -113,6 +117,9 @@ classDiagram
         +getCoreMapping() Array
         +getAgentMapping() Array
         +getHookMapping() Array
+        +getRulesMapping() Array
+        +getAgentMemoryMapping() Array
+        +getSkillMapping() Array
         +getConfigMapping() Array
         +getTestMapping() Array
     }
@@ -147,21 +154,41 @@ graph TB
     end
 
     subgraph "Hook Files"
-        H1[directive-enforcer.sh]
-        H2[collective-metrics.sh]
-        H3[test-driven-handoff.sh]
-        H4[3 more hooks...]
+        H1[load-behavioral-system.sh]
+        H2[block-destructive-commands.sh]
+        H3[block-sensitive-files.sh]
+        H4[collective-metrics.sh]
+        H5[test-driven-handoff.sh]
+        H6[pre-compact-state.sh]
+        H7[subagent-context-inject.sh]
+        H8[semantic-docs-update-hook.sh]
+    end
+
+    subgraph "Rules Files (v2.1)"
+        R1[drupal-services.md]
+        R2[drupal-security.md]
+        R3[code-quality.md]
+        R4[3 more rules...]
+    end
+
+    subgraph "Agent Memory (v2.1)"
+        AM1[drupal-architect/MEMORY.md]
+        AM2[4 more agent memories...]
     end
 
     subgraph "Config Files"
         CF1[settings.json]
-        CF2[.mcp.json]
-        CF3[config.json]
+        CF2[settings.local.json]
+        CF3[.mcp.json]
     end
 
     subgraph "Command Files"
         CMD1[van.md]
         CMD2[tm/*.md]
+    end
+
+    subgraph "Skill Files (v2.1)"
+        SK1[7 Drupal SKILL.md files]
     end
 ```
 
@@ -340,7 +367,20 @@ graph TB
     ROOT --> CLAUDE[.claude/]
     CLAUDE --> AGENTS[agents/]
     CLAUDE --> HOOKS[hooks/]
+    HOOKS --> HOOKLIB[lib/]
     CLAUDE --> COMMANDS[commands/]
+    CLAUDE --> RULES[rules/ v2.1]
+    CLAUDE --> AGENTMEM[agent-memory/ v2.1]
+    AGENTMEM --> AM1[drupal-architect/]
+    AGENTMEM --> AM2[module-development-agent/]
+    AGENTMEM --> AM3[security-compliance-agent/]
+    AGENTMEM --> AM4[research-agent/]
+    AGENTMEM --> AM5[configuration-management-agent/]
+    CLAUDE --> SKILLS[skills/]
+    SKILLS --> SK1[semantic-docs/]
+    SKILLS --> SK2[drupal-entity-api/ v2.1]
+    SKILLS --> SK3[drupal-service-di/ v2.1]
+    SKILLS --> SK4[7 more skills...]
 
     ROOT --> COLLECTIVE[.claude-collective/]
     COLLECTIVE --> TESTS[tests/]
@@ -395,6 +435,8 @@ flowchart TD
     C3{hooks/ directory exists?}
     C4{agents/ directory exists?}
     C5{tests/ directory exists?}
+    C6{rules/ directory exists?}
+    C7{agent-memory/ directory exists?}
 
     PASS[Validation Passed]
     FAIL[Validation Failed]
@@ -408,8 +450,12 @@ flowchart TD
     C3 --> |No| FAIL
     C4 --> |Yes| C5
     C4 --> |No| FAIL
-    C5 --> |Yes| PASS
+    C5 --> |Yes| C6
     C5 --> |No| FAIL
+    C6 --> |Yes| C7
+    C6 --> |No| FAIL
+    C7 --> |Yes| PASS
+    C7 --> |No| FAIL
 ```
 
 ## Installation Status

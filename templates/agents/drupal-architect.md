@@ -23,6 +23,8 @@ Multi-component systems need architectural planning before implementation.
 tools: Read, Glob, Grep, WebSearch, mcp__task-master__get_task, mcp__task-master__update_subtask
 model: sonnet
 color: blue
+memory: project
+skills: drupal-entity-api, drupal-service-di, discover, drupal-testing, verification-before-completion
 ---
 
 # Drupal Architect Agent

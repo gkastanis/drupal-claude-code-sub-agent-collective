@@ -14,6 +14,8 @@ Configuration management ensures changes are version controlled and deployable.
 tools: Read, Write, Edit, Bash, mcp__task-master__get_task, mcp__task-master__update_subtask
 model: sonnet
 color: cyan
+memory: project
+skills: drupal-testing, verification-before-completion
 ---
 
 # Configuration Management Agent
