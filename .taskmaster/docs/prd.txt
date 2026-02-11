@@ -1,83 +1,259 @@
-# Product Requirements Document: Simple Todo Application
+# Product Requirements Document: Drupal Claude Collective v2.0 Overhaul
 
-## Overview
-Create a basic todo application with essential CRUD operations and local storage persistence.
+## Executive Summary
 
-## Core Features
+The drupal-claude-code-sub-agent-collective (v1.8.5) is an NPM package that installs 15 Drupal-specialized agents, hooks, commands, and coordination infrastructure into Claude Code projects. Research and usage analysis has revealed critical issues: the system loads 737 lines of context on every session (only ~120 needed), claims JIT loading but pre-loads everything, has 29 agent definitions when 15 suffice, and contains 6 major contradictions between documented behavior and actual behavior.
 
-### 1. Todo Management
-- **Add New Todos**: Input field with submit button
-- **Edit Todos**: Click to edit todo text inline
-- **Delete Todos**: Delete button to remove todos
-- **Toggle Completion**: Checkbox to mark complete/incomplete
+This v2.0 overhaul applies learnings from the Vercel AGENTS.md approach (lean passive context), Lullabot prompt library patterns (self-verification checklists), and the project's own research hypotheses to deliver a dramatically leaner, more honest, and more effective system.
 
-### 2. Basic Organization
-- **Filtering**: Show All, Active, Completed views
-- **Search**: Simple text search through todos
+## Problem Statement
 
-### 3. Data Persistence
-- **Local Storage**: Save todos to browser localStorage
-- **Auto-save**: Changes saved automatically
+### Context Bloat (Critical)
+- 737 lines loaded on EVERY session via `load-behavioral-system.sh` hook
+- Only ~120 lines needed for basic operation (auto-delegation + core identity)
+- Task Master CLAUDE.md alone is 417 lines - loaded even when not using task management
+- Contradicts the project's own JIT hypothesis which claims 65% context reduction
 
-### 4. User Experience
-- **Responsive Design**: Works on desktop and mobile
-- **Clean Interface**: Simple, intuitive design
+### Documentation Contradictions (6 Major)
+1. Claims "minimal routing" but loads 738 lines comprehensively
+2. Claims JIT context loading but pre-loads everything via startup hook
+3. Says "ONLY ACTIVE WHEN /VAN CALLED" but loads on every session
+4. Says "ignore collective rules for normal questions" but force-loads them
+5. System reminder says "may or may not be relevant" but loading is mandatory
+6. Claims "65% context reduction" from monolithic era but hook negates savings
 
-## Technical Requirements
+### Agent Proliferation
+- 29 agent definitions in .claude/agents/ totaling 4,750 lines
+- Package installs only 15 agents - 14 extra are meta/infrastructure agents not for end users
+- 3 gate agents with overlapping responsibilities (completion, enhanced-quality, readiness)
+- 3 PRD agents (prd-agent, prd-mvp, prd-research-agent) that could be 1
+- 2 project management agents that overlap (task-orchestrator, enhanced-project-manager)
 
-### Frontend Architecture
-- **React 18** with modern hooks
-- **TypeScript** for better development experience
-- **CSS Modules** or styled-components for styling
+### Hook Complexity
+- test-driven-handoff.sh is 740 lines - over-engineered for its purpose
+- collective-metrics.sh overlaps with test-driven-handoff.sh on JSON parsing
+- 80+ accumulated metrics JSON files with no rotation
+- 6 hooks run on every tool use creating performance overhead
 
-### Data Model
-```typescript
-interface Todo {
-  id: string;
-  text: string;
-  completed: boolean;
-  createdAt: Date;
-}
+### Command Redundancy
+- 47 Task Master commands with deep nesting
+- 6 nearly identical status change commands (to-done, to-pending, etc.)
+- Could be 20 commands with parameterization
 
-interface AppState {
-  todos: Todo[];
-  filter: 'all' | 'active' | 'completed';
-  searchQuery: string;
-}
+## Goals
+
+### Primary Goals
+1. **Reduce always-loaded context from 737 to ~120 lines** (84% reduction)
+2. **Implement true JIT loading** that aligns with the stated JIT hypothesis
+3. **Consolidate 29 agents to 15** clear-purpose agents
+4. **Fix all 6 documentation contradictions** so claims match reality
+5. **Simplify hooks** from 1,352 lines to ~500 lines
+
+### Secondary Goals
+6. Apply Vercel compressed-index pattern for passive context
+7. Apply Lullabot self-verification checklists to Drupal agents
+8. Apply DDC-style explicit decision tree for routing
+9. Consolidate 47 commands to ~20 parameterized commands
+10. Clean up metrics accumulation with rotation/archival
+
+### Non-Goals
+- Changing the core 15 Drupal agent definitions (those are well-differentiated)
+- Rewriting the JavaScript installer/CLI code
+- Changing the NPM package distribution model
+- Adding new Drupal-specific capabilities
+
+## Technical Architecture
+
+### New Context Loading Model
+
+```
+ALWAYS LOADED (~120 lines):
+  CLAUDE.md (6 lines) - entry point with @ imports
+  DECISION.md (35 lines) - auto-delegation logic
+  INDEX.md (NEW, ~80 lines) - compressed agent/command index
+
+JIT LOADED (on demand):
+  /van command used -> load van-context.md (~80 lines)
+  task-master command -> load taskmaster-reference.md (~100 lines)
+  research/analysis -> load research-framework.md (~60 lines)
+  hook debugging -> load hook-guide.md (~25 lines)
 ```
 
-### Development Tools
-- **Vite** for fast development
-- **ESLint + Prettier** for code quality
-- **Vitest** for testing
+### New File Structure
 
-## User Stories
+```
+CLAUDE.md (6 lines - unchanged entry point)
+.claude-collective/
+  DECISION.md (35 lines - auto-delegation, cleaned up)
+  INDEX.md (NEW ~80 lines - compressed agent/command index)
+  van-context.md (NEW ~80 lines - routing + agent details, loaded on /van)
+  taskmaster-reference.md (NEW ~100 lines - TM quick reference, loaded on demand)
+  research-framework.md (MOVED ~60 lines - loaded only for research)
+  hook-guide.md (NEW ~25 lines - loaded only for hook debugging)
+.claude/
+  agents/ (15 files down from 29 - consolidated)
+  hooks/ (4-5 files, simplified from 6)
+  commands/ (~20 files down from 54)
+```
 
-1. **As a user**, I want to add new todos so I can track my tasks
-2. **As a user**, I want to edit todos so I can update task details
-3. **As a user**, I want to delete todos so I can remove completed tasks
-4. **As a user**, I want to mark todos complete so I can track progress
-5. **As a user**, I want to filter todos so I can focus on specific items
-6. **As a user**, I want to search todos so I can find specific tasks
+### Agent Consolidation Map
+
+KEEP AS-IS (well-differentiated, these are the 15 installed agents):
+- routing-agent
+- drupal-architect
+- module-development-agent
+- theme-development-agent
+- configuration-management-agent
+- content-migration-agent
+- security-compliance-agent
+- performance-devops-agent
+- functional-testing-agent
+- unit-testing-agent
+- visual-regression-agent
+- enhanced-project-manager-agent
+- research-agent
+- workflow-agent
+- semantic-architect-agent
+
+MERGE (meta/infrastructure agents - dev repo only, not installed):
+- completion-gate + enhanced-quality-gate + readiness-gate -> quality-gate
+- task-executor + task-checker -> task-executor (with validation)
+- prd-agent + prd-mvp + prd-research-agent -> prd-agent (with modes)
+- behavioral-transformation-agent + van-maintenance-agent -> collective-maintenance-agent
+- hook-integration-agent + command-system-agent -> system-configuration-agent
+
+REMOVE (not needed at runtime):
+- dynamic-agent-creator (over-engineered)
+- npx-package-agent (release-time only)
+- metrics-collection-agent (hooks handle this)
+- tdd-validation-agent (merged into quality-gate)
+
+### Hook Simplification
+
+KEEP:
+- block-destructive-commands.sh (188 lines, well-focused)
+- load-behavioral-system.sh (REWRITE to ~20 lines, minimal index loading)
+
+SIMPLIFY:
+- test-driven-handoff.sh (740 -> ~200 lines, extract shared JSON parsing)
+- collective-metrics.sh (270 -> ~100 lines, add rotation, remove overlap)
+
+REMOVE:
+- directive-enforcer.sh (merge essential checks into load-behavioral-system)
+- routing-executor.sh (already a no-op)
+
+### Command Consolidation
+
+KEEP:
+- van.md (core routing)
+- autocompact.md
+- continue-handoff.md
+- reset-handoff.md
+
+CONSOLIDATE TaskMaster commands:
+- 6 status commands -> 1 set-status.md with $ARGUMENTS parameter
+- 2 init commands -> 1 init.md
+- 2 parse-prd commands -> 1 parse-prd.md
+- 3 list variants -> 1 list.md
+- 2 expand commands -> 1 expand.md
+- Keep unique: show, next, add-task, add-subtask, add-dependency, remove-task, remove-dependency, update-task, update-tasks-from-id, analyze-complexity, complexity-report, validate-dependencies, generate, models (setup + view), help, project-status
+- 3 workflow commands -> 1 workflow.md
+
+Target: ~20 commands down from 54
+
+## Implementation Phases
+
+### Phase 1: Context Engineering (Highest Priority)
+Create the new lean context loading system
+
+Tasks:
+1. Create INDEX.md - compressed agent/command index (~80 lines)
+2. Create van-context.md - routing details loaded only on /van
+3. Create taskmaster-reference.md - TM quick ref loaded only on demand
+4. Rewrite load-behavioral-system.sh to load only INDEX.md + DECISION.md
+5. Move research.md content to research-framework.md (JIT loaded)
+6. Create hook-guide.md from hooks.md content (JIT loaded)
+7. Fix all 6 contradictions in documentation
+8. Update CLAUDE.md imports to use new file structure
+9. Test: verify normal sessions load less than 150 lines
+10. Test: verify /van command loads full routing context on demand
+
+### Phase 2: Agent Consolidation
+Merge overlapping agents, remove unnecessary ones
+
+Tasks:
+1. Merge 3 gate agents into quality-gate.md
+2. Merge task-executor + task-checker into task-executor.md
+3. Merge 3 PRD agents into prd-agent.md with mode parameter
+4. Merge behavioral-transformation + van-maintenance into collective-maintenance-agent.md
+5. Merge hook-integration + command-system into system-configuration-agent.md
+6. Remove dynamic-agent-creator, npx-package-agent, metrics-collection-agent, tdd-validation-agent
+7. Update INDEX.md agent catalog to reflect new agent set
+8. Update van.md routing to use new consolidated agent names
+9. Update templates/agents/ to match new agent structure
+10. Update lib/file-mapping.js to reflect template changes
+
+### Phase 3: Hook and Command Simplification
+Reduce complexity while maintaining functionality
+
+Tasks:
+1. Refactor test-driven-handoff.sh (740 -> ~200 lines)
+2. Extract shared JSON parsing into lib/hook-utils.sh
+3. Simplify collective-metrics.sh with rotation and cleanup
+4. Remove directive-enforcer.sh (merge essentials into startup hook)
+5. Remove routing-executor.sh (no-op)
+6. Consolidate 6 status commands into 1 parameterized set-status.md
+7. Consolidate duplicate init, parse-prd, list, expand commands
+8. Create parameterized workflow.md from 3 workflow commands
+9. Update settings.json hook configuration
+10. Archive 80+ accumulated metrics JSON files
+
+### Phase 4: Integration and Polish
+Align with research learnings, prepare release
+
+Tasks:
+1. Apply Lullabot self-verification checklists to Drupal agents
+2. Apply DDC-style explicit decision tree to DECISION.md
+3. Update research.md with real metrics from the overhaul
+4. Update README.md for v2.0 changes
+5. Update CHANGELOG.md with v2.0 entries
+6. Update package.json to v2.0.0
+7. Update installer to handle new file structure
+8. Run full test suite and fix any breakages
+9. Update USER-GUIDE.md and CONTRIBUTING.md
+10. Final validation: measure actual context loading reduction
 
 ## Success Criteria
 
-- ✅ All CRUD operations work correctly
-- ✅ Data persists across browser sessions
-- ✅ Filtering and search work properly
-- ✅ Clean, responsive interface
-- ✅ Basic test coverage
+- Always-loaded context reduced from 737 to less than 150 lines
+- Zero contradictions between documented and actual behavior
+- Agent count reduced from 29 to 15 (matching installed count)
+- Hook total lines reduced from 1,352 to less than 500
+- Command count reduced from 54 to less than 25
+- All existing tests pass
+- Package installs cleanly via npx drupal-claude-collective init
+- /van routing works correctly with consolidated agents
 
-## Implementation Plan
+## Compatibility
 
-### Phase 1: Core Features
-- Basic todo CRUD operations
-- Local storage persistence
-- Simple list display
+This is a BREAKING CHANGE release (v2.0.0):
+- Existing v1.x installations should re-run init
+- Agent names change due to consolidation
+- Hook configuration changes
+- Command structure changes
+- No automated migration path (clean break)
 
-### Phase 2: Organization
-- Filtering system (all/active/completed)
-- Search functionality
-- Improved styling
+## Risk Assessment
 
-This simple todo application demonstrates modern React development practices with essential functionality.
+- LOW: Context file restructuring (just moving content between files)
+- LOW: Command consolidation (parameterization, not logic changes)
+- MEDIUM: Agent consolidation (routing updates needed)
+- MEDIUM: Hook simplification (could break handoff detection if not careful)
+- HIGH: Load-behavioral-system.sh rewrite (critical path, affects every session)
+
+## Dependencies
+
+- No external dependency changes needed
+- Node.js >=16.0.0 (unchanged)
+- Same 7 runtime dependencies (unchanged)
+- Same dev dependencies (unchanged)

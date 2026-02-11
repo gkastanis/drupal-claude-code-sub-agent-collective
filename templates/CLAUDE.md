@@ -149,3 +149,13 @@ Exception: Drupal render/form APIs can use arrays.
 - Hard-code technology dependencies
 
 **Detailed principles:** `@./.claude/docs/drupal-patterns/architecture-principles.md`
+
+---
+
+## Collective Index
+**Import compressed agent/command index with behavioral rules.**
+@./.claude-collective/INDEX.md
+
+## Decision Engine
+**Import auto-delegation infrastructure.**
+@./.claude-collective/DECISION.md

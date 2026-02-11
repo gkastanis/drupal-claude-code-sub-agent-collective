@@ -1,0 +1,171 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Create lean INDEX.md and context loading infrastructure",
+        "description": "Build compressed agent/command index (~95 lines) with behavioral rules section, and implement JIT loading system with new file structure (van-context.md, taskmaster-reference.md, research-framework.md, hook-guide.md)",
+        "details": "Implementation:\n1. Create .claude-collective/INDEX.md (~95 lines) as compressed index:\n   - Agent catalog (15 agents, 1-2 line descriptions each)\n   - Command catalog (~20 consolidated commands)\n   - JIT loading instructions (when to load van-context, taskmaster-reference, etc.)\n   - Format: Vercel AGENTS.md style - terse, scannable, passive reference\n   - NEW: Behavioral Rules section (~15-20 lines) from Claude Code Insights report:\n     a) After multi-file changes, grep codebase for remaining references to modified functions/constants/variables to catch missed locations\n     b) After Drupal service/Twig changes, verify: service injections correct, DB table/column names exist, Twig filters actually exist in project (no non-existent filters like |clamp)\n     c) Use system-configured values instead of hardcoding magic numbers (* 8 for hours, * 5 for weekdays) - search for existing config constants first\n     d) When removing/disabling something, remove from ALL locations (controller, template, Twig, JS, config) and grep to confirm nothing missed\n     e) Write output files to appropriate project directory, not inline in chat\n     f) For CSS fixes, target specific elements within context (.parent .child) not parent containers\n   - These rules address the #1 friction point: 26 buggy code events across 150 sessions\n\n2. Create .claude-collective/van-context.md (~80 lines):\n   - Move routing logic from CLAUDE.md\n   - Agent selection matrices\n   - Drupal-specific routing patterns\n   - Only loaded when /van command is used\n\n3. Create .claude-collective/taskmaster-reference.md (~100 lines):\n   - Extract essential TaskMaster commands from .taskmaster/CLAUDE.md\n   - Quick reference format (command + 1-line description)\n   - Only loaded when task-master commands are invoked\n\n4. Create .claude-collective/research-framework.md (~60 lines):\n   - Move content from research.md\n   - Only loaded for research/analysis tasks\n\n5. Create .claude-collective/hook-guide.md (~25 lines):\n   - Extract from hooks.md\n   - Only loaded for hook debugging\n\n6. Update CLAUDE.md imports to reference new structure\n7. Test: Verify files parse correctly with @ imports",
+        "testStrategy": "Validation:\n- INDEX.md <= 100 lines (target 95, expanded from 80 to include behavioral rules)\n- INDEX.md contains '## Behavioral Rules' section with 6 rules from Insights report\n- Each JIT file within size targets\n- @ imports resolve correctly in Claude Code\n- No syntax errors in markdown\n- grep '@\\.' *.md succeeds for all imports\n- Manual test: load CLAUDE.md, verify INDEX.md appears with behavioral rules, verify JIT files DON'T appear until triggered",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-10T14:07:18.541Z"
+      },
+      {
+        "id": "2",
+        "title": "Rewrite load-behavioral-system.sh for minimal context loading",
+        "description": "Transform startup hook from loading 738 lines to loading only ~120 lines (INDEX.md + DECISION.md), implementing true JIT loading pattern",
+        "details": "Implementation:\n1. Rewrite .claude/hooks/load-behavioral-system.sh (~20 lines):\n   ```bash\n   #!/bin/bash\n   echo \"🚀 DRUPAL CLAUDE COLLECTIVE v2.0\"\n   echo \"=== COLLECTIVE INDEX (.claude-collective/INDEX.md) ===\"\n   cat .claude-collective/INDEX.md\n   echo \"\"\n   echo \"=== DECISION ENGINE (.claude-collective/DECISION.md) ===\"\n   cat .claude-collective/DECISION.md\n   echo \"\"\n   echo \"✅ Collective Ready - JIT Loading Active\"\n   ```\n\n2. Remove all other file loads (agents.md, hooks.md, quality.md, research.md, CLAUDE.md, .taskmaster/CLAUDE.md)\n\n3. Update hook to display new branding/version (v2.0.0)\n\n4. Ensure executable permissions preserved\n\n5. Test with wc -l to verify output < 150 lines total",
+        "testStrategy": "Validation:\n- Hook script <= 25 lines\n- Hook output <= 150 lines total (INDEX.md ~80 + DECISION.md ~35 + formatting ~35)\n- Startup time < 1 second\n- No file not found errors\n- Manual test: restart Claude Code, check system-reminder length\n- Compare: v1.x startup = 738 lines, v2.0 startup <= 150 lines (80% reduction achieved)",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-11T16:01:07.543Z"
+      },
+      {
+        "id": "3",
+        "title": "Update DECISION.md with DDC-style explicit decision tree",
+        "description": "Refactor DECISION.md to include clearer decision logic following DDC (Decision-Driven Claude) pattern with explicit routing rules",
+        "details": "Implementation:\n1. Keep existing auto-delegation infrastructure (lines 1-35)\n\n2. Add explicit decision tree section:\n   ```markdown\n   ## ROUTING DECISION TREE\n   \n   IF: Drupal module/theme/config development\n     THEN: Load van-context.md, route to specialized Drupal agent\n   \n   IF: task-master command invoked\n     THEN: Load taskmaster-reference.md on demand\n   \n   IF: Research/analysis request\n     THEN: Load research-framework.md, use @research-agent\n   \n   IF: Hook debugging needed\n     THEN: Load hook-guide.md\n   \n   IF: Normal conversation\n     THEN: Use standard Claude behavior + auto-delegation capability\n   ```\n\n3. Clarify when JIT loading occurs vs. startup loading\n\n4. Fix any remaining contradictions from the 6 identified issues\n\n5. Target: ~40-45 lines total (slight expansion for clarity)",
+        "testStrategy": "Validation:\n- DECISION.md <= 50 lines\n- All 6 contradictions documented in PRD are resolved\n- Decision tree is explicit and unambiguous\n- No overlap with INDEX.md or van-context.md content\n- Manual review: read top to bottom, verify logical flow\n- Cross-reference with PRD section 'Documentation Contradictions'",
+        "priority": "medium",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-11T16:01:08.186Z"
+      },
+      {
+        "id": "4",
+        "title": "Consolidate 29 agents to 15 production agents",
+        "description": "Merge overlapping meta/infrastructure agents, remove development-only agents, keep 15 well-differentiated Drupal agents that match installed package",
+        "details": "Implementation:\n1. KEEP AS-IS (15 agents installed by package - from lib/file-mapping.js lines 117-144):\n   - routing-agent.md\n   - drupal-architect.md\n   - module-development-agent.md\n   - theme-development-agent.md\n   - configuration-management-agent.md\n   - content-migration-agent.md\n   - security-compliance-agent.md\n   - performance-devops-agent.md\n   - functional-testing-agent.md\n   - unit-testing-agent.md\n   - visual-regression-agent.md\n   - enhanced-project-manager-agent.md\n   - research-agent.md\n   - workflow-agent.md\n   - semantic-architect-agent.md\n\n2. MERGE (meta agents - development repo only):\n   - Create quality-gate.md = completion-gate + enhanced-quality-gate + readiness-gate\n   - Merge task-executor.md + task-checker.md (keep validation in executor)\n   - Merge prd-agent.md + prd-mvp.md + prd-research-agent.md (add mode parameter)\n   - Create collective-maintenance-agent.md = behavioral-transformation-agent + van-maintenance-agent\n   - Create system-configuration-agent.md = hook-integration-agent + command-system-agent\n\n3. REMOVE (not needed at runtime):\n   - dynamic-agent-creator.md\n   - npx-package-agent.md\n   - metrics-collection-agent.md\n   - tdd-validation-agent.md\n\n4. Update .claude-collective/INDEX.md to list only 15 production agents\n\n5. Update lib/file-mapping.js getAgentMapping() to reflect final 15 agents only\n\n6. Keep merged agents in dev repo but not in templates/ directory for installation",
+        "testStrategy": "Validation:\n- Exactly 15 agent files in templates/agents/ directory\n- lib/file-mapping.js allAgents array has exactly 15 entries\n- INDEX.md lists exactly 15 agents with clear descriptions\n- Each merged agent has clear capability description\n- No duplicate capabilities across agents\n- find templates/agents -name '*.md' | wc -l returns 15\n- Verify getAgentMapping() in file-mapping.js has 15 items in allAgents array",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-11T15:57:59.574Z"
+      },
+      {
+        "id": "5",
+        "title": "Simplify test-driven-handoff.sh hook",
+        "description": "Refactor test-driven-handoff.sh from 740 lines to ~200 lines by extracting shared JSON parsing utilities and removing redundant logic",
+        "details": "Implementation:\n1. Create .claude/hooks/lib/hook-utils.sh (~50 lines):\n   - Extract shared JSON parsing functions\n   - Extract Unicode normalization logic\n   - Extract handoff pattern matching\n   - Make reusable across hooks\n\n2. Refactor .claude/hooks/test-driven-handoff.sh:\n   - Source ./lib/hook-utils.sh\n   - Remove duplicated JSON parsing (use utils)\n   - Remove redundant validation checks\n   - Simplify handoff detection logic\n   - Target: ~200 lines (down from 740)\n\n3. Ensure all existing handoff patterns still detected:\n   - \"Use the [agent-name] subagent to...\"\n   - Unicode dash normalization (‑–—− to -)\n   - Task tool emission on detection\n\n4. Preserve critical functionality:\n   - Handoff metrics collection\n   - Error handling\n   - Hook failure recovery\n\n5. Update templates/hooks/test-driven-handoff.sh to match",
+        "testStrategy": "Validation:\n- test-driven-handoff.sh <= 220 lines (target 200)\n- hook-utils.sh exists and is sourced correctly\n- All existing handoff test cases pass\n- No regression in handoff detection\n- Manual test: trigger handoff with sample agent completion message\n- Run: bash -n test-driven-handoff.sh (syntax check)\n- Test handoff patterns: grep 'Use the' test fixtures, verify detection",
+        "priority": "medium",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-11T16:12:19.865Z"
+      },
+      {
+        "id": "6",
+        "title": "Simplify collective-metrics.sh and add rotation",
+        "description": "Refactor collective-metrics.sh from 270 lines to ~100 lines, remove overlap with test-driven-handoff.sh, and implement metrics rotation/archival",
+        "details": "Implementation:\n1. Refactor .claude/hooks/collective-metrics.sh:\n   - Source ./lib/hook-utils.sh for shared JSON parsing\n   - Remove duplicate JSON parsing logic that overlaps with test-driven-handoff.sh\n   - Simplify metrics collection to essential data points\n   - Target: ~100 lines (down from 270)\n\n2. Add metrics rotation:\n   - Keep last 30 session JSON files\n   - Keep last 10 snapshot JSON files\n   - Archive older files to .claude-collective/metrics/archives/YYYY-MM/\n   - Run rotation on metrics hook execution (check file count, rotate if > limit)\n\n3. Cleanup existing 80+ accumulated metrics files:\n   - Archive all existing files by date\n   - Keep only recent 30 sessions + 10 snapshots\n\n4. Update metrics-report.js to handle archived metrics (if needed)\n\n5. Document rotation policy in hook-guide.md",
+        "testStrategy": "Validation:\n- collective-metrics.sh <= 110 lines (target 100)\n- Uses hook-utils.sh for JSON parsing (no duplication)\n- Metrics rotation works: creates archives/YYYY-MM/ directories\n- After rotation: <= 30 session files, <= 10 snapshot files\n- Archived files are moved, not deleted\n- Manual test: run hook 50 times, verify rotation triggers\n- Test: ls .claude-collective/metrics/sessions/ | wc -l <= 30",
+        "priority": "medium",
+        "dependencies": [
+          "5"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "7",
+        "title": "Remove redundant hooks and add php-lint post-edit hook",
+        "description": "Remove directive-enforcer.sh and routing-executor.sh, merge essential checks into load-behavioral-system.sh, and add a postToolUse hook for PHP syntax checking after edits (from Insights report). Reduces total hook count while adding high-impact auto-linting.",
+        "details": "Implementation:\n1. Remove .claude/hooks/directive-enforcer.sh (currently no-op or minimal value)\n   - Review for any essential checks\n   - Merge critical checks into load-behavioral-system.sh if needed\n\n2. Remove .claude/hooks/routing-executor.sh (already a no-op per PRD)\n   - Confirm no active logic\n   - Remove from settings.json hook configuration\n\n3. NEW: Add postToolUse php-lint hook to settings.json:\n   - Trigger on Edit|Write tool calls\n   - Run php -l on modified .php/.module/.inc files\n   - This addresses the #1 friction point from Insights report: 26 buggy code events, many from missing service injections, wrong DB table names, and syntax errors that php -l would catch\n   - Configuration:\n     ```json\n     { \"matcher\": \"Edit|Write\", \"command\": \"if echo $CC_EDIT_FILE_PATH | grep -qE '\\\\.(php|module|inc|install|theme)$'; then php -l $CC_EDIT_FILE_PATH 2>&1 | tail -1; fi\" }\n     ```\n   - Add to both .claude/settings.json and templates/settings.json.template\n\n4. Update .claude/settings.json:\n   - Remove directive-enforcer from hook configuration\n   - Remove routing-executor from hook configuration\n   - Add postToolUse php-lint hook\n   - Keep: load-behavioral-system, test-driven-handoff, collective-metrics, block-destructive-commands\n\n5. Update templates/settings.json.template to match\n\n6. Update lib/file-mapping.js getHookMapping() to remove deleted hooks\n\n7. Verify final hook total:\n   - load-behavioral-system.sh: ~20 lines\n   - test-driven-handoff.sh: ~200 lines\n   - collective-metrics.sh: ~100 lines\n   - block-destructive-commands.sh: 188 lines (keep as-is)\n   - hook-utils.sh: ~50 lines\n   - php-lint: inline in settings.json (1 line)\n   - Total: ~558 lines (target <600)",
+        "testStrategy": "Validation:\n- directive-enforcer.sh deleted from templates/hooks/\n- routing-executor.sh deleted from templates/hooks/\n- settings.json has 4 hooks configured plus postToolUse php-lint\n- postToolUse hook triggers on .php/.module/.inc/.install/.theme files\n- php -l catches syntax errors on modified PHP files\n- lib/file-mapping.js getHookMapping() returns correct hooks\n- Total hook lines: wc -l .claude/hooks/*.sh | tail -1 shows <600\n- No broken hook references in settings.json\n- Manual test: edit a .php file with syntax error, verify hook catches it\n- Manual test: edit a .js file, verify hook does NOT trigger\n- Manual test: restart Claude Code, verify no hook errors",
+        "priority": "medium",
+        "dependencies": [
+          "2",
+          "5",
+          "6"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "8",
+        "title": "Consolidate TaskMaster commands from 47 to ~20",
+        "description": "Merge 6 status commands into 1 parameterized command, consolidate duplicate init/parse-prd/list/expand commands, and create unified workflow command",
+        "details": "Implementation:\n1. Create parameterized set-status.md (replace 6 status commands):\n   ```markdown\n   Set task status to: $ARGUMENTS\n   \n   Run: task-master set-status --id=<id> --status=$ARGUMENTS\n   Valid statuses: pending, in-progress, done, deferred, cancelled, review\n   ```\n   - Delete: to-done.md, to-pending.md, to-in-progress.md, to-cancelled.md, to-deferred.md, to-review.md\n\n2. Consolidate duplicate commands:\n   - init.md (merge init-project.md + init-project-quick.md, add --quick flag parameter)\n   - parse-prd.md (merge parse-prd.md + parse-prd-with-research.md, add --research flag)\n   - list.md (merge list-tasks.md + list-tasks-with-subtasks.md + list-tasks-by-status.md, add parameters)\n   - expand.md (merge expand-task.md + expand-all-tasks.md, add --all flag)\n   - workflow.md (merge auto-implement-tasks.md + command-pipeline.md + smart-workflow.md, add workflow type parameter)\n   - install.md (merge install-taskmaster.md + quick-install-taskmaster.md, add --quick flag)\n   - update.md (merge update-task.md + update-tasks-from-id.md + update-single-task.md, use parameters)\n\n3. Keep unique commands as-is (~15 commands):\n   - show, next, add-task, add-subtask, add-dependency, remove-task, remove-dependency, remove-subtask\n   - clear-subtasks, clear-all-subtasks, analyze-complexity, complexity-report, validate-dependencies\n   - generate, models (already parameterized), help, learn, project-status, sync-readme, analyze-project\n\n4. Update lib/file-mapping.js getCommandMapping() to reflect new structure (~26 command files)\n\n5. Delete consolidated command files from templates/commands/tm/\n\n6. Update taskmaster-reference.md with new command structure",
+        "testStrategy": "Validation:\n- find .claude/commands/tm -name '*.md' | wc -l returns ~26 (down from 47)\n- set-status.md accepts $ARGUMENTS parameter\n- All consolidated commands have clear parameter documentation\n- No broken command references in INDEX.md or taskmaster-reference.md\n- lib/file-mapping.js tmCommands array has ~26 entries (down from 47)\n- Manual test: each consolidated command with various parameters\n- Test: /tm-set-status done works, /tm-list pending works, /tm-expand --all works",
+        "priority": "medium",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "updatedAt": "2026-02-11T16:05:51.316Z"
+      },
+      {
+        "id": "9",
+        "title": "Apply Lullabot self-verification checklists to Drupal agents",
+        "description": "Integrate Lullabot prompt library patterns (self-verification checklists) into the 15 Drupal agent definitions for improved quality and consistency",
+        "details": "Implementation:\n1. Review Lullabot self-verification checklist patterns from docs/research/lullabot-agent-research.md\n\n2. Add self-verification checklist section to each Drupal agent:\n   - @drupal-architect: Architecture decision checklist (dependency injection, entity API, caching)\n   - @module-development-agent: Module quality checklist (hooks, plugins, services, schema)\n   - @theme-development-agent: Theme standards checklist (Twig, assets, responsive, accessibility)\n   - @security-compliance-agent: Security audit checklist (OWASP, Drupal SA, access control)\n   - @configuration-management-agent: Config management checklist (CMI, install/update hooks, schema)\n   - @content-migration-agent: Migration checklist (source plugins, process plugins, rollback)\n   - @performance-devops-agent: Performance checklist (caching, aggregation, CDN, database)\n   - @functional-testing-agent: Behat checklist (scenarios, contexts, step definitions)\n   - @unit-testing-agent: PHPUnit checklist (mocking, assertions, coverage)\n   - @visual-regression-agent: Visual testing checklist (baseline, comparison, thresholds)\n\n3. Format: Add \"## Self-Verification Checklist\" section before \"## Handoff Criteria\"\n\n4. Each checklist: 5-10 yes/no items specific to agent's domain\n\n5. Update agent templates in templates/agents/",
+        "testStrategy": "Validation:\n- All 15 Drupal agents have Self-Verification Checklist section\n- Each checklist has 5-10 specific, actionable items\n- Checklists reference Drupal-specific patterns from docs/drupal-patterns/\n- No generic/vague checklist items\n- Manual review: each agent checklist is domain-specific\n- grep '## Self-Verification Checklist' templates/agents/*.md | wc -l returns 15",
+        "priority": "medium",
+        "dependencies": [
+          "4"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "10",
+        "title": "Update documentation and prepare v2.0.0 release",
+        "description": "Update README, CHANGELOG, package.json, USER-GUIDE, research.md with v2.0 changes including Insights report-driven improvements, update installer for new structure, run tests, and validate context reduction metrics",
+        "details": "Implementation:\n1. Update package.json:\n   - version: \"2.0.0\"\n   - Update description to mention \"lean context loading\"\n\n2. Update CHANGELOG.md:\n   - Add v2.0.0 section with BREAKING CHANGES\n   - Document context reduction (738 → <150 lines)\n   - Document agent consolidation (29 → 15)\n   - Document hook simplification (1,352 → ~558 lines)\n   - Document command consolidation (52 → ~26)\n   - Document new workflow skills (/implement, /update-docs, /verify-changes)\n   - Document php-lint postToolUse hook\n   - Document behavioral rules from Insights report\n\n3. Update README.md:\n   - Update headline stats (context reduction, agent count)\n   - Update installation instructions if needed\n   - Add migration guide from v1.x to v2.0\n   - Highlight Insights-driven improvements (behavioral rules, auto-linting, workflow skills)\n\n4. Update .claude-collective/research.md:\n   - Mark JIT Hypothesis as VALIDATED (65% → 80% context reduction achieved)\n   - Add real metrics from v2.0 overhaul\n   - Document actual context loading measurements\n   - Document Insights report integration as feedback loop validation\n\n5. Update USER-GUIDE.md and CONTRIBUTING.md:\n   - Document new file structure\n   - Update JIT loading behavior\n   - Update agent catalog (15 agents)\n   - Document new /implement, /update-docs, /verify-changes skills\n\n6. Update lib/installer.js if needed for new file structure\n\n7. Run full test suite:\n   - npm run test:jest\n   - npm run test:contracts\n   - npm run test:handoffs\n   - Fix any breakages\n\n8. Final validation:\n   - Measure actual startup context: restart Claude, count system-reminder lines\n   - Verify < 150 lines loaded at startup\n   - Verify JIT loading works for /van command\n   - Test clean installation: npx drupal-claude-collective init\n\n9. Update templates/ directory with all v2.0 changes\n\n10. Run manual smoke test of key workflows",
+        "testStrategy": "Validation:\n- package.json version is 2.0.0\n- CHANGELOG.md has complete v2.0.0 section\n- README.md reflects v2.0 changes\n- All tests pass: npm run test:jest exits 0\n- Clean install works: npx drupal-claude-collective init succeeds\n- Startup context measurement:\n  - Restart Claude Code in test project\n  - Count lines in system-reminder\n  - Verify <= 150 lines (INDEX.md + DECISION.md + formatting)\n- /van command loads additional context (verify van-context.md appears)\n- Manual test: complete Drupal module creation workflow\n- Manual test: task-master workflow triggers taskmaster-reference.md load\n- Success criteria from PRD all met:\n  - Always-loaded < 150 lines ✓\n  - Zero contradictions ✓\n  - 15 agents ✓\n  - Hooks < 600 lines ✓\n  - Commands < 30 ✓",
+        "priority": "high",
+        "dependencies": [
+          "2",
+          "3",
+          "4",
+          "7",
+          "8",
+          "9",
+          "11"
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": "11",
+        "title": "Create custom workflow skills from Insights report patterns",
+        "description": "Create custom Claude Code skills (/implement, /update-docs, /verify-changes) that encode the high-impact workflow patterns identified by the Claude Code Insights usage report, addressing multi-file verification gaps and documentation drift.",
+        "details": "Implementation:\n1. Create .claude/commands/implement.md skill:\n   - Encodes the plan-then-execute workflow that 74% of successful sessions used\n   - Steps: read plan file, grep codebase for ALL files referencing changed functions/services, implement across ALL files, run php -l on modified PHP files, grep for hardcoded magic numbers and replace with config values, verify Twig filters exist, write output to project directory, commit\n   - Addresses: 40 multi-file change successes + 26 buggy code frictions\n   - Usage: /implement <plan-file-or-description>\n\n2. Create .claude/commands/update-docs.md skill:\n   - Encodes the documentation sync workflow (23 sessions dedicated to docs)\n   - Steps: check recent git commits, diff against semantic docs/CHANGELOG/feature index, update any stale documentation, verify accuracy against actual source code, commit doc updates\n   - Addresses: documentation drift found in 3+ sessions\n   - Usage: /update-docs [since-commit-or-timeframe]\n\n3. Create .claude/commands/verify-changes.md skill:\n   - Encodes the post-implementation verification pass\n   - Steps: grep for remaining references to old names/values, check all service injections, verify DB table/column names, confirm Twig filter existence, check for missed locations\n   - Addresses: #1 friction - Claude missing files in multi-file changes\n   - Usage: /verify-changes\n\n4. Add all 3 skills to templates/commands/ for installation\n\n5. Update lib/file-mapping.js getCommandMapping() to include new skills\n\n6. Update INDEX.md command catalog to list new skills\n\n7. Reference: Claude Code Insights report patterns section and CLAUDE.md suggestions section",
+        "testStrategy": "Validation:\n- implement.md exists in .claude/commands/ and templates/commands/\n- update-docs.md exists in .claude/commands/ and templates/commands/\n- verify-changes.md exists in .claude/commands/ and templates/commands/\n- Each skill file is <30 lines and has clear step-by-step instructions\n- lib/file-mapping.js includes the 3 new skills in command mapping\n- INDEX.md lists the 3 skills with 1-line descriptions\n- Manual test: /implement with a simple plan file works end-to-end\n- Manual test: /verify-changes catches a deliberately missed reference\n- Manual test: /update-docs identifies stale documentation",
+        "priority": "medium",
+        "dependencies": [
+          "1",
+          "8"
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-02-11T16:12:19.865Z",
+      "taskCount": 11,
+      "completedCount": 6,
+      "tags": [
+        "master"
+      ]
+    }
+  }
+}
