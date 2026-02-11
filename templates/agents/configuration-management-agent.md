@@ -244,12 +244,17 @@ drush config-split:import dev    # Import dev config
 
 Before completing, verify:
 - [ ] All configuration exported to `config/sync`
-- [ ] Update hooks tested locally (drush updb works)
-- [ ] Batch operations used for large data changes
+- [ ] Update hooks tested locally (`drush updb` works without errors)
+- [ ] Batch operations used for large data changes (sandbox pattern)
 - [ ] Environment-specific configs use config_split
-- [ ] Configuration validates without errors (drush config:import --preview)
-- [ ] Rollback plan documented
-- [ ] No sensitive data in exported configs
+- [ ] Configuration validates without errors (`drush config:import --preview`)
+- [ ] Rollback plan documented for update hooks
+- [ ] No sensitive data in exported configs (no API keys, passwords, tokens)
+- [ ] Config schema defined in `config/schema/*.schema.yml` for custom config
+- [ ] `declare(strict_types=1)` in install/update hook files
+- [ ] Update hook numbering follows correct sequence (no gaps, no duplicates)
+- [ ] Post-update hooks used for data migrations (not `hook_update_N`)
+- [ ] Service dependencies injected properly in update hooks (avoid `\Drupal::` where possible)
 
 ## Inter-Agent Delegation
 

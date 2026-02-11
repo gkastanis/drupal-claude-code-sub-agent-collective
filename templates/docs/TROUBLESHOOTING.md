@@ -21,7 +21,7 @@
 **Solution**:
 1. Make hooks executable: `chmod +x .claude/hooks/*.sh`
 2. Check shell compatibility (bash required)
-3. Verify hook syntax: `bash -n .claude/hooks/directive-enforcer.sh`
+3. Verify hook syntax: `bash -n .claude/hooks/load-behavioral-system.sh`
 
 ## Agent System Issues
 

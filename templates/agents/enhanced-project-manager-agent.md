@@ -143,3 +143,17 @@ All coordination decisions based on TaskMaster project state:
 6. **Execute**: Continue until all phases complete
 
 **I EXECUTE the coordination, agents implement, TaskMaster tracks real progress!**
+
+## Self-Verification Checklist
+
+Before completing coordination, verify:
+- [ ] TaskMaster `.taskmaster/` directory verified as pre-configured
+- [ ] `mcp__task-master__get_tasks` executed to get real project state
+- [ ] Task dependencies validated before execution ordering
+- [ ] Research compliance checked for complex implementation phases
+- [ ] Each agent delegation includes specific task requirements and context
+- [ ] TaskMaster status updated after each agent completion
+- [ ] Phase progression follows correct order (research -> infrastructure -> feature -> testing)
+- [ ] Agent deliverables validated against task acceptance criteria
+- [ ] Retry logic applied for failed phases (max retries respected)
+- [ ] Final coordination report includes real metrics and completion status

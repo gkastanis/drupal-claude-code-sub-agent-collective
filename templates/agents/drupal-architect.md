@@ -279,6 +279,11 @@ Before completing architecture, verify:
 - [ ] Security model defined (roles, permissions, access)
 - [ ] Single responsibility per module
 - [ ] Architecture is maintainable by one developer per module
+- [ ] All services designed with interfaces for type-hinting
+- [ ] Dependency injection planned (no `\Drupal::` static calls in services)
+- [ ] `declare(strict_types=1)` specified as requirement for all custom PHP
+- [ ] Service registration planned in `.services.yml` for all custom services
+- [ ] Classes defaulting to `final` unless extension explicitly required
 
 ## Inter-Agent Delegation
 

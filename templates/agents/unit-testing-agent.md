@@ -218,4 +218,18 @@ handoff:
     route_to: "@module-development-agent"
 ```
 
+## Self-Verification Checklist
+
+Before completing, verify:
+- [ ] Test classes use `declare(strict_types=1)`
+- [ ] Correct test base class selected (UnitTestCase, KernelTestBase, BrowserTestBase)
+- [ ] All external dependencies mocked (no real service calls in unit tests)
+- [ ] `@group` and `@coversDefaultClass` annotations present
+- [ ] Test isolation maintained (setUp/tearDown properly implemented)
+- [ ] No `\Drupal::` static calls in test code (use dependency injection or container)
+- [ ] Tests are deterministic (no randomness, no time-dependent assertions)
+- [ ] Kernel tests install required entity schemas and configs
+- [ ] Test names clearly describe the behavior being tested
+- [ ] Tests verify actual bugs are fixed in source code (no assertion manipulation)
+
 Use this agent to implement comprehensive PHPUnit testing for Drupal modules when testing is requested.

@@ -1,49 +1,27 @@
 Parse a PRD document to generate tasks.
 
-Arguments: $ARGUMENTS (PRD file path)
+Arguments: $ARGUMENTS
 
-## Intelligent PRD Parsing
-
-Analyzes your requirements document and generates a complete task breakdown.
+Parse arguments for options:
+- `<file>` → PRD file path (default: .taskmaster/docs/prd.txt)
+- `research` or `--research` → Enable research mode for enhanced task generation
+- `--append` → Append to existing tasks instead of replacing
 
 ## Execution
 
 ```bash
-task-master parse-prd --input=$ARGUMENTS
+task-master parse-prd <file> [--research] [--append]
 ```
 
-## Parsing Process
+## Process
 
-1. **Document Analysis**
-   - Extract key requirements
-   - Identify technical components
-   - Detect dependencies
-   - Estimate complexity
+1. Read and analyze PRD document
+2. Generate structured tasks with dependencies
+3. If `--research`: Use research provider for enhanced analysis
+4. If `--append`: Add to existing task list
 
-2. **Task Generation**
-   - Create 10-15 tasks by default
-   - Include implementation tasks
-   - Add testing tasks
-   - Include documentation tasks
-   - Set logical dependencies
+## Post-Parse
 
-3. **Smart Enhancements**
-   - Group related functionality
-   - Set appropriate priorities
-   - Add acceptance criteria
-   - Include test strategies
-
-## Options
-
-Parse arguments for modifiers:
-- Number after filename → `--num-tasks`
-- `research` → Use research mode
-- `comprehensive` → Generate more tasks
-
-## Post-Generation
-
-After parsing:
-1. Display task summary
-2. Show dependency graph
-3. Suggest task expansion for complex items
-4. Recommend sprint planning
+1. Show generated tasks summary
+2. Suggest running analyze-complexity
+3. Recommend expanding high-complexity tasks

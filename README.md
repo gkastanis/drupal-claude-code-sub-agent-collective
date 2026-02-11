@@ -223,13 +223,14 @@ your-project/
 │   │   ├── research-agent.md
 │   │   ├── semantic-architect-agent.md
 │   │   └── workflow-agent.md
-│   ├── hooks/                  # Enforcement scripts (6 hooks)
-│   │   ├── directive-enforcer.sh
-│   │   ├── collective-metrics.sh
-│   │   ├── routing-executor.sh
-│   │   ├── load-behavioral-system.sh
+│   ├── hooks/                  # Enforcement scripts (6 hooks + shared lib)
+│   │   ├── lib/hook-utils.sh
 │   │   ├── block-destructive-commands.sh
-│   │   └── block-sensitive-files.sh
+│   │   ├── block-sensitive-files.sh
+│   │   ├── collective-metrics.sh
+│   │   ├── load-behavioral-system.sh
+│   │   ├── semantic-docs-update-hook.sh
+│   │   └── test-driven-handoff.sh
 │   └── commands/               # Command system
 │       ├── van.md              # Routing command
 │       └── tm/                 # TaskMaster commands
@@ -418,10 +419,29 @@ Attempted to access: web/sites/default/settings.php
 
 If you need agents to access a specific file, add it to the allowlist in `.claude/sensitive-files.json`.
 
+## Upgrading from v1.x
+
+v2.0.0 is a major infrastructure overhaul that reduces complexity while maintaining full backward compatibility.
+
+**What changed:**
+- Hook scripts refactored with shared utility library (`lib/hook-utils.sh`), reducing total hook code by ~60%
+- `/tm:*` command variants consolidated into unified skills (47 files down to 31)
+- All 15 agents enhanced with self-verification checklists and Lullabot best practices
+- 3 new workflow skills added: `/implement`, `/update-docs`, `/verify-changes`
+- Inline php-lint hook added for immediate PHP syntax feedback
+
+**How to upgrade:**
+```bash
+# Re-run the installer with --force to update all files
+npx drupal-claude-collective init --force
+```
+
+**Breaking changes:** None. All existing `/tm:*` commands, agent names, and configuration files remain compatible. The consolidated command files accept the same arguments as their predecessor variants.
+
 ## Current State
 
 ### What Works Well
-- **Streamlined agent collective** (14 agents vs 47 - 70% reduction)
+- **Streamlined agent collective** (15 agents vs 47 original - 68% reduction)
 - **Consolidated quality validation** - one comprehensive gate instead of 6 separate gates
 - **Sensitive file protection** - automatic blocking of .env, settings.php, and credential files
 - Drupal coding standards enforcement prevents common issues

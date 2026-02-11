@@ -5,6 +5,44 @@ All notable changes to the TaskMaster Agent autonomous development system will b
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-02-11
+
+### Summary
+
+Major overhaul of the collective infrastructure. Focused on reducing complexity, consolidating redundant components, and improving maintainability. Overall: ~60% reduction in hook code, ~70% reduction in /tm command files, and all 15 agents upgraded with self-verification checklists and Lullabot best practices.
+
+### Added
+
+- **Shared hook utility library** (`lib/hook-utils.sh`): Common functions extracted from hooks into a reusable library, eliminating duplicated code across hook scripts.
+- **php-lint PostToolUse hook**: Inline PHP syntax checking added as a PostToolUse hook for immediate feedback on PHP file changes.
+- **Self-verification checklists**: All 15 agents now include self-verification checklists to validate their own output quality before completing handoffs.
+- **Lullabot best practices**: Industry best practices from Lullabot integrated into all 15 agent templates for improved Drupal development guidance.
+- **3 new workflow skills**: `/implement`, `/update-docs`, and `/verify-changes` for streamlined multi-agent orchestration.
+
+### Changed
+
+- **Consolidated /tm:\* commands**: Reduced from 47 command files to 31 by merging variant files into unified skills. Eight command groups (expand, init, list, models, set-status, setup, update, workflows) each consolidated from 2-6 files into a single unified file.
+- **Refactored load-behavioral-system.sh**: Reduced from 53 lines to 18 lines by extracting shared logic into `lib/hook-utils.sh`.
+- **Refactored test-driven-handoff.sh**: Reduced from 363 lines to ~172 lines through utility extraction and logic simplification.
+- **Refactored collective-metrics.sh**: Reduced from 291 lines to 106 lines (63% reduction) by leveraging shared hook utilities.
+- **JIT Context Loading validated**: Startup context reduced from ~500 lines to <150 lines via INDEX.md + DECISION.md routing tree, confirming the Phase 2 hypothesis.
+
+### Removed
+
+- **7 redundant hooks**: Removed hooks that duplicated functionality now handled by the shared utility library or were no longer needed.
+- **Redundant context files**: 7 files deleted that were superseded by the JIT loading approach via DECISION.md.
+- **25 redundant /tm command files**: Variant files (e.g., `expand-task.md`, `expand-all-tasks.md`) replaced by unified equivalents (e.g., `expand.md`).
+
+### Migration from v1.x
+
+- All `/tm:*` commands continue to work. Consolidated commands accept the same arguments as their predecessor variants.
+- Hook scripts are backward compatible. The new `lib/hook-utils.sh` library is sourced automatically by hooks that need it.
+- Agent templates have been enhanced but maintain the same file names and locations.
+- No changes required to `.mcp.json` or `settings.json` configuration.
+- Re-run `npx drupal-claude-collective init --force` to update an existing installation.
+
+---
+
 ## [1.8.3] - 2025-12-16
 
 ### 🗑️ Removed

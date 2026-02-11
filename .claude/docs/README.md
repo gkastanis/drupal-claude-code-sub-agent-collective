@@ -23,10 +23,14 @@ Each agent has specific capabilities and responsibilities:
 
 #### 🪝 Hook Scripts (`.claude/hooks/`)
 Enforcement mechanisms that ensure directive compliance:
-- **directive-enforcer.sh**: Validates behavioral directives before tool execution
-- **collective-metrics.sh**: Collects performance and research metrics
+- **load-behavioral-system.sh**: Loads collective behavioral system during SessionStart events
 - **test-driven-handoff.sh**: Validates handoff contracts during transitions
-- **routing-executor.sh**: Executes routing decisions and agent handoffs
+- **collective-metrics.sh**: Collects performance and research metrics
+- **block-destructive-commands.sh**: Blocks dangerous destructive commands before execution
+- **block-sensitive-files.sh**: Blocks Read/Grep access to sensitive configuration files
+- **semantic-docs-update-hook.sh**: Reminds to update semantic documentation after development tasks
+- **lib/hook-utils.sh**: Shared utility functions for hooks
+- **php-lint**: Inline PHP syntax check in settings.json for Edit/Write operations
 
 #### 🧪 Testing Framework (`.claude-collective/`)
 Complete testing system for validating collective behavior:

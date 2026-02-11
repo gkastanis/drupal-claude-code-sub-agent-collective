@@ -47,10 +47,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/directive-enforcer.sh"
-          },
-          {
-            "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/collective-metrics.sh"
           }
         ]
@@ -80,6 +76,15 @@
         ]
       },
       {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo $CC_EDIT_FILE_PATH | grep -qE '\\.(php|module|inc|install|theme)$'; then php -l $CC_EDIT_FILE_PATH 2>&1 | tail -1; fi"
+          }
+        ]
+      },
+      {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           {
@@ -93,10 +98,6 @@
       {
         "matcher": "mock-.*",
         "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/mock-deliverable-generator.sh"
-          },
           {
             "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/test-driven-handoff.sh"

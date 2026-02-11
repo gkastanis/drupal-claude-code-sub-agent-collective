@@ -10,7 +10,7 @@
       },
       {
         "name": "missing_hook_script",
-        "description": "Simulated missing directive-enforcer.sh",
+        "description": "Simulated missing collective-metrics.sh",
         "status": "repaired",
         "actions_taken": ["script_restored", "permissions_fixed"]
       },

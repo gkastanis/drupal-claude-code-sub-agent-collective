@@ -109,13 +109,18 @@ drush migrate:reset-status migration_id
 
 Before completing, verify:
 - [ ] Content model documented with field mappings
-- [ ] Migration dependencies defined correctly
-- [ ] Rollback tested (`drush mr migration_id` works)
+- [ ] Migration dependencies defined correctly (migration groups ordered)
+- [ ] Rollback tested (`drush mr migration_id` works cleanly)
 - [ ] Error handling implemented for bad source data
 - [ ] Source data validated before migration
 - [ ] Files/images imported and referenced correctly
 - [ ] No orphaned entities after migration
 - [ ] Migration is idempotent (can re-run safely)
+- [ ] `declare(strict_types=1)` in all custom source/process plugin classes
+- [ ] Custom plugins use dependency injection (no `\Drupal::` static calls)
+- [ ] Custom plugins registered via proper Drupal plugin annotations
+- [ ] Services used by plugins listed in `.services.yml`
+- [ ] Process plugins handle edge cases (null values, empty strings, encoding issues)
 
 ## Inter-Agent Delegation
 

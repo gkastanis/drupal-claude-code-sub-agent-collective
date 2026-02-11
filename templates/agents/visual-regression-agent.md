@@ -176,13 +176,17 @@ jobs:
 
 Before completing, verify:
 - [ ] Baseline screenshots created and version controlled
-- [ ] Dynamic content standardized (dates, user names, etc.)
-- [ ] Key breakpoints tested (mobile, tablet, desktop)
+- [ ] Dynamic content standardized (dates, user names, ads)
+- [ ] Key breakpoints tested (mobile 375px, tablet 768px, desktop 1920px)
 - [ ] Diff threshold configured appropriately (<0.1%)
 - [ ] Tests integrated into CI/CD pipeline
-- [ ] Critical pages covered (homepage, content types, forms)
-- [ ] Interactive states tested (hover, focus, open menus)
-- [ ] Font loading handled (wait for fonts.ready)
+- [ ] Critical pages covered (homepage, content types, forms, error pages)
+- [ ] Interactive states tested (hover, focus, open menus, modals)
+- [ ] Font loading handled (wait for `document.fonts.ready`)
+- [ ] Cookie banners and live chat widgets hidden for consistent comparisons
+- [ ] Drupal-specific elements covered (admin toolbar hidden, cache cleared before capture)
+- [ ] WCAG 2.1 AA visual indicators verified (focus outlines, contrast ratios)
+- [ ] Backstop/Playwright configuration committed to version control
 
 ## Inter-Agent Delegation
 

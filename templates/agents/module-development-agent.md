@@ -142,13 +142,19 @@ public function __construct(
 
 Before completing, verify:
 - [ ] Class is `final` with `declare(strict_types=1);`
-- [ ] All dependencies injected via constructor
-- [ ] No static calls to `\Drupal::`
-- [ ] Hooks use OOP attribute pattern
-- [ ] Services listed in `<module>.services.yml`
+- [ ] All dependencies injected via constructor (constructor property promotion)
+- [ ] No static calls to `\Drupal::` in any service or plugin class
+- [ ] Hooks use OOP attribute pattern with `LegacyHook` bridge
+- [ ] Services listed in `<module>.services.yml` with interface type-hints
 - [ ] Visibility minimized (private > protected > public)
 - [ ] Guard clauses used for early returns
-- [ ] Functional array operations preferred
+- [ ] Functional array operations preferred (`array_filter`, `array_map`, `array_reduce`)
+- [ ] Properties use `private readonly` where possible
+- [ ] No getters/setters where `public readonly` suffices
+- [ ] PHPCS compliant (Drupal,DrupalPractice standards)
+- [ ] JSON handling uses `\GuzzleHttp\Utils::jsonDecode/jsonEncode` (not PHP native)
+- [ ] Exceptions used for error conditions (not NULL/FALSE returns)
+- [ ] Cache metadata (`#cache` tags, contexts, max-age) set on render arrays
 
 ## Architecture Guidelines
 

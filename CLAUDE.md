@@ -1,7 +1,7 @@
-## Global Decision Engine
-**Import minimal routing and auto-delegation decisions only, treat as if import is in the main CLAUDE.md file.**
-@./.claude-collective/DECISION.md
+## Collective Index
+**Import compressed agent/command index with behavioral rules.**
+@./.claude-collective/INDEX.md
 
-## Task Master AI Instructions
-**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
-@./.taskmaster/CLAUDE.md
+## Decision Engine
+**Import auto-delegation infrastructure.**
+@./.claude-collective/DECISION.md

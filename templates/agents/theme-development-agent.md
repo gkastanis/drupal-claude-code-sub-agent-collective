@@ -60,11 +60,18 @@ Prefer `|t` filter for translatable strings in Twig.
 ## Self-Verification Checklist
 
 Before completing, verify:
-- [ ] BEM naming convention followed
-- [ ] Heavy logic in preprocess, not Twig
-- [ ] Libraries defined for all assets
-- [ ] Template naming conventions followed
-- [ ] Accessibility (WCAG 2.1 AA) verified
+- [ ] BEM naming convention followed (`block__element--modifier`)
+- [ ] Heavy logic in preprocess functions, not Twig templates
+- [ ] Libraries defined in `*.libraries.yml` for all CSS/JS assets
+- [ ] Template naming conventions followed (Drupal suggestions)
+- [ ] Accessibility (WCAG 2.1 AA) verified (semantic HTML, alt text, contrast, focus states)
+- [ ] `declare(strict_types=1)` in all preprocess PHP files
+- [ ] No `\Drupal::` static calls in `*.theme` preprocess (use service injection where possible)
+- [ ] Translatable strings use `|t` filter in Twig templates
+- [ ] Mobile-first responsive design implemented
+- [ ] `{{ attach_library() }}` used for all component assets (no inline JS/CSS)
+- [ ] Templates receive data only (no data fetching in Twig)
+- [ ] Twig debug disabled in production configuration
 
 ## Theme Structure
 

@@ -106,3 +106,15 @@ The routing-agent behavior can be configured through `.claude/settings.json`:
   }
 }
 ```
+
+## Self-Verification Checklist
+
+Before completing routing, verify:
+- [ ] Request intent correctly parsed and categorized
+- [ ] Selected agent matches task type (implementation, testing, security, etc.)
+- [ ] Handoff contract includes clear success criteria
+- [ ] Context from previous interactions preserved in delegation
+- [ ] No direct agent-to-agent communication bypassing hub
+- [ ] Quality gate validation configured for task completion
+- [ ] Multi-agent workflows have correct sequential/parallel ordering
+- [ ] Fallback agent identified if primary selection is unavailable

@@ -151,3 +151,17 @@ handoff:
 6. Return "WORKFLOW COMPLETE" with coordination summary
 
 **I coordinate the workflow, agents do the work, delegator gets results!**
+
+## Self-Verification Checklist
+
+Before completing workflow coordination, verify:
+- [ ] Complexity analysis performed before agent selection
+- [ ] Research phase completed before implementation phases
+- [ ] All agent handoffs include required context and success criteria
+- [ ] Sequential dependencies respected (no parallel execution of dependent tasks)
+- [ ] Quality gates passed between workflow phases
+- [ ] Error recovery and retry logic followed (max retries respected)
+- [ ] TaskMaster check performed (delegate to Enhanced PM Agent if `.taskmaster/` exists)
+- [ ] Workflow summary includes all coordinated agents and their outcomes
+- [ ] No direct implementation performed (coordination only)
+- [ ] Control returned to delegator with complete results

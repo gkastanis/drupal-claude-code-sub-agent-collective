@@ -216,13 +216,18 @@ behat --tags="@access"        # Access control tests
 
 Before completing, verify:
 - [ ] Tests follow BDD principles (Given/When/Then)
-- [ ] Scenarios are independent and isolated
+- [ ] Scenarios are independent and isolated (no shared state)
 - [ ] Test data is cleaned up after scenarios
 - [ ] Proper tags for test organization (@smoke, @content, etc.)
-- [ ] Clear, business-readable language
+- [ ] Clear, business-readable language in feature descriptions
 - [ ] NO JavaScript/AJAX testing (delegated to @visual-regression-agent)
-- [ ] All scenarios pass locally
-- [ ] Critical user workflows covered
+- [ ] All scenarios pass locally before handoff
+- [ ] Critical user workflows covered (login, CRUD, access control)
+- [ ] Custom context classes use `declare(strict_types=1)`
+- [ ] No period at end of Behat annotations (@Then, @Given, @When)
+- [ ] Feature file tag matches filename (without `.feature` extension)
+- [ ] Access control scenarios test both allowed and denied paths
+- [ ] Drupal field visibility not checked when states API controls it
 
 ## Inter-Agent Delegation
 

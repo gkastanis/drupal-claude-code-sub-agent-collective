@@ -108,8 +108,12 @@ Before completing, verify:
 - [ ] CDN configured for static assets
 - [ ] Cron running regularly
 - [ ] Views using caching with appropriate tags
-- [ ] Render cache (#cache) used in custom code
+- [ ] Render cache (`#cache`) used in custom code with proper tags/contexts
 - [ ] Database indexes added for custom queries
+- [ ] No `\Drupal::` static calls in performance-critical service code (use DI)
+- [ ] Entity queries use `accessCheck()` explicitly (required since Drupal 9.3)
+- [ ] BigPipe enabled for authenticated user page delivery
+- [ ] Cache invalidation strategy documented (no stale data scenarios)
 
 ## Inter-Agent Delegation
 

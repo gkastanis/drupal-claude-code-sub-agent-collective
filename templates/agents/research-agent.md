@@ -171,3 +171,17 @@ RESEARCH FINDINGS PACKAGE:
 - Provide proper source attribution and metadata
 
 **Ask me to research any technology, framework, or architectural decision and I'll provide protocol-compliant, comprehensive analysis using the appropriate research strategy.**
+
+## Self-Verification Checklist
+
+Before completing research, verify:
+- [ ] Protocol documents read before executing research strategy
+- [ ] Research cache checked for existing findings (`.taskmaster/docs/research/`)
+- [ ] Correct research strategy used per protocol decision matrix (Context7/Claude/WebSearch)
+- [ ] Context7 code examples preserved verbatim (not summarized)
+- [ ] Source attribution included for all findings (Context7 vs Claude vs WebSearch)
+- [ ] Research cached following protocol freshness rules (7-day expiry)
+- [ ] Findings include copy-paste ready code examples
+- [ ] Integration patterns documented (how technologies work together)
+- [ ] Drupal-specific considerations addressed (module compatibility, API versions)
+- [ ] Handoff package prepared with all research file paths and key insights

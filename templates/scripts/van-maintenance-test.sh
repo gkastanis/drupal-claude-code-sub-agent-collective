@@ -50,7 +50,7 @@ corrupt_settings() {
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/directive-enforcer.sh"
+            "command": ".claude/hooks/collective-metrics.sh"
           }
         ]
       // Missing closing bracket - malformed JSON
@@ -65,10 +65,10 @@ EOF
 # Function to simulate missing hook script
 simulate_missing_hook() {
     echo "🔧 Test 2: Simulating missing hook script" | tee -a "${MAINTENANCE_LOG}"
-    if [[ -f "${PROJECT_ROOT}/.claude/hooks/directive-enforcer.sh" ]]; then
-        backup_file "${PROJECT_ROOT}/.claude/hooks/directive-enforcer.sh" "directive-enforcer.sh.backup"
-        rm "${PROJECT_ROOT}/.claude/hooks/directive-enforcer.sh"
-        echo "✗ Removed directive-enforcer.sh" | tee -a "${MAINTENANCE_LOG}"
+    if [[ -f "${PROJECT_ROOT}/.claude/hooks/collective-metrics.sh" ]]; then
+        backup_file "${PROJECT_ROOT}/.claude/hooks/collective-metrics.sh" "collective-metrics.sh.backup"
+        rm "${PROJECT_ROOT}/.claude/hooks/collective-metrics.sh"
+        echo "✗ Removed collective-metrics.sh" | tee -a "${MAINTENANCE_LOG}"
     fi
 }
 
@@ -102,7 +102,7 @@ validate_system_health() {
     fi
     
     # Check required hook scripts
-    local required_hooks=("directive-enforcer.sh" "test-driven-handoff.sh" "collective-metrics.sh" "routing-executor.sh")
+    local required_hooks=("load-behavioral-system.sh" "test-driven-handoff.sh" "collective-metrics.sh" "block-destructive-commands.sh" "block-sensitive-files.sh")
     for hook in "${required_hooks[@]}"; do
         if [[ -f "${PROJECT_ROOT}/.claude/hooks/${hook}" ]]; then
             echo "✓ Hook script ${hook} exists" | tee -a "${MAINTENANCE_LOG}"
@@ -111,7 +111,7 @@ validate_system_health() {
             ((issues_found++))
         fi
     done
-    
+
     # Check directory structure
     local required_dirs=(".claude/agents" ".claude/hooks" ".claude/state")
     for dir in "${required_dirs[@]}"; do
@@ -162,7 +162,7 @@ trigger_van_maintenance() {
     fi
     
     # Restore missing hook scripts
-    local required_hooks=("directive-enforcer.sh" "test-driven-handoff.sh" "collective-metrics.sh" "routing-executor.sh")
+    local required_hooks=("load-behavioral-system.sh" "test-driven-handoff.sh" "collective-metrics.sh" "block-destructive-commands.sh" "block-sensitive-files.sh")
     for hook in "${required_hooks[@]}"; do
         if [[ ! -f "${PROJECT_ROOT}/.claude/hooks/${hook}" ]] && [[ -f "${BACKUP_DIR}/${hook}.backup" ]]; then
             echo "🔧 Restoring missing hook: ${hook}" | tee -a "${MAINTENANCE_LOG}"
@@ -205,7 +205,7 @@ generate_maintenance_report() {
       },
       {
         "name": "missing_hook_script",
-        "description": "Simulated missing directive-enforcer.sh",
+        "description": "Simulated missing collective-metrics.sh",
         "status": "repaired",
         "actions_taken": ["script_restored", "permissions_fixed"]
       },
@@ -287,7 +287,7 @@ cleanup() {
     
     # Restore any remaining backups
     restore_file "${PROJECT_ROOT}/.claude/settings.json" "settings.json.backup" 2>/dev/null || true
-    restore_file "${PROJECT_ROOT}/.claude/hooks/directive-enforcer.sh" "directive-enforcer.sh.backup" 2>/dev/null || true
+    restore_file "${PROJECT_ROOT}/.claude/hooks/collective-metrics.sh" "collective-metrics.sh.backup" 2>/dev/null || true
     
     # Fix any remaining directory issues
     if [[ -f "${PROJECT_ROOT}/.claude/agents" ]] && [[ ! -d "${PROJECT_ROOT}/.claude/agents" ]]; then

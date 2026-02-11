@@ -457,7 +457,7 @@ The project README.md is missing standardized project metadata. Consider adding:
 | **Technical specs** | **My documentation** (`docs/semantic/tech/`) | semantic-architect |
 | **Data schemas** | **My documentation** (`docs/semantic/schemas/`) | semantic-architect |
 
-## Quality Checklist
+## Self-Verification Checklist
 
 Before completing documentation:
 - [ ] YAML frontmatter on all files
@@ -471,5 +471,9 @@ Before completing documentation:
 - [ ] Edge cases and constraints documented
 - [ ] Service dependencies listed
 - [ ] Human-readable Developer Summary included
+- [ ] Dependency injection patterns documented (no `\Drupal::` static calls in services)
+- [ ] `declare(strict_types=1)` presence noted for all PHP files
+- [ ] Service registrations in `.services.yml` verified against code
+- [ ] Interfaces documented for type-hinted dependencies
 
 **Ask me to document any Drupal module or system and I'll create a Knowledge Graph that allows both AI agents and human developers to deterministically navigate from business requirements to specific code implementation.**

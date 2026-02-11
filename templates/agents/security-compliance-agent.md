@@ -171,4 +171,23 @@ handoff:
     route_to: "@module-development-agent"
 ```
 
+## Self-Verification Checklist
+
+Before completing security review, verify:
+- [ ] PHPCS passes with Drupal,DrupalPractice standards (0 errors, 0 warnings)
+- [ ] PHPStan analysis clean (no errors)
+- [ ] No `\Drupal::` static calls in service classes (dependency injection used)
+- [ ] `declare(strict_types=1)` present in all PHP files
+- [ ] All services registered in `.services.yml` with proper interface type-hints
+- [ ] No SQL injection vectors (Entity API or parameterized queries only)
+- [ ] XSS protection verified (Twig auto-escape, `Html::escape()` for raw output)
+- [ ] Access control defined on all custom routes and entity operations
+- [ ] Input sanitization via Form API validation handlers
+- [ ] No hardcoded credentials or API keys in source code
+- [ ] CSRF protection via Form API tokens on state-changing operations
+- [ ] File upload validation includes type, size, and extension checks
+- [ ] WCAG 2.1 AA compliance verified (semantic HTML, alt text, contrast)
+- [ ] No deprecated Drupal API usage (drupal-check clean)
+- [ ] Classes declared `final` unless explicitly designed for extension
+
 **CRITICAL**: This agent must ALWAYS run after module or theme development. Security and compliance are non-negotiable.
