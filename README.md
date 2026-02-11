@@ -237,8 +237,19 @@ your-project/
 │   └── skills/                # Claude Code skills
 │       └── semantic-docs/     # Semantic documentation navigator
 └── .claude-collective/
-    ├── tests/                  # Test framework
-    ├── metrics/                # Usage tracking
+    ├── INDEX.md               # Agent/command index + behavioral rules (startup)
+    ├── DECISION.md            # Auto-delegation decision engine (startup)
+    ├── van-context.md         # Routing context (JIT: /van only)
+    ├── taskmaster-reference.md # TaskMaster quick reference (JIT: /tm commands)
+    ├── research-framework.md  # Research hypotheses (JIT: research tasks)
+    ├── hook-guide.md          # Hook troubleshooting (JIT: hook debugging)
+    ├── CLAUDE.md              # Collective behavioral rules (/van activated)
+    ├── agents.md              # Agent catalog
+    ├── hooks.md               # Hook integration requirements
+    ├── quality.md             # Quality gates and reporting
+    ├── research.md            # Research metrics
+    ├── tests/                 # Test framework
+    ├── metrics/               # Usage tracking
     └── package.json           # Testing setup
 ```
 
