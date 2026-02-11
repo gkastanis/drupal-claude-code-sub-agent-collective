@@ -216,7 +216,7 @@ your-project/
 ├── CLAUDE.md                    # Behavioral rules for agents (~96 lines, lean)
 ├── .mcp.json                    # MCP server configuration (Task Master by default)
 ├── .claude/
-│   ├── settings.json           # Hook configuration (8 hooks across 6 events)
+│   ├── settings.json           # Hook configuration (9 hooks across 8 events)
 │   ├── settings.local.json     # Personal overrides (not overwritten on updates)
 │   ├── agents/                 # 15 agent definitions (with memory + skills frontmatter)
 │   │   ├── routing-agent.md
@@ -234,7 +234,7 @@ your-project/
 │   │   ├── research-agent.md            # memory: project
 │   │   ├── semantic-architect-agent.md
 │   │   └── workflow-agent.md
-│   ├── hooks/                  # Enforcement scripts (8 hooks + shared lib)
+│   ├── hooks/                  # Enforcement scripts (9 hooks + shared lib)
 │   │   ├── lib/hook-utils.sh
 │   │   ├── block-destructive-commands.sh    # PreToolUse(Bash)
 │   │   ├── block-sensitive-files.sh         # PreToolUse(Read|Grep)
@@ -243,7 +243,8 @@ your-project/
 │   │   ├── semantic-docs-update-hook.sh     # PostToolUse(Edit|Write)
 │   │   ├── test-driven-handoff.sh           # PostToolUse(Task)/SubagentStop
 │   │   ├── pre-compact-state.sh             # PreCompact (NEW v2.1)
-│   │   └── subagent-context-inject.sh       # SubagentStart (NEW v2.1)
+│   │   ├── subagent-context-inject.sh       # SubagentStart (NEW v2.1)
+│   │   └── teammate-quality-gate.sh         # TeammateIdle/TaskCompleted (NEW v2.2)
 │   ├── rules/                  # Auto-loaded behavioral rules (NEW v2.1)
 │   │   ├── drupal-services.md       # DI, Entity API, service registration
 │   │   ├── drupal-security.md       # Input sanitization, XSS, access control
@@ -471,6 +472,25 @@ Attempted to access: web/sites/default/settings.php
 If you need agents to access a specific file, add it to the allowlist in `.claude/sensitive-files.json`.
 
 ## Upgrading
+
+### Upgrading to v2.2 (from v2.1)
+
+v2.2 adds experimental agent teams support - Claude Code's multi-session coordination system where independent teammates share a task list and mailbox.
+
+**What changed:**
+- Agent teams enabled by default (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json)
+- `teammateMode: "in-process"` configured in settings.json
+- New `teammate-quality-gate.sh` hook for `TeammateIdle` and `TaskCompleted` events (advisory only, never blocks)
+- Agent Teams guidance section added to CLAUDE.md with role-based teammate suggestions
+- Override examples in settings.local.json for disabling agent teams or changing teammate mode
+- Hook count: 8 → 9 across 8 event types (was 6)
+
+**How to upgrade:**
+```bash
+npx drupal-claude-collective init --force
+```
+
+**Breaking changes:** None. Agent teams are opt-in at usage time - the feature flag just makes them available. All existing commands, agents, and configuration remain compatible.
 
 ### Upgrading to v2.1 (from v2.0)
 

@@ -6,9 +6,9 @@ Read this first when starting a new session on this project.
 
 ## What This Project Is
 
-An **NPM package** (`drupal-claude-collective`) that installs 15 Drupal-specialized AI agents, 8 enforcement hooks, 15 skills, 7 auto-loaded rule files, slash commands, and coordination infrastructure into Claude Code projects. Users run `npx drupal-claude-collective install --yes` and get a complete multi-agent Drupal development environment.
+An **NPM package** (`drupal-claude-collective`) that installs 15 Drupal-specialized AI agents, 9 enforcement hooks, 15 skills, 7 auto-loaded rule files, slash commands, and coordination infrastructure into Claude Code projects. Users run `npx drupal-claude-collective install --yes` and get a complete multi-agent Drupal development environment.
 
-**npm**: `drupal-claude-collective` | **Current version**: 2.1.0-dev | **License**: MIT
+**npm**: `drupal-claude-collective` | **Current version**: 2.2.0-dev | **License**: MIT
 
 ---
 
@@ -20,7 +20,7 @@ An **NPM package** (`drupal-claude-collective`) that installs 15 Drupal-speciali
 
 **2. Hub-and-Spoke Coordination** — All agent communication flows through a central hub (the `/van` routing command). Agents never communicate peer-to-peer. The hub selects the optimal agent, delegates, monitors, and validates.
 
-**3. Hook Enforcement** — 8 shell scripts hook into Claude Code events (SessionStart, PreToolUse, PostToolUse, PreCompact, SubagentStart, SubagentStop) to enforce behavioral rules, block dangerous commands, detect agent handoffs, preserve state during compaction, inject agent context, and collect metrics. Shared utilities live in `lib/hook-utils.sh`.
+**3. Hook Enforcement** — 9 shell scripts hook into Claude Code events (SessionStart, PreToolUse, PostToolUse, PreCompact, SubagentStart, SubagentStop, TeammateIdle, TaskCompleted) to enforce behavioral rules, block dangerous commands, detect agent handoffs, preserve state during compaction, inject agent context, collect metrics, and advise on verification. Shared utilities live in `lib/hook-utils.sh`.
 
 **4. Rules Directory** (v2.1) — 7 topic-based rule files in `.claude/rules/` auto-loaded by Claude Code. Replaces inline rules in CLAUDE.md for leaner startup context. Includes `testing-verification.md` which enforces verification-before-completion behavior.
 
@@ -97,7 +97,7 @@ drupal-claude-code-sub-agent-collective/
 │   │   ├── tests/                       # Test contracts
 │   │   └── metrics/                     # Usage tracking
 │   ├── agents/                          # 15 agent definitions (.md, with memory + skills)
-│   ├── hooks/                           # 8 hook scripts + lib/
+│   ├── hooks/                           # 9 hook scripts + lib/
 │   │   ├── load-behavioral-system.sh    # SessionStart (18 lines)
 │   │   ├── test-driven-handoff.sh       # PostToolUse/SubagentStop (172 lines)
 │   │   ├── collective-metrics.sh        # PostToolUse (106 lines)
@@ -106,6 +106,7 @@ drupal-claude-code-sub-agent-collective/
 │   │   ├── semantic-docs-update-hook.sh # PostToolUse (75 lines)
 │   │   ├── pre-compact-state.sh         # PreCompact (~40 lines) NEW v2.1
 │   │   ├── subagent-context-inject.sh   # SubagentStart (~60 lines) NEW v2.1
+│   │   ├── teammate-quality-gate.sh     # TeammateIdle/TaskCompleted (~35 lines) NEW v2.2
 │   │   └── lib/hook-utils.sh           # Shared utilities (79 lines)
 │   ├── .claude/rules/                   # Auto-loaded behavioral rules (7 files) NEW v2.1+
 │   ├── agent-memory/                    # Persistent agent knowledge (5 agents) NEW v2.1
@@ -115,7 +116,7 @@ drupal-claude-code-sub-agent-collective/
 │   ├── skills/                          # Claude Code skills (3 existing + 7 Drupal + 3 cross-project + 2 testing) v2.1+
 │   ├── scripts/tests/                   # Test scripts directory (agent-created verification scripts)
 │   ├── docs/                            # Installed documentation
-│   ├── settings.json.template           # Hook configuration (6 events, 8 hooks)
+│   ├── settings.json.template           # Hook configuration (8 events, 9 hooks)
 │   └── settings.local.json              # Personal overrides template
 │
 ├── .claude-collective/                  # Repo's own collective (dog-fooding)
@@ -173,7 +174,7 @@ Agent definitions: `templates/agents/*.md` | Mappings: `lib/file-mapping.js:getA
 
 ---
 
-## The 8 Hooks
+## The 9 Hooks
 
 | Hook | Event | Lines | Purpose |
 |------|-------|-------|---------|
@@ -183,8 +184,9 @@ Agent definitions: `templates/agents/*.md` | Mappings: `lib/file-mapping.js:getA
 | collective-metrics.sh | PostToolUse | 106 | Collects routing, performance, research metrics |
 | semantic-docs-update-hook.sh | PostToolUse | 75 | Reminds to update semantic docs after dev tasks |
 | test-driven-handoff.sh | PostToolUse/SubagentStop | 172 | Detects handoff patterns, routes to next agent |
-| **pre-compact-state.sh** | **PreCompact** | ~40 | **Saves active agent/task state before context compaction** |
-| **subagent-context-inject.sh** | **SubagentStart** | ~60 | **Validates agent name, injects recovery context + memory path** |
+| pre-compact-state.sh | PreCompact | ~40 | Saves active agent/task state before context compaction |
+| subagent-context-inject.sh | SubagentStart | ~60 | Validates agent name, injects recovery context + memory path |
+| **teammate-quality-gate.sh** | **TeammateIdle/TaskCompleted** | ~35 | **Advisory verification reminder for agent teams (never blocks)** |
 | lib/hook-utils.sh | (shared) | 79 | JSON parsing, Unicode normalization, handoff detection |
 
 Hook templates: `templates/hooks/` | Mappings: `lib/file-mapping.js:getHookMapping()`
@@ -270,6 +272,15 @@ Install: `npx drupal-claude-collective` (stable) or `npx drupal-claude-collectiv
 
 ---
 
+## v2.2 Changes from v2.1
+
+| Metric | v2.1 | v2.2 | Change |
+|--------|------|------|--------|
+| Hook count | 8 | 9 | +1 (teammate-quality-gate.sh) |
+| Hook events | 6 | 8 | +2 (TeammateIdle, TaskCompleted) |
+| Agent teams | Not available | Enabled by default | Experimental multi-session coordination |
+| Settings keys | hooks, sandbox, etc. | +env, +teammateMode | Agent teams configuration |
+
 ## v2.1 Changes from v2.0
 
 | Metric | v2.0 | v2.1 | Change |
@@ -329,7 +340,7 @@ Install: `npx drupal-claude-collective` (stable) or `npx drupal-claude-collectiv
 | [CHANGELOG.md](../CHANGELOG.md) | Full version history v1.0.0 → current |
 | [docs/OVERVIEW.md](OVERVIEW.md) | Architecture with Mermaid diagrams |
 | [docs/AGENTS.md](AGENTS.md) | Agent lifecycle, registry, selection matrix |
-| [docs/HOOKS.md](HOOKS.md) | Hook flow, TDD validation, response format (8 hooks, 6 events) |
+| [docs/HOOKS.md](HOOKS.md) | Hook flow, TDD validation, response format (9 hooks, 8 events) |
 | [docs/INSTALLATION.md](INSTALLATION.md) | Installer sequence, file mapping, merge strategies |
 | [docs/COMMAND-SYSTEM.md](COMMAND-SYSTEM.md) | Command parsing, autocomplete, history |
 | [docs/METRICS.md](METRICS.md) | Research metrics, 3 hypotheses, KPIs |

@@ -2,7 +2,29 @@
 
 All notable changes to the Drupal Claude Code Sub-Agent Collective.
 
-## [Unreleased]
+## [2.2.0-dev] - 2026-02-12
+
+### Added
+- **Agent Teams support** (experimental): Enables Claude Code's multi-session agent teams feature. Teammates are independent Claude Code sessions that automatically get all collective rules, skills, and hooks.
+- **`teammate-quality-gate.sh` hook**: Advisory hook for `TeammateIdle` and `TaskCompleted` events. Checks for verification output patterns; outputs a reminder if none found. Always exits 0 (never blocks).
+- **`env` config in settings.json**: Sets `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` to enable agent teams.
+- **`teammateMode` config**: Defaults to `in-process` in settings.json.template.
+- **Agent Teams section in CLAUDE.md**: Guidance on role-based teammates (module-dev, theme-dev, config, testing), file conflict avoidance, and when to use agent teams vs subagents.
+- **Agent Teams note in INDEX.md**: Brief mention that teammates get full collective context.
+- Override examples in `settings.local.json` for disabling agent teams and changing teammate mode.
+
+### Changed
+- Hook count: 8 → 9 (+teammate-quality-gate.sh).
+- Hook events: 6 → 8 (+TeammateIdle, +TaskCompleted).
+- Settings template now includes `env` and `teammateMode` top-level keys.
+- Updated README.md: agent teams section, file tree, hook count, upgrading guide.
+- Updated docs/v2-session-kickstart.md: hook count, hook events, repo tree, settings info.
+- Updated CHANGELOG.md with full version history.
+
+### Verified
+- All 172 unit tests pass.
+
+## [2.1.0] - 2026-02-11
 
 ### Added
 - **3 new skills**: `agent-browser` (CLI browser automation with DDEV integration), `discover` (docs-first codebase discovery with scripts), `prd` (Drupal-adapted PRD generator with user stories).

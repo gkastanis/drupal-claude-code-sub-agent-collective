@@ -66,6 +66,29 @@ npm install && npm run build  # Compile assets
 
 ---
 
+## Agent Teams (Experimental)
+
+Agent teams spawn independent Claude Code sessions ("teammates") that coordinate via shared task list and mailbox. Each teammate is a full session that automatically loads all collective rules, skills, and hooks.
+
+**How teammates use the collective:**
+- Each teammate can use `/van` to route to specialized agents within their session
+- All 7 behavioral rules and hooks apply automatically per teammate
+- Teammates communicate via mailbox - not through the hub-and-spoke subagent system
+
+**Suggested role-based teammates for Drupal projects:**
+- **module-dev**: Module code, services, plugins, hooks
+- **theme-dev**: Twig templates, CSS/JS assets, responsive design
+- **config**: Configuration management, schema, install/update hooks
+- **testing**: Behat scenarios, PHPUnit tests, verification scripts
+
+**File conflict avoidance:** Each teammate should own different files/directories. Avoid multiple teammates editing the same file simultaneously.
+
+**When to use agent teams vs subagents:**
+- **Agent teams**: Parallel independent workstreams (new module with separate layers, parallel code review lenses, large migrations)
+- **Subagents** (`/van`): Single-feature sequential work, same-file edits, quick tasks where coordination overhead exceeds benefit
+
+---
+
 ## Architecture Checklist
 
 **Before writing code, ASK:**

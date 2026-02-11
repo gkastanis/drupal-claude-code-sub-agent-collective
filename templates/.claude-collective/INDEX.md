@@ -30,6 +30,10 @@
 **Workflows**: /implement, /update-docs, /verify-changes
 **TaskMaster Workflows**: /tm:workflows/auto-implement-tasks, /tm:workflows/smart-workflow, /tm:workflows/command-pipeline
 
+## Agent Teams (Experimental)
+
+Agent teams enabled. Teammates are independent sessions that automatically get all collective rules, skills, and hooks. Each teammate can use `/van` for agent routing. Assign teammates to separate file areas to avoid conflicts.
+
 ## Context Loading (JIT)
 
 Load ONLY when needed -- never at startup:

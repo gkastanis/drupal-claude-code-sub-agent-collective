@@ -35,6 +35,8 @@
     "_statusLine": "Override team statusLine: {\"statusLine\": {\"type\": \"command\", \"command\": \"echo my-info\"}}",
     "_thinking": "Enable extended thinking: {\"alwaysThinkingEnabled\": true}",
     "_spinnerVerbs": "Replace spinner: {\"spinnerVerbs\": {\"mode\": \"replace\", \"verbs\": [\"Your\", \"Custom\", \"Verbs\"]}}",
-    "_outputStyle": "Change response style: {\"outputStyle\": \"Explanatory\"}"
+    "_outputStyle": "Change response style: {\"outputStyle\": \"Explanatory\"}",
+    "_disable_agent_teams": "Disable agent teams: add to env: {\"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS\": \"0\"}",
+    "_teammate_mode": "Change teammate mode: {\"teammateMode\": \"tmux\"} (options: in-process, tmux)"
   }
 }
