@@ -8,7 +8,7 @@
   ],
   "statusLine": {
     "type": "command",
-    "command": "branch=$(git branch --show-current 2>/dev/null || echo 'detached'); ddev_status=$(ddev status 2>/dev/null | grep -o 'running\\|stopped' | head -1 || echo 'no-ddev'); echo \"$branch | ddev:$ddev_status\""
+    "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/collective-statusline.sh"
   },
   "attribution": {
     "commit": "",

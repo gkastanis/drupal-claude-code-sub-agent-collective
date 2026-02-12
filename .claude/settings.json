@@ -2,6 +2,10 @@
   "deniedTools": [
     "mcp__task-master__initialize_project"
   ],
+  "statusLine": {
+    "type": "command",
+    "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/collective-statusline.sh"
+  },
   "hooks": {
     "SessionStart": [
       {
