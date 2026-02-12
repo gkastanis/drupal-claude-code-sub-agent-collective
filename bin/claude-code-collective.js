@@ -34,7 +34,8 @@ program
   .option('--backup <strategy>', 'Backup strategy: full, simple, or none', 'full')
   .option('--with-playwright', 'Include Playwright MCP server for visual regression testing')
   .option('--with-context7', 'Include Context7 MCP server for documentation lookup')
-  .option('--with-ddev', 'Include DDEV MCP server for database queries and container management')
+  .option('--no-ddev', 'Exclude DDEV MCP server (included by default)')
+  .option('--no-filesystem', 'Exclude Filesystem MCP server (included by default)')
   .option('--with-sequential-thinking', 'Include Sequential Thinking MCP for structured problem decomposition')
   .option('--with-all-mcps', 'Include all available MCP servers (highest resource usage)')
   .argument('[path]', 'Installation directory', '.')
@@ -52,7 +53,8 @@ program
           express: true,
           withPlaywright: options.withPlaywright,
           withContext7: options.withContext7,
-          withDdev: options.withDdev,
+          noDdev: options.ddev === false,
+          noFilesystem: options.filesystem === false,
           withSequentialThinking: options.withSequentialThinking,
           withAllMcps: options.withAllMcps,
           targetPath: path
@@ -67,7 +69,8 @@ program
           minimal: options.minimal,
           withPlaywright: options.withPlaywright,
           withContext7: options.withContext7,
-          withDdev: options.withDdev,
+          noDdev: options.ddev === false,
+          noFilesystem: options.filesystem === false,
           withSequentialThinking: options.withSequentialThinking,
           withAllMcps: options.withAllMcps,
           targetPath: path

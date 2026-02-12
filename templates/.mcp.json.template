@@ -40,6 +40,16 @@
         "memory": "~10MB",
         "cpu": "Low"
       }
+    }{{/if}}{{#if includeFilesystem}},
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "env": {},
+      "description": "Filesystem Access - File read/write/search via MCP protocol",
+      "resourceUsage": {
+        "memory": "~15MB",
+        "cpu": "Low"
+      }
     }{{/if}}{{#if includeSequentialThinking}},
     "sequential-thinking": {
       "command": "npx",
