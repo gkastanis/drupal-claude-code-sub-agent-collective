@@ -142,6 +142,30 @@ class MyService {
 }
 ```
 
+## Service Name Discovery
+
+Service names follow no universal convention. Don't guess -- verify.
+
+```bash
+# Quick check: does a service exist?
+ddev drush eval 'print json_encode(["exists" => Drupal::hasService("module_name.service_name")]);'
+```
+
+**When a service name fails**: Read the module's `*.services.yml` directly rather than guessing variations. The module prefix may be singular (`group_permission.checker`) when you expect plural (`group_permissions.checker`).
+
+## Finding the Loaded File (Patched Modules)
+
+When a module exists in both `vendor/drupal/` and `web/modules/contrib/`, only one is actually loaded by PHP.
+
+```php
+// Find which file is running at runtime
+$ref = new \ReflectionMethod($service, 'methodName');
+echo $ref->getFileName();
+// Edit the file that ReflectionMethod reports, not the one you assume.
+```
+
+**Common scenario**: A composer-patched module. The original sits in `vendor/`, the patched version in `web/modules/contrib/`. Editing the vendor copy has no effect because the autoloader loads from contrib.
+
 ## Common Drupal Services
 
 | Service ID | Interface | Purpose |

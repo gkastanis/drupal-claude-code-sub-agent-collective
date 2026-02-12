@@ -2,6 +2,31 @@
 
 All notable changes to the Drupal Claude Code Sub-Agent Collective.
 
+## [2.4.0] - 2026-02-12
+
+### Added
+- **DDEV debugging field report integration**: 10 hard-won lessons from production Drupal/DDEV debugging sessions distributed across rules, skills, and docs.
+- **Behavioral rule #7**: "Write script files for DDEV commands" added to both root and template INDEX.md.
+- **DDEV Shell Rules** section in `testing-verification.md`: Never pass complex shell constructs through `ddev exec`, same-shell auth requirement, HTML form ID search patterns.
+- **Script naming conventions** in `testing-verification.md`: `verify-*.sh`, `debug-*.php`, `check-*.sh`, `list-*.php`, `fix-*.php`.
+- **Service Name Discovery** section in `drupal-services.md`: Never guess service names, read `*.services.yml`, `Drupal::hasService()` pattern.
+- **Route Access vs Entity Access** section in `drupal-security.md`: Stacked access checkers warning, debugging 403s.
+- **DDEV Shell Gotchas** section in `drupal-testing` skill: BAD/GOOD patterns for `ddev exec` with variables.
+- **Same-shell authentication** pattern in `drupal-testing` skill: Fixed Pattern 1 to use same-shell `drush uli` + `curl` with `--uri=http://localhost`.
+- **Vendor vs Contrib** section in `drupal-testing` skill: `ReflectionMethod` pattern for finding actually-loaded file.
+- **Role-Based Access Testing** section in `drupal-testing` skill: Test user creation, 4-role test matrix, content inspection over status codes.
+- **Service Name Discovery** and **Finding the Loaded File** sections in `drupal-service-di` skill.
+- **Stacked Route Access Checks** section in `drupal-security-patterns` skill: Multiple `_*_access*` requirements (AND logic), debugging 403 pattern.
+- **DDEV Debugging Lessons** section in `LESSONS-LEARNED.md`: Anti-patterns summary table (8 rows), cross-reference to field report.
+- `No use statements` added to drush eval escaping rules in both `testing-verification.md` rule and `drupal-testing` skill.
+
+### Changed
+- `drupal-testing` skill Pattern 1 rewritten from split `ddev exec` calls to same-shell script pattern.
+- Behavioral rules count: 6 → 7 in root INDEX.md, 5 → 6 in template INDEX.md.
+
+### Note
+- Lesson #6 (Group module 1.x permission architecture) is domain-specific and documented only in the field report (`docs/research/DRUPAL-DDEV-DEBUGGING-FIELD-REPORT.md`), not integrated into collective rules or skills.
+
 ## [2.2.0-dev] - 2026-02-12
 
 ### Added

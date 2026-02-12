@@ -18,6 +18,12 @@
 - Use CSRF protection via Form API tokens on state-changing operations.
 - Validate file uploads: type, size, and extension checks.
 
+## Route Access vs Entity Access
+
+- Routes can stack **multiple** access checkers -- all must pass for access to be granted.
+- `$entity->access('update')` returning ALLOWED does NOT mean the route grants access. Other checkers (archived status, custom gates) may still deny.
+- Debugging 403: read the route's `requirements` YAML and trace each `_*_access*` checker class individually.
+
 ## Credentials
 
 - No hardcoded credentials or API keys in source code.

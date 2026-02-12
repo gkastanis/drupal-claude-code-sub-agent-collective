@@ -252,7 +252,7 @@ your-project/
 │   │   ├── code-quality.md          # Grep after changes, magic numbers, naming
 │   │   ├── css-conventions.md       # BEM, specific selectors, asset management
 │   │   ├── error-handling.md        # Exception hierarchy, fail fast
-│   │   └── testing-verification.md  # Verify before completion, script storage, drush escaping
+│   │   └── testing-verification.md  # Verify before completion, DDEV shell rules, script storage, drush escaping
 │   ├── agent-memory/           # Persistent agent knowledge (NEW v2.1)
 │   │   ├── drupal-architect/MEMORY.md
 │   │   ├── module-development-agent/MEMORY.md
@@ -472,6 +472,27 @@ Attempted to access: web/sites/default/settings.php
 If you need agents to access a specific file, add it to the allowlist in `.claude/sensitive-files.json`.
 
 ## Upgrading
+
+### Upgrading to v2.4 (from v2.3)
+
+v2.4 integrates 10 hard-won DDEV debugging lessons from production Drupal sessions into existing rules, skills, and documentation.
+
+**What changed:**
+- Behavioral rule #7 added to INDEX.md: "Write script files for DDEV commands"
+- `testing-verification.md` rule expanded with DDEV shell rules, script naming conventions, HTML form ID search patterns
+- `drupal-services.md` rule expanded with service name discovery section
+- `drupal-security.md` rule expanded with route access vs entity access warning
+- `drupal-testing` skill enhanced with DDEV gotchas, same-shell auth pattern, vendor vs contrib file discovery, role-based access testing matrix
+- `drupal-service-di` skill enhanced with service name discovery and ReflectionMethod for patched modules
+- `drupal-security-patterns` skill enhanced with stacked route access checks section
+- `LESSONS-LEARNED.md` doc expanded with anti-patterns summary table and field report cross-reference
+
+**How to upgrade:**
+```bash
+npx drupal-claude-collective init --force
+```
+
+**Breaking changes:** None. All content additions to existing files.
 
 ### Upgrading to v2.2 (from v2.1)
 

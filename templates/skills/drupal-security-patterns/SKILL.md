@@ -87,6 +87,27 @@ final class MyAccessChecker implements AccessInterface {
 }
 ```
 
+## Stacked Route Access Checks
+
+Routes can have **multiple** `_*_access*` requirements that ALL must pass (AND logic). Don't assume `_permission` is the only gate.
+
+```yaml
+# Example: three access checkers on one route
+my_module.entity_edit:
+  path: '/entity/{entity}/edit'
+  requirements:
+    _entity_access: entity.update           # Entity-level check
+    _custom_archived_check: 'TRUE'          # Custom: is entity archived?
+    _custom_status_check: 'TRUE'            # Custom: additional gate
+```
+
+**Debugging 403s when entity access passes:**
+1. Read the route's `requirements` in `*.routing.yml`
+2. Trace each `_*_access*` checker service in `*.services.yml`
+3. Check each checker class individually -- any one returning DENIED blocks the route
+
+**During security review**: Examine ALL route requirements, not just `_permission`. Custom access checkers may silently block access even when entity-level access is granted.
+
 ## CSRF Protection
 
 ```php

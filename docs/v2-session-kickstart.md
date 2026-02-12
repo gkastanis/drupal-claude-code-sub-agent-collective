@@ -8,7 +8,7 @@ Read this first when starting a new session on this project.
 
 An **NPM package** (`drupal-claude-collective`) that installs 15 Drupal-specialized AI agents, 9 enforcement hooks, 15 skills, 7 auto-loaded rule files, slash commands, and coordination infrastructure into Claude Code projects. Users run `npx drupal-claude-collective install --yes` and get a complete multi-agent Drupal development environment.
 
-**npm**: `drupal-claude-collective` | **Current version**: 2.2.0-dev | **License**: MIT
+**npm**: `drupal-claude-collective` | **Current version**: 2.4.0 | **License**: MIT
 
 ---
 

@@ -9,19 +9,24 @@ Practical verification patterns for Drupal implementations in DDEV environments.
 
 ## Curl Smoke Test Patterns
 
-### Pattern 1: Status Code + Response Size
+### Pattern 1: Status Code + Response Size (Same-Shell Auth)
+
+The login URL and curl MUST run in the **same shell** so the session cookie is valid. Write a script file and run it inside ddev.
 
 ```bash
-# Get auth cookie first
-LOGIN_URL=$(ddev drush uli --uid=1 --no-browser 2>/dev/null)
-COOKIE_FILE="/tmp/claude/cookies.txt"
-ddev exec curl -s -c "$COOKIE_FILE" -L "$LOGIN_URL" -o /dev/null
+#!/bin/bash
+# scripts/tests/verify-page-access.sh
+# Run with: ddev exec bash scripts/tests/verify-page-access.sh
+LOGIN_URL=$(drush uli --uid=1 --no-browser --uri=http://localhost 2>/dev/null)
+COOKIE=$(curl -s -D - -o /dev/null -L "$LOGIN_URL" 2>/dev/null \
+  | grep -i 'set-cookie' | head -1 \
+  | sed 's/.*set-cookie: *//i' | cut -d';' -f1)
 
-# Check status and size
-ddev exec curl -s -o /dev/null -w "%{http_code} %{size_download}" \
-  -b "$COOKIE_FILE" "http://localhost/TARGET_PATH"
-# Expect: "200 <size>" where size > 0
+STATUS=$(curl -s -o /dev/null -w "%{http_code}" -b "$COOKIE" "http://localhost/TARGET_PATH")
+echo "TARGET_PATH: $STATUS"
 ```
+
+**Why `--uri=http://localhost`**: Without it, `drush uli` may generate a URL with a different domain (e.g., `https://mysite.ddev.site`), causing a cookie domain mismatch when curling `http://localhost`.
 
 ### Pattern 2: Download Full HTML
 
@@ -64,12 +69,33 @@ fi
 rm -f "$COOKIE_FILE"
 ```
 
+## DDEV Shell Gotchas
+
+`ddev exec` passes commands through multiple shell layers, destroying pipes, variable expansion, nested quotes, and `grep -P`.
+
+```bash
+# BAD — variables get expanded/mangled by ddev exec shell layers
+ddev exec "drush eval 'foreach ($groups as $g) { echo $g->id(); }'"
+
+# GOOD — write a script file, run the file
+cat > scripts/tests/my-check.php << 'EOF'
+<?php
+$groups = \Drupal::entityTypeManager()->getStorage('group')->loadMultiple();
+foreach ($groups as $g) { echo $g->id() . "\n"; }
+EOF
+ddev exec drush scr scripts/tests/my-check.php
+```
+
+**Rule**: If the command has pipes (`|`), variables (`$var`), nested quotes, or multi-line PHP, write it to a file first.
+
 ## Drush Eval Patterns
 
 **CRITICAL escaping rules:**
 - Use `Drupal::` not `\Drupal::` (backslash gets eaten by shell)
 - Use `Exception` not `\Exception`
+- No `use` statements (not supported in eval context)
 - Keep PHP on one line
+- Complex logic → `drush scr script.php` instead
 - Redirect stderr: `2>/dev/null`
 - Use single quotes around PHP code
 
@@ -171,3 +197,37 @@ echo "=== All checks passed ==="
 | Permission defined | drush eval | `getPermissions()` check |
 | Cache clear works | drush | `ddev drush cr` exits 0 |
 | Config imports | drush | `ddev drush cim -y` exits 0 |
+
+## Finding the Real File (Vendor vs Contrib)
+
+Patched modules may live in both `vendor/drupal/` (original) and `web/modules/contrib/` (patched). Editing the wrong one has no effect.
+
+```php
+// Find which file is actually loaded at runtime
+$ref = new \ReflectionMethod($service, 'methodName');
+echo $ref->getFileName();
+```
+
+**Rule**: When a patched module exists in both locations, use `ReflectionMethod` to find which file PHP actually loads. Edit that file, not the one you assume.
+
+## Role-Based Access Testing
+
+Create dedicated test users rather than relying on existing users with unknown role combinations.
+
+```bash
+# Create test users
+ddev drush user:create testauth --password=testauth123
+ddev drush user:create testadmin --password=testadmin123
+ddev drush user:role:add my_admin_role testadmin
+```
+
+**Test matrix** -- verify each user type against each resource state:
+
+| User type | Published resource | Unpublished resource |
+|---|---|---|
+| Anonymous | view only | 403 |
+| Authenticated | view only | 403 |
+| Role-based admin | view + edit | view + edit |
+| uid 1 | view + edit | view + edit (bypass) |
+
+**Check content, not just status codes**: Download the HTML and grep for Drupal form IDs (`edit-*`) to verify what users actually see -- presence of edit forms, workflow fields, and local task tabs.

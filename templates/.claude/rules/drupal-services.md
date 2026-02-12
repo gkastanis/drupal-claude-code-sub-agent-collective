@@ -19,3 +19,10 @@
 ## After Service Changes
 
 Verify Drupal service changes: after service or Twig changes, confirm service injections are correct, DB table and column names exist, and Twig filters actually exist in the project.
+
+## Service Name Discovery
+
+- **Never guess** service names -- read the module's `*.services.yml` file directly.
+- Quick check: `Drupal::hasService("module_name.service_name")` before using any service.
+- Common trap: module prefix may be singular (`group_permission`) even when docs or module name suggest plural (`group_permissions`).
+- When a service name fails, check the YAML -- don't iterate through guesses.

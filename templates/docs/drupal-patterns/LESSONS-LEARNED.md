@@ -167,3 +167,24 @@ git add config/sync/ && git commit -m "feat: Add field"
 ```
 
 **NEVER skip config export after structural changes.**
+
+---
+
+## DDEV Debugging Lessons
+
+Hard-won patterns from production Drupal/DDEV debugging sessions. Full context: `docs/research/DRUPAL-DDEV-DEBUGGING-FIELD-REPORT.md`.
+
+### Anti-Patterns Summary
+
+| # | Anti-pattern | Fix | Integrated in |
+|---|---|---|---|
+| 1 | `ddev exec` with pipes/variables | Write a script file, run with `ddev exec bash` or `drush scr` | rules/testing-verification, skills/drupal-testing |
+| 2 | `drush eval` with complex PHP or `use` statements | Keep one-line, use `drush scr` for complex logic | rules/testing-verification, skills/drupal-testing |
+| 3 | Split `drush uli` + `curl` across separate calls | Single script, same shell, `--uri=http://localhost` | rules/testing-verification, skills/drupal-testing |
+| 4 | Guess service names by convention | Check `*.services.yml` or `Drupal::hasService()` | rules/drupal-services, skills/drupal-service-di |
+| 5 | Edit vendor file for patched module | Find real file via `ReflectionMethod` | skills/drupal-testing, skills/drupal-service-di |
+| 7 | Assume entity access = route access | Read route requirements, trace each access checker | rules/drupal-security, skills/drupal-security-patterns |
+| 8 | Search generic strings in HTML output | Use Drupal HTML form IDs (`edit-*`) | rules/testing-verification, skills/drupal-testing |
+| 9 | Scripts in `/tmp/claude/` or project root | Use `scripts/tests/` with naming conventions and index | rules/testing-verification, skills/drupal-testing |
+
+**Note**: Lesson #6 (Group module 1.x permission architecture) is domain-specific and documented only in the full field report, not integrated into collective rules or skills.

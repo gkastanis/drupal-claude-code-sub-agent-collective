@@ -53,6 +53,8 @@ Detailed rules are in `.claude/rules/` (auto-loaded by topic). Key rules:
 4. **Remove from ALL locations** - grep to confirm nothing was missed.
 5. **Verify before completion** - run tests (curl smoke or drush eval), document results, store scripts in `scripts/tests/`.
 
+6. **Write script files for DDEV commands**: Never use complex shell constructs (pipes, variables, nested quotes) in `ddev exec`. Write a script to `scripts/tests/` and run with `ddev exec drush scr` or `ddev exec bash`.
+
 ## Quality
 
 - TDD: Tests first (RED) --> implement (GREEN) --> refactor
