@@ -35,17 +35,16 @@ fi
 if [[ "$HAS_JQ" == "1" ]]; then
   stdin_json=$(cat)
   if [[ -n "$stdin_json" && "$stdin_json" != "{}" ]]; then
-    ctx_size=$(echo "$stdin_json" | jq -r '.context_window.context_window_size // empty' 2>/dev/null)
-    if [[ -n "$ctx_size" && "$ctx_size" != "0" ]]; then
-      input=$(echo "$stdin_json" | jq -r '.context_window.current_usage.input_tokens // 0' 2>/dev/null)
-      output=$(echo "$stdin_json" | jq -r '.context_window.current_usage.output_tokens // 0' 2>/dev/null)
-      # input_tokens already includes cached tokens; cache_creation/cache_read are breakdowns, not additive.
-      total=$((input + output))
-      pct=$((total * 100 / ctx_size))
+    # Use pre-calculated used_percentage (most reliable).
+    pct=$(echo "$stdin_json" | jq -r '.context_window.used_percentage // empty' 2>/dev/null | cut -d. -f1)
+    if [[ -n "$pct" ]]; then
+      # Use cumulative session totals for the token display.
+      total_in=$(echo "$stdin_json" | jq -r '.context_window.total_input_tokens // 0' 2>/dev/null)
+      total_out=$(echo "$stdin_json" | jq -r '.context_window.total_output_tokens // 0' 2>/dev/null)
 
       # Format token counts as compact "Xk" values.
-      total_k=$((total / 1000))
-      output_k=$((output / 1000))
+      in_k=$((total_in / 1000))
+      out_k=$((total_out / 1000))
 
       # Color: green <50%, yellow 50-80%, red >80%.
       if [[ $pct -lt 50 ]]; then
@@ -55,7 +54,7 @@ if [[ "$HAS_JQ" == "1" ]]; then
       else
         color="\033[31m"
       fi
-      SEGMENTS+=("${color}ctx:${pct}% ${total_k}k>${output_k}k\033[0m")
+      SEGMENTS+=("${color}ctx:${pct}% ${in_k}k>${out_k}k\033[0m")
     fi
   fi
 else
