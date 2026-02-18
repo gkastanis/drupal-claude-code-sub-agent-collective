@@ -66,52 +66,6 @@ npm install && npm run build  # Compile assets
 
 ---
 
-## Agent Teams (Experimental)
-
-Agent teams spawn independent Claude Code sessions ("teammates") that coordinate via shared task list and mailbox. Each teammate is a full session that automatically loads all collective rules, skills, and hooks.
-
-**How teammates use the collective:**
-- Each teammate can use `/van` to route to specialized agents within their session
-- All 7 behavioral rules and hooks apply automatically per teammate
-- Teammates communicate via mailbox - not through the hub-and-spoke subagent system
-
-**Suggested role-based teammates for Drupal projects:**
-- **module-dev**: Module code, services, plugins, hooks
-- **theme-dev**: Twig templates, CSS/JS assets, responsive design
-- **config**: Configuration management, schema, install/update hooks
-- **testing**: Behat scenarios, PHPUnit tests, verification scripts
-
-**File conflict avoidance:** Each teammate should own different files/directories. Avoid multiple teammates editing the same file simultaneously.
-
-**When to use agent teams vs subagents:**
-- **Agent teams**: Parallel independent workstreams (new module with separate layers, parallel code review lenses, large migrations)
-- **Subagents** (`/van`): Single-feature sequential work, same-file edits, quick tasks where coordination overhead exceeds benefit
-
----
-
-## Architecture Checklist
-
-**Before writing code, ASK:**
-1. What are the core data types flowing through this system?
-2. Could someone rewrite this module using only its public interface?
-3. Will this be maintainable in 2-3 years?
-4. Does each module have ONE clear responsibility?
-
-**Module design:**
-- One module = one purpose (black box with clean interface)
-- Hide implementation behind services/interfaces
-- Communicate via services, events, hooks - not direct class deps
-
-**DO NOT:**
-- Expose internal implementation in APIs
-- Create modules too complex for one person
-- Hard-code technology dependencies
-- Add fields to user bundle unless explicitly told
-
-**Detailed principles:** `@./.claude/docs/drupal-patterns/architecture-principles.md`
-
----
-
 ## Collective Index
 **Import compressed agent/command index with behavioral rules.**
 @./.claude-collective/INDEX.md

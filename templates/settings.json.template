@@ -140,6 +140,15 @@
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/semantic-docs-update-hook.sh"
           }
         ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/plan-quality-inject.sh"
+          }
+        ]
       }
     ],
     "PreCompact": [

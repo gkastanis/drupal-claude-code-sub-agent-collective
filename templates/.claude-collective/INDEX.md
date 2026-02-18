@@ -43,21 +43,6 @@ Load ONLY when needed -- never at startup:
 - Hook debugging --> load `hook-guide.md` for troubleshooting and restart procedures
 - Semantic docs tasks --> check `docs/semantic/00_BUSINESS_INDEX.md` for logic-to-code mappings
 
-## Behavioral Rules
-
-Detailed rules are in `.claude/rules/` (auto-loaded by topic). Key rules:
-
-1. **Grep after multi-file changes** - catch missed references.
-2. **Verify Drupal service changes** - confirm injections, table names, Twig filters.
-3. **Use config over magic numbers** - search for existing constants first.
-4. **Remove from ALL locations** - grep to confirm nothing was missed.
-5. **Verify before completion** - run tests (curl smoke or drush eval), document results, store scripts in `scripts/tests/`.
-
-6. **Write script files for DDEV commands**: Never use complex shell constructs (pipes, variables, nested quotes) in `ddev exec`. Write a script to `scripts/tests/` and run with `ddev exec drush scr` or `ddev exec bash`.
-
 ## Quality
 
-- TDD: Tests first (RED) --> implement (GREEN) --> refactor
-- Handoff validation: context completeness, agent match, tests passing
-- Agents report: completion status with test results (display verbatim, never summarize)
-- Phase gates: all subtasks complete, tests pass, no directive violations
+Detailed rules auto-loaded from `.claude/rules/` (code-quality, drupal-services, drupal-security, testing-verification, css-conventions, error-handling, translation-rules). See also `.claude-collective/quality.md` for gate definitions.
