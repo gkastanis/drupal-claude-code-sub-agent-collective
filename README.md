@@ -234,7 +234,7 @@ your-project/
 │   │   ├── research-agent.md            # memory: project
 │   │   ├── semantic-architect-agent.md
 │   │   └── workflow-agent.md
-│   ├── hooks/                  # Enforcement scripts (9 hooks + shared lib)
+│   ├── hooks/                  # Enforcement scripts (10 hooks + shared lib)
 │   │   ├── lib/hook-utils.sh
 │   │   ├── block-destructive-commands.sh    # PreToolUse(Bash)
 │   │   ├── block-sensitive-files.sh         # PreToolUse(Read|Grep)
@@ -244,15 +244,17 @@ your-project/
 │   │   ├── test-driven-handoff.sh           # PostToolUse(Task)/SubagentStop
 │   │   ├── pre-compact-state.sh             # PreCompact (NEW v2.1)
 │   │   ├── subagent-context-inject.sh       # SubagentStart (NEW v2.1)
-│   │   └── teammate-quality-gate.sh         # TeammateIdle/TaskCompleted (NEW v2.2)
-│   ├── rules/                  # Auto-loaded behavioral rules (NEW v2.1)
+│   │   ├── teammate-quality-gate.sh         # TeammateIdle/TaskCompleted (NEW v2.2)
+│   │   └── plan-quality-inject.sh          # PostToolUse:ExitPlanMode (NEW v2.5)
+│   ├── rules/                  # Auto-loaded behavioral rules (8 rules, NEW v2.1)
 │   │   ├── drupal-services.md       # DI, Entity API, service registration
 │   │   ├── drupal-security.md       # Input sanitization, XSS, access control
 │   │   ├── translation-rules.md     # t(), .po conventions, Twig |t
 │   │   ├── code-quality.md          # Grep after changes, magic numbers, naming
 │   │   ├── css-conventions.md       # BEM, specific selectors, asset management
 │   │   ├── error-handling.md        # Exception hierarchy, fail fast
-│   │   └── testing-verification.md  # Verify before completion, DDEV shell rules, script storage, drush escaping
+│   │   ├── testing-verification.md  # Verify before completion, DDEV shell rules, script storage, drush escaping
+│   │   └── drupal-contrib-first.md  # Check drupal.org for existing modules before custom code
 │   ├── agent-memory/           # Persistent agent knowledge (NEW v2.1)
 │   │   ├── drupal-architect/MEMORY.md
 │   │   ├── module-development-agent/MEMORY.md
@@ -472,6 +474,26 @@ Attempted to access: web/sites/default/settings.php
 If you need agents to access a specific file, add it to the allowlist in `.claude/sensitive-files.json`.
 
 ## Upgrading
+
+### Upgrading to v2.5 (from v2.4)
+
+v2.5 extracts high-value Drupal knowledge gaps from the external `drupal-expert` skill, adds a plan quality injection hook, and trims CLAUDE.md/INDEX.md template bloat.
+
+**What changed:**
+- New `drupal-contrib-first.md` rule: Always-on rule enforcing drupal.org module search before custom code
+- `drupal-coding-standards` skill expanded with Drush generators (`--answers` patterns) and deprecated APIs table (10 mappings)
+- `drupal-hook-patterns` skill expanded with D10/D11 compatibility matrix and Recipes (10.3+) note
+- New `plan-quality-inject.sh` hook: Injects routing and quality requirements at plan approval
+- `CLAUDE.md` template trimmed by 46 lines (removed content already in auto-loaded rules/skills)
+- `INDEX.md` template trimmed (removed duplicated behavioral rules summary)
+- Rules count: 7 → 8. Hooks count: 9 → 10.
+
+**How to upgrade:**
+```bash
+npx drupal-claude-collective init --force
+```
+
+**Breaking changes:** None. All additions to existing files.
 
 ### Upgrading to v2.4 (from v2.3)
 

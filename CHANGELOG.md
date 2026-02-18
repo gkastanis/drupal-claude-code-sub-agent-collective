@@ -2,6 +2,27 @@
 
 All notable changes to the Drupal Claude Code Sub-Agent Collective.
 
+## [2.5.0] - 2026-02-19
+
+### Added
+- **`drupal-contrib-first.md` rule**: New always-on rule (15 lines) enforcing drupal.org module search before writing custom code. Includes evaluation criteria (D10/11 compat, security coverage, maintenance, usage count) and Recipes (10.3+) check.
+- **Drush Generators section** in `drupal-coding-standards` skill: Non-interactive `--answers` patterns for module, controller, form, block, and service generation. Common field types reference table (17 types). `--dry-run` tip for discovering answer keys.
+- **Deprecated APIs table** in `drupal-coding-standards` skill: 10 legacy-to-modern API mappings (`drupal_set_message()`, `entity_load()`, `db_select()`, `drupal_render()`, etc.) with `drupal-check` scanner reference.
+- **D10/D11 Compatibility table** in `drupal-hook-patterns` skill: PHP, Symfony, hooks, annotations, jQuery differences. `core_version_requirement` YAML examples.
+- **Recipes note** in `drupal-hook-patterns` skill: Drupal Recipes (10.3+) for bundling config, modules, and content.
+- **`plan-quality-inject.sh` hook**: PostToolUse:ExitPlanMode hook that injects routing and quality requirements when plans are approved for Drupal work.
+
+### Changed
+- `templates/CLAUDE.md` trimmed by 46 lines: Removed Agent Teams section and Architecture Checklist (both already covered by auto-loaded rules and skills). Now 75 lines, well under 150-line best practice limit.
+- `templates/.claude-collective/INDEX.md` trimmed: Removed inline behavioral rules summary (duplicated from `.claude/rules/`). Quality section now references auto-loaded rules and `quality.md`.
+- `drupal-coding-standards` skill: 128 → 202 lines (+74).
+- `drupal-hook-patterns` skill: 174 → 198 lines (+24).
+- Rules count: 7 → 8 (+drupal-contrib-first.md).
+- Hooks count: 9 → 10 (+plan-quality-inject.sh).
+
+### Note
+- Content extracted from the external `madsnorgaard/drupal-expert` skill (1,327 lines). Only high-value gaps were imported; ~60% of the source skill duplicated our existing 8 skills + 7 rules.
+
 ## [2.4.0] - 2026-02-12
 
 ### Added
