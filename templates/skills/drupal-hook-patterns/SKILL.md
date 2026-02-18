@@ -171,3 +171,28 @@ final class MyEventSubscriber implements EventSubscriberInterface {
 4. Keep `.module` file thin - hooks call services.
 5. Use specific form alter hooks (`hook_form_FORM_ID_alter`) over generic.
 6. Add cache metadata to access results.
+
+## D10/D11 Compatibility
+
+| Feature | Drupal 10 | Drupal 11 |
+|---|---|---|
+| PHP | 8.1+ | 8.3+ |
+| Symfony | 6.x | 7.x |
+| Hooks | Procedural or OOP | OOP preferred (attributes) |
+| Annotations | Supported | Deprecated (use attributes) |
+| jQuery | Included | Optional |
+| CKEditor | CKEditor 5 | CKEditor 5 |
+
+### Version Requirement Examples
+
+```yaml
+# Support both D10 and D11.
+core_version_requirement: ^10.3 || ^11
+
+# D11 only.
+core_version_requirement: ^11
+```
+
+### Recipes (D10.3+)
+
+Drupal Recipes bundle config, modules, and content into reusable packages. Check for existing recipes before building custom install profiles or complex config exports. Apply with: `php core/scripts/drupal recipe core/recipes/standard`.

@@ -125,3 +125,78 @@ modules/custom/my_module/
       Kernel/
       Functional/
 ```
+
+## Drush Generators (Non-Interactive)
+
+Use `--answers` for scripted, non-interactive code generation.
+
+### Common Generators
+
+```bash
+# Generate a module.
+drush generate module --answers='{"name":"My Module","machine_name":"my_module","description":"Module description.","package":"Custom","dependencies":"drupal:node","install_file":true}'
+
+# Generate a controller.
+drush generate controller --answers='{"module":"my_module","class":"MyController","route_name":"my_module.page","route_path":"/my-module/page","route_title":"My Page"}'
+
+# Generate a simple form.
+drush generate form-simple --answers='{"module":"my_module","class":"MyForm","form_id":"my_module_my_form","route":"yes","route_name":"my_module.my_form","route_path":"/admin/config/my-module","route_title":"My Form","route_permission":"administer site configuration"}'
+
+# Generate a config form.
+drush generate form-config --answers='{"module":"my_module","class":"SettingsForm","form_id":"my_module_settings","route":"yes","route_name":"my_module.settings","route_path":"/admin/config/my-module/settings","route_title":"Settings","route_permission":"administer site configuration"}'
+
+# Generate a block plugin.
+drush generate plugin:block --answers='{"module":"my_module","plugin_id":"my_block","admin_label":"My Block","class":"MyBlock","category":"Custom"}'
+
+# Generate a service.
+drush generate service --answers='{"module":"my_module","service_name":"my_module.my_service","class":"MyService"}'
+
+# Generate a field.
+drush field:create node article --field-name=field_subtitle --field-type=string
+```
+
+### Tips
+
+- Use `--dry-run` to discover required answer keys without generating files.
+- Always run `drush cex -y` after CLI changes to export config.
+- Run `drush cr` after generating new plugins or services.
+
+### Common Field Types
+
+| Type | Machine name |
+|---|---|
+| Text (plain) | `string` |
+| Text (long) | `text_long` |
+| Text (formatted, long) | `text_long` |
+| Boolean | `boolean` |
+| Integer | `integer` |
+| Decimal | `decimal` |
+| Float | `float` |
+| Email | `email` |
+| Link | `link` |
+| Entity reference | `entity_reference` |
+| Image | `image` |
+| File | `file` |
+| Date | `datetime` |
+| Timestamp | `timestamp` |
+| List (text) | `list_string` |
+| List (integer) | `list_integer` |
+
+## Deprecated APIs
+
+Replace legacy function calls with their modern service equivalents.
+
+| Deprecated | Replacement |
+|---|---|
+| `drupal_set_message()` | `\Drupal::messenger()->addMessage()` |
+| `format_date()` | `\Drupal::service('date.formatter')->format()` |
+| `entity_load()` | `\Drupal::entityTypeManager()->getStorage()->load()` |
+| `entity_load_multiple()` | `\Drupal::entityTypeManager()->getStorage()->loadMultiple()` |
+| `db_select()` / `db_query()` | `\Drupal::database()->select()` / `->query()` |
+| `drupal_render()` | `\Drupal::service('renderer')->render()` |
+| `\Drupal::l()` | `Link::fromTextAndUrl()` |
+| `drupal_get_path()` | `\Drupal::service('extension.list.module')->getPath()` |
+| `file_create_url()` | `\Drupal::service('file_url_generator')->generateAbsoluteString()` |
+| `unicode_strlen()` | `mb_strlen()` |
+
+Use `drupal-check` to scan for deprecated API usage: `drupal-check web/modules/custom/my_module/`.
